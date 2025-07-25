@@ -22,7 +22,7 @@ export default {
     extend: {
       colors: {
         // Tu color de marca personalizado
-        "brand-primary": "#295652",
+        "brand-primary": "#034651",
 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
