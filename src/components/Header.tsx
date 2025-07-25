@@ -69,7 +69,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           <div
             className={`bg-white p-2 rounded-sm transition-all duration-300`}
           >
-            <img src="/assets/mundocar-logo.png" style={{ width: "90%" }} />
+            <img
+              src="/assets/mundocar-logo.png"
+              className="w-32 h-auto md:w-full lg:w-full" // Ajusta estos valores
+              alt="Mundocar Logo"
+            />
           </div>
         </div>
         {/* Ítems de Navegación (reemplaza la barra de búsqueda en desktop) */}
@@ -120,21 +124,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           >
             <Menu className="h-5 w-5" />
           </Button>
-        </div>
-      </div>
-
-      {/* Búsqueda Móvil - Permanece igual */}
-      <div
-        className={`md:hidden mt-4 transition-all duration-300 ${
-          isScrolled ? "py-0 h-0 overflow-hidden opacity-0" : "py-0 opacity-100"
-        }`}
-      >
-        <div className="container mx-auto px-4 relative">
-          <Search className="absolute left-7 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-300" />
-          <Input
-            placeholder="Buscar autos..."
-            className="pl-10 bg-white/10 border-white/30 text-white placeholder-white/60"
-          />
         </div>
       </div>
     </header>
