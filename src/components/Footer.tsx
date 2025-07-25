@@ -19,30 +19,40 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="bg-blue-600 p-2 rounded-full">
-                <Car className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">AutoTrader</h3>
-                <p className="text-sm text-gray-400">Tu mejor opción</p>
-              </div>
+            <div className="flex items-center space-x-2 bg-white rounded-sm">
+              <img src="/assets/mundocar-logo.png" />
             </div>
             <p className="text-gray-400 text-sm">
               La plataforma líder en venta de autos, repuestos y servicios
               automotrices.
             </p>
             <div className="flex space-x-3">
-              <Button size="sm" variant="outline" className="p-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="p-2 bg-brand-primary"
+              >
                 <Facebook className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="outline" className="p-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="p-2 bg-brand-primary"
+              >
                 <Twitter className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="outline" className="p-2">
-                <Instagram className="h-4 w-4" />
+              <Button
+                size="sm"
+                variant="outline"
+                className="p-2 bg-brand-primary"
+              >
+                <Instagram className="h-4 w-4 " />
               </Button>
-              <Button size="sm" variant="outline" className="p-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="p-2 bg-brand-primary"
+              >
                 <Youtube className="h-4 w-4" />
               </Button>
             </div>
@@ -110,7 +120,10 @@ const Footer: React.FC = () => {
                 placeholder="Tu email"
                 className="bg-gray-800 border-gray-700 text-white"
               />
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+              <Button
+                size="sm"
+                className="bg-brand-primary hover:bg-brand-primary/80"
+              >
                 Suscribir
               </Button>
             </div>

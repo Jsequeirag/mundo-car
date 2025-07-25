@@ -11,38 +11,99 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Car, MapPin, Package, Droplets } from "lucide-react"; // Importa los íconos de categoría
 
 interface SearchFiltersProps {
   onSearch: (filters: any) => void;
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = React.useState<string>("");
   const [priceRange, setPriceRange] = React.useState([0, 100000]);
   const [yearRange, setYearRange] = React.useState([2010, 2024]);
   const [department, setDepartment] = React.useState<string>("");
+  const [category, setCategory] = React.useState<string>(""); // Estado para la categoría
+
+  // Define las opciones de categoría
+  const categoryOptions = [
+    { label: "Autos nuevos", value: "new_cars", icon: Car },
+    { label: "Autos usados", value: "used_cars", icon: Car },
+    { label: "Renta de autos", value: "car_rental", icon: MapPin },
+    { label: "Autorepuestos", value: "auto_parts", icon: Package },
+    { label: "Lubicentros", value: "lubricenters", icon: Droplets },
+  ];
+
+  // Función de búsqueda para incluir todos los filtros
+  const handleSearchClick = () => {
+    onSearch({
+      searchTerm,
+      priceRange,
+      yearRange,
+      department,
+      category,
+    });
+  };
 
   return (
-    // CAMBIOS CLAVE AQUÍ:
-    // Fondo de la Card: Blanco o gris muy claro para un look limpio y moderno.
-    // Borde de la Card: Un tono de gris más oscuro o incluso tu brand-primary para un borde sutil pero marcado.
-    <Card className="bg-white border border-gray-200 shadow-md rounded-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-xl font-bold text-gray-800">
-          {/* Ícono de filtro: Usa tu brand-primary para destacarlo */}
-          <Filter className="h-5 w-5 text-brand-primary" />
-          Search Filters
+    <Card className="bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden">
+      <CardHeader className="bg-gradient-to-r bg-brand-primary  text-white p-4">
+        <CardTitle className="flex items-center gap-2 text-xl font-bold">
+          <Filter className="h-6 w-6 " />
+          <p className="text-white"> Filtros de Búsqueda</p>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardContent className="space-y-6 p-6">
+        {/* Barra de Búsqueda General */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Input
+            placeholder="Buscar autos, marcas, modelos, palabras clave..."
+            className="pl-10 py-2 border-gray-300 focus:border-brand-primary focus:ring-brand-primary focus:ring-2 focus:ring-offset-2"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* CAMPO DE SELECCIÓN PARA CATEGORÍA */}
           <div>
-            <Label htmlFor="make">Make</Label>
+            <Label
+              htmlFor="category"
+              className="text-gray-700 font-medium mb-1 block"
+            >
+              Categoría
+            </Label>
+            <Select onValueChange={setCategory} value={category}>
+              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                <SelectValue placeholder="Cualquier Categoría" />
+              </SelectTrigger>
+              <SelectContent>
+                {categoryOptions.map((option) => {
+                  const CategoryIcon = option.icon;
+                  return (
+                    <SelectItem key={option.value} value={option.value}>
+                      <div className="flex items-center gap-2">
+                        <CategoryIcon className="h-4 w-4 text-gray-600" />
+                        {option.label}
+                      </div>
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+          {/* FIN DEL CAMPO DE SELECCIÓN */}
+
+          <div>
+            <Label
+              htmlFor="make"
+              className="text-gray-700 font-medium mb-1 block"
+            >
+              Marca
+            </Label>
             <Select>
-              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2">
-                {" "}
-                {/* Ajustes de focus */}
-                <SelectValue placeholder="Any Make" />
+              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                <SelectValue placeholder="Cualquier Marca" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="toyota">Toyota</SelectItem>
@@ -54,19 +115,27 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
             </Select>
           </div>
           <div>
-            <Label htmlFor="model">Model</Label>
+            <Label
+              htmlFor="model"
+              className="text-gray-700 font-medium mb-1 block"
+            >
+              Modelo
+            </Label>
             <Input
-              placeholder="Any Model"
-              className="focus:border-brand-primary focus:ring-brand-primary focus:ring-2 focus:ring-offset-2" // Ajustes de focus
+              placeholder="Cualquier Modelo"
+              className="focus:border-brand-primary focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors"
             />
           </div>
           <div>
-            <Label htmlFor="department">Department</Label>
+            <Label
+              htmlFor="department"
+              className="text-gray-700 font-medium mb-1 block"
+            >
+              Departamento
+            </Label>
             <Select onValueChange={setDepartment} value={department}>
-              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2">
-                {" "}
-                {/* Ajustes de focus */}
-                <SelectValue placeholder="Any Department" />
+              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                <SelectValue placeholder="Cualquier Departamento" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="san_jose">San José</SelectItem>
@@ -82,8 +151,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
         </div>
 
         <div>
-          <Label>
-            Price Range: ${priceRange[0].toLocaleString()} - $
+          <Label className="text-gray-700 font-medium mb-1 block">
+            Rango de Precio: ${priceRange[0].toLocaleString()} - $
             {priceRange[1].toLocaleString()}
           </Label>
           <Slider
@@ -92,20 +161,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
             max={100000}
             min={0}
             step={1000}
-            className="mt-2"
-            // Estilizar el track y el thumb del slider con brand-primary
-            // Estas clases podrían necesitar ser ajustadas dependiendo de la implementación específica de tu componente Slider
-            // Algunos sliders como los de shadcn/ui ya manejan esto con sus propias clases de color 'primary'
-            // Si el slider es de shadcn/ui, 'bg-primary' dentro de las clases de su track ya usaría tu color si mapeas 'primary' a 'brand-primary' en tailwind.config
-            // Por simplicidad, asumimos que 'primary' en shadcn/ui es tu brand-primary
-            // Si no, tendrías que ver la implementación de tu Slider para inyectar estas clases
-            // Por ejemplo: track-background: bg-brand-primary, thumb-color: bg-brand-primary
+            className="mt-3"
           />
         </div>
 
         <div>
-          <Label>
-            Year Range: {yearRange[0]} - {yearRange[1]}
+          <Label className="text-gray-700 font-medium mb-1 block">
+            Rango de Año: {yearRange[0]} - {yearRange[1]}
           </Label>
           <Slider
             value={yearRange}
@@ -113,20 +175,16 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
             max={2024}
             min={1990}
             step={1}
-            className="mt-2"
-            // Ver notas sobre el Slider de arriba.
+            className="mt-3"
           />
         </div>
 
-        {/* Botón de búsqueda: Aplicar tu brand-primary directamente */}
         <Button
-          onClick={() => onSearch({ priceRange, yearRange, department })}
-          // Usamos bg-brand-primary para el fondo del botón
-          // Y un color ligeramente más oscuro o una opacidad reducida para el hover
-          className="w-full bg-brand-primary hover:bg-opacity-90 text-white font-semibold py-2 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+          onClick={handleSearchClick}
+          className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
         >
-          <Search className="h-4 w-4 mr-2" />
-          Search Cars
+          <Search className="h-5 w-5 mr-2" />
+          Buscar
         </Button>
       </CardContent>
     </Card>

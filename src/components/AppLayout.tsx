@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Header from "./Header";
-import Navigation from "./Navigation";
 import SearchFilters from "./SearchFilters";
 import CarGrid from "./CarGrid";
 import Footer from "./Footer";
@@ -8,6 +7,11 @@ import { mockCars } from "@/data/mockCars";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Award, Shield, Users } from "lucide-react";
 import AdvertisementCarousel from "./AdvertisementCarousel";
+import Hero from "./Hero";
+// IMPORTA LAS NUEVAS SECCIONES AQUÍ:
+import HowItWorks from "./HowItWorks"; // O BenefitsSection
+
+import SecondaryCTA from "./SecondaryCTA"; // O SellCarCTA
 
 const AppLayout: React.FC = () => {
   const adImagesTop = [
@@ -44,77 +48,56 @@ const AppLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {" "}
-      {/* Changed background to a soft gray for a cleaner look */}
       <Header />
-      <Navigation />
-      {/* Hero Section */}
-      {/* Replaced blue-purple gradient with brand-primary or a complementary gradient */}
-      <section className="bg-brand-primary text-white py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
-            Find Your Perfect Car
-          </h1>
-          {/* Adjusted text opacity for better readability on brand-primary background */}
-          <p className="text-xl md:text-2xl mb-8 text-white/90">
-            Thousands of quality vehicles at unbeatable prices
-          </p>
-          <div className="flex flex-wrap justify-center gap-8 mt-8">
-            {/* Icons and text should remain white as they're on a dark background */}
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-6 w-6" />
-              <span className="font-semibold">Best Prices</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Award className="h-6 w-6" />
-              <span className="font-semibold">Quality Assured</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Shield className="h-6 w-6" />
-              <span className="font-semibold">Secure Buying</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="h-6 w-6" />
-              <span className="font-semibold">Trusted Dealers</span>
-            </div>
+      {/* ESTE ES EL DIV QUE VA A EMPUJAR TODO EL CONTENIDO HACIA ABAJO */}
+      {/* El padding-top debe ser igual a la altura máxima del Header */}
+      <div className="pt-[80px]">
+        {" "}
+        {/* Altura máxima del Header es 80px (h-20) */}
+        {/* Hero Section - QUITAMOS el padding-top de aquí */}
+        <Hero />
+        {/* NUEVA SECCIÓN: CATEGORY SHOWCASE */}
+        <HowItWorks />
+        <SecondaryCTA />
+        {/* 6. "HOW IT WORKS" / BENEFICIOS (NUEVA SECCIÓN) */}
+        {/* Main Content */}
+        <main className=" mx-auto px-6 py-10">
+          <div className="mb-8">
+            <AdvertisementCarousel images={adImagesTop} interval={6000} />
           </div>
-        </div>
-      </section>
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <AdvertisementCarousel images={adImagesTop} interval={6000} />
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-          {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
-          <div className="lg:col-span-1 space-y-8">
-            <SearchFilters onSearch={handleSearch} />
-            <div className="hidden lg:block">
-              <AdvertisementCarousel images={adImagesSide1} interval={7000} />
+          <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+            {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
+            <div className="lg:col-span-1 space-y-8">
+              <SearchFilters onSearch={handleSearch} />
+              <div className="hidden lg:block">
+                <AdvertisementCarousel images={adImagesSide1} interval={7000} />
+              </div>
             </div>
-          </div>
 
-          {/* Columna Central: Grid de Carros (ocupa más espacio) */}
-          <div className="lg:col-span-2 xl:col-span-3">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                Featured Vehicles
-              </h2>
-              <p className="text-gray-600">{cars.length} cars available</p>
+            {/* Columna Central: Grid de Carros (ocupa más espacio) */}
+            <div className="lg:col-span-2 xl:col-span-3">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Featured Vehicles
+                </h2>
+                <p className="text-gray-600">{cars.length} cars available</p>
+              </div>
+              <CarGrid cars={cars} loading={loading} />
             </div>
-            <CarGrid cars={cars} loading={loading} />
-          </div>
 
-          {/* Columna Derecha: Anuncio Lateral 2 */}
-          <div className="lg:col-span-1 hidden lg:block space-y-8">
-            <AdvertisementCarousel images={adImagesSide2} interval={8000} />
+            {/* Columna Derecha: Anuncio Lateral 2 */}
+            <div className="lg:col-span-1 hidden lg:block space-y-8">
+              <AdvertisementCarousel images={adImagesSide2} interval={8000} />
+            </div>
           </div>
-        </div>
-        {/* Anuncio Banner Inferior */}
-        <div className="mt-8">
-          <AdvertisementCarousel images={adImagesBottom} interval={6500} />
-        </div>
-      </main>
+          {/* Anuncio Banner Inferior */}
+          {/*<div className="mt-8">
+            <AdvertisementCarousel images={adImagesBottom} interval={6500} />
+          </div> */}
+        </main>
+      </div>{" "}
+      {/* 8. CALL TO ACTION SECUNDARIO (NUEVA SECCIÓN) */}
+      {/* CIERRE DEL DIV CON EL PADDING-TOP */}
       <Footer />
     </div>
   );
