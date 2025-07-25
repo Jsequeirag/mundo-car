@@ -131,7 +131,10 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; 2024 AutoTrader. Todos los derechos reservados.</p>
+          <p>
+            &copy; {new Date().getFullYear()} 2024 MUNDOCAR. Todos los derechos
+            reservados.
+          </p>
         </div>
       </div>
     </footer>
