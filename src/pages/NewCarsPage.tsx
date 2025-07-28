@@ -12,7 +12,8 @@ import BrandShowCase from "@/components/BrandShowCase"; // Puedes decidir si qui
 // IMPORTA LAS SECCIONES ADICIONALES SI LAS USARÁS AQUÍ
 import HowItWorks from "@/components/HowItWorks"; // Sección de beneficios
 import SecondaryCTA from "@/components/SecondaryCTA"; // CTA para vender coche
-import MobileSidebar from "../components/MobileSidebar";
+import MobileSidebar from "../components/MobileSidebar"; // Asegúrate de que la ruta sea correcta
+import { useParams, Outlet } from "react-router-dom";
 const NewCarsPage: React.FC = () => {
   const adImagesTop = [
     "/assets/thumb-bridgestone.png",
@@ -36,6 +37,7 @@ const NewCarsPage: React.FC = () => {
 
   const [newCars, setNewCars] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Estado para el menú móvil
 
   // Filtra los autos nuevos cuando el componente se monta
   useEffect(() => {
@@ -83,31 +85,42 @@ const NewCarsPage: React.FC = () => {
       setLoading(false);
     }, 1000);
   };
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setIsMobileMenuOpen((prevState) => !prevState); // Usa el setter con una función para evitar problemas de cierre
   };
-
+  const { countryCode } = useParams<{ countryCode?: string }>();
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      {/* PASO CLAVE: Pasa la función toggleMobileMenu al Header */}
+      <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
+
+      {/* RENDERIZA MobileSidebar fuera del div pt-[80px] si es un overlay */}
+      <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
+
       <div className="pt-[80px]">
+        {" "}
+        {/* Este padding es para el contenido principal, no para el sidebar */}
         {/* Puedes tener un Hero específico para autos nuevos o quitarlo */}
         <Hero
           title="Autos Nuevos para Ti"
           subtitle="Explora la más reciente colección de vehículos 0 km."
+          // Si tu Hero acepta showSearch, puedes pasarlo aquí
+          // showSearch={false} // O true, según necesites el buscador en el hero para esta página
         />{" "}
-        <MobileSidebar
-          isOpen={isMobileMenuOpen}
-          onClose={toggleMobileMenu}
-          // Puedes pasar los navItems al MobileSidebar si no los define internamente
-          // navItems={/* el mismo array navItems que tienes en Header, o adaptado */}
-        />
         <BrandShowCase />
         {/* Aquí podrías poner el HowItWorks o SecondaryCTA si aplican también a esta página */}
         {/* <HowItWorks /> */}
-        {/* <SecondaryCTA /> */}
+        {/* <SecondaryCTA
+          sectionTextColor="brand-primary"
+          buttonBgColor="bg-brand-primary"
+          sectionBgColor="bg-white"
+          buttonTextColor="text-white"
+          title="¿Quieres vender tu coche nuevo?"
+          subtitle="Publica tu vehículo con nosotros y llega a miles de compradores potenciales."
+          buttonText="Vender Ahora"
+          buttonLink="/publicar"
+        /> */}
         <main className="mx-auto px-6 py-10">
           <div className="mb-8">
             <AdvertisementCarousel images={adImagesTop} interval={6000} />

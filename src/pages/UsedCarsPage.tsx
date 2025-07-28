@@ -13,6 +13,7 @@ import BrandShowcase from "@/components/BrandShowCase"; // Si quieres mostrar la
 import HowItWorks from "@/components/HowItWorks"; // Sección de beneficios
 import SecondaryCTA from "@/components/SecondaryCTA"; // CTA para vender coche
 import MobileSidebar from "../components/MobileSidebar";
+import { useParams, Outlet } from "react-router-dom";
 const UsedCarsPage: React.FC = () => {
   // Las imágenes de anuncios pueden ser las mismas o diferentes si tienes específicas para autos usados
   const adImagesTop = [
@@ -96,10 +97,10 @@ const UsedCarsPage: React.FC = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
+  const { countryCode } = useParams<{ countryCode?: string }>();
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
       <div className="pt-[80px]">
         {/* Hero específico para autos usados */}
         <Hero

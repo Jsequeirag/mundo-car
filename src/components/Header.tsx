@@ -15,6 +15,7 @@ import {
   PlusCircle,
   ChevronDown,
 } from "lucide-react";
+import { Link } from "react-router-dom"; // CAMBIO CLAVE: Importa Link de react-router-dom
 
 import {
   DropdownMenu,
@@ -25,31 +26,61 @@ import {
 
 interface HeaderProps {
   onMenuClick?: () => void;
+  currentCountryCode?: string; // NUEVA PROP: Para saber qué país está activo
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+const Header: React.FC<HeaderProps> = ({ onMenuClick, currentCountryCode }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Función auxiliar para construir las URLs con el prefijo del país
+  const getCountryPath = (path: string) => {
+    // Si no hay código de país (ej. en la página de selección de país),
+    // o si el path ya es la raíz '/', simplemente devuelve el path tal cual
+    if (!currentCountryCode || path === "/") {
+      return path;
+    }
+    // Si el path es relativo y no empieza con '/', asume que es una sub-ruta del país
+    // Esto es útil si tus rutas en App.tsx son como "autos-nuevos" dentro de /:countryCode
+    if (path.startsWith("/")) {
+      return `/${currentCountryCode}${path}`;
+    }
+    // Si el path es relativo sin barra inicial (menos común en hrefs, pero por si acaso)
+    return `/${currentCountryCode}/${path}`;
+  };
+
   const navItems = [
-    { type: "link", label: "Inicio", icon: Home, href: "/" },
+    { type: "link", label: "Inicio", icon: Home, href: getCountryPath("") }, // Usa la función auxiliar
     {
       type: "dropdown",
       label: "Autos",
       icon: Car,
       subItems: [
-        { label: "Autos nuevos", href: "/autos-nuevos" },
-        { label: "Autos usados", href: "/autos-usados" },
-        { label: "Renta de autos", href: "/renta" },
+        { label: "Autos nuevos", href: getCountryPath("/autos-nuevos") }, // Usa la función auxiliar
+        { label: "Autos usados", href: getCountryPath("/autos-usados") }, // Usa la función auxiliar
+        { label: "Renta de autos", href: getCountryPath("/renta") }, // Usa la función auxiliar
       ],
     },
-    { type: "link", label: "Autorepuestos", icon: Package, href: "/repuestos" },
+    {
+      type: "link",
+      label: "Autorepuestos",
+      icon: Package,
+      href: getCountryPath("/repuestos"),
+    }, // Usa la función auxiliar
     {
       type: "link",
       label: "Lubricentros",
       icon: Droplets,
-      href: "/lubricentros",
+      href: getCountryPath("/lubricentros"), // Usa la función auxiliar
     },
-    { type: "link", label: "Publicar", icon: PlusCircle, href: "/publicar" },
+    {
+      type: "link",
+      label: "Publicar",
+      icon: PlusCircle,
+      href: getCountryPath("/publicar"),
+    }, // Usa la función auxiliar
+    // Puedes añadir más elementos si tienes Blog, Contacto, etc.
+    // { type: "link", label: "Blog", icon: Rss, href: getCountryPath("/blog") },
+    // { type: "link", label: "Contacto", icon: Mail, href: getCountryPath("/contacto") },
   ];
 
   useEffect(() => {
@@ -86,13 +117,14 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           <div
             className={`bg-white p-2 rounded-sm transition-all duration-300`}
           >
-            <a href="/">
+            {/* CAMBIO: Usa Link de react-router-dom para el logo */}
+            <Link to={getCountryPath("/")}>
               <img
                 src="/assets/mundocar-logo.png"
                 className="w-24 h-auto md:w-32 lg:w-40"
                 alt="Mundocar Logo"
               />
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -115,31 +147,31 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                       <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                     </Button>
                   </DropdownMenuTrigger>
-                  {/* AQUÍ LOS CAMBIOS PARA UN MENÚ MÁS ELEGANTE */}
                   <DropdownMenuContent
                     className="
-                      w-56 bg-white border border-gray-100 rounded-lg shadow-xl // Bordes más suaves, sombra más pronunciada y sutil
-                      text-gray-800 p-2 // Mayor padding interno
-                      z-[60] // Asegura que esté por encima
-                      transform origin-top-right // Para la animación de escalado/fade
-                      transition-all duration-200 ease-out // Animación de entrada
-                      data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2 // Animaciones de shadcn
-                      data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-top-2 // Animaciones de salida
+                      w-56 bg-white border border-gray-100 rounded-lg shadow-xl
+                      text-gray-800 p-2
+                      z-[60]
+                      transform origin-top-right
+                      transition-all duration-200 ease-out
+                      data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2
+                      data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-top-2
                     "
                   >
                     {item.subItems?.map((subItem) => (
                       <DropdownMenuItem key={subItem.label} asChild>
-                        <a
-                          href={subItem.href}
+                        {/* CAMBIO: Usa Link de react-router-dom para los sub-items */}
+                        <Link
+                          to={subItem.href}
                           className="
                             flex items-center px-3 py-2 rounded-md
-                            text-sm font-medium // Texto más definido
-                            text-gray-700 hover:bg-brand-primary hover:text-white // Colores de hover más atractivos
+                            text-sm font-medium
+                            text-gray-700 hover:bg-brand-primary hover:text-white
                             transition-colors duration-150 cursor-pointer
                           "
                         >
                           {subItem.label}
-                        </a>
+                        </Link>
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
@@ -155,12 +187,13 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                 className="flex items-center space-x-2 text-white hover:bg-white/20 hover:text-white transition-colors"
                 asChild
               >
-                <a href={item.href}>
+                {/* CAMBIO: Usa Link de react-router-dom para los ítems de navegación directos */}
+                <Link to={item.href}>
                   <Icon className="h-4 w-4" />
                   <span className="font-medium text-sm lg:text-base">
                     {item.label}
                   </span>
-                </a>
+                </Link>
               </Button>
             );
           })}
@@ -168,22 +201,37 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
         {/* Botones del lado derecho (Favoritos, Cuenta, Menú Móvil) */}
         <div className="flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="hidden md:flex text-white hover:bg-white/20 hover:text-white"
-          >
-            <Heart className="h-4 w-4 mr-2" />
-            Favoritos
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="hidden md:flex text-white hover:bg-white/20 hover:text-white"
-          >
-            <User className="h-4 w-4 mr-2" />
-            Cuenta
-          </Button>
+          {/* CAMBIO: Usa Link de react-router-dom para Favoritos y Cuenta */}
+          <Link to={getCountryPath("/favoritos")} className="hidden md:flex">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 hover:text-white"
+            >
+              <Heart className="h-4 w-4 mr-2" />
+              Favoritos
+            </Button>
+          </Link>
+          <Link to={getCountryPath("/cuenta")} className="hidden md:flex">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 hover:text-white"
+            >
+              <User className="h-4 w-4 mr-2" />
+              Cuenta
+            </Button>
+          </Link>
+          {/* Si tu login es una página separada, también debería usar getCountryPath */}
+          {/* <Link to={getCountryPath("/login")} className="hidden md:flex">
+            <Button
+              variant="default"
+              size="sm"
+              className="bg-white text-brand-primary hover:bg-gray-100"
+            >
+              Iniciar Sesión
+            </Button>
+          </Link> */}
           <Button
             variant="ghost"
             size="sm"

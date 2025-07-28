@@ -12,7 +12,7 @@ import MobileSidebar from "../components/MobileSidebar";
 // Si estás usando Next.js 13+ App Router, esta será una "Client Component"
 // ya que utiliza useState y useEffect.
 // "use client";
-
+import { useParams, Outlet } from "react-router-dom";
 const LubricentrosPage: React.FC = () => {
   // Las imágenes de anuncios
   const adImagesTop = [
@@ -89,10 +89,10 @@ const LubricentrosPage: React.FC = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
+  const { countryCode } = useParams<{ countryCode?: string }>();
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header onMenuClick={toggleMobileMenu} />
+      <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
 
       <MobileSidebar
         isOpen={isMobileMenuOpen}

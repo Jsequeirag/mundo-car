@@ -15,7 +15,7 @@ import MobileSidebar from "./MobileSidebar";
 import HowItWorks from "./HowItWorks"; // O BenefitsSection
 
 import SecondaryCTA from "./SecondaryCTA"; // O SellCarCTA
-
+import { useParams, Outlet } from "react-router-dom";
 const AppLayout: React.FC = () => {
   const adImagesTop = [
     "/assets/thumb-bridgestone.png",
@@ -53,10 +53,10 @@ const AppLayout: React.FC = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
+  const { countryCode } = useParams<{ countryCode?: string }>();
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header onMenuClick={toggleMobileMenu} />
+      <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
       <MobileSidebar
         isOpen={isMobileMenuOpen}
         onClose={toggleMobileMenu}

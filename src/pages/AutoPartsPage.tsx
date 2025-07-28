@@ -11,12 +11,12 @@ import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import BlogPreview from "@/components/BlogPreview";
 import Hero from "@/components/Hero";
 import SecondaryCTA from "@/components/SecondaryCTA"; // CTA para vender repuestos
-
+import MobileSidebar from "../components/MobileSidebar";
 // Si estás usando Next.js 13+ App Router, esta será una "Client Component"
 // ya que utiliza useState y useEffect.
 // Si no, ignora la línea de abajo.
 // "use client";
-
+import { useParams, Outlet } from "react-router-dom";
 const AutoPartsPage: React.FC = () => {
   // Las imágenes de anuncios
   const adImagesTop = [
@@ -91,13 +91,19 @@ const AutoPartsPage: React.FC = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
+  const { countryCode } = useParams<{ countryCode?: string }>();
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header onMenuClick={toggleMobileMenu} />{" "}
+      <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />{" "}
       {/* Pasa la prop para el menú móvil */}
       {/* Importa y usa MobileSidebar si lo tienes */}
-      {/* <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} /> */}
+      {/* <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} /> */}{" "}
+      <MobileSidebar
+        isOpen={isMobileMenuOpen}
+        onClose={toggleMobileMenu}
+        // Puedes pasar los navItems al MobileSidebar si no los define internamente
+        // navItems={/* el mismo array navItems que tienes en Header, o adaptado */}
+      />
       <div className="pt-[80px]">
         {" "}
         {/* Padding para compensar el header fijo */}
