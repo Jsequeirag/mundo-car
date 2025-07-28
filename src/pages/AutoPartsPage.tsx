@@ -8,6 +8,7 @@ import AutoPartsGrid from "@/components/AutoPartsGrid"; // Nuevo componente
 import Footer from "@/components/Footer";
 import { mockAutoParts, AutoPart } from "@/data/mockAutoParts"; // Importa los datos y la interfaz
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
+import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
 import BlogPreview from "@/components/BlogPreview";
 import Hero from "@/components/Hero";
 import SecondaryCTA from "@/components/SecondaryCTA"; // CTA para vender repuestos
@@ -18,20 +19,19 @@ import MobileSidebar from "../components/MobileSidebar";
 // "use client";
 import { useParams, Outlet } from "react-router-dom";
 const AutoPartsPage: React.FC = () => {
-  // Las imágenes de anuncios
-  const adImagesTop = [
-    "/assets/thumb-bridgestone.png",
-    "/assets/TEX_LandingPage-1.jpg",
-  ];
+  const adImagesTop = ["/assets/bridgestone.png"];
 
   const adImagesSide1 = [
-    "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
+    "/assets/toyota.png",
     "/assets/castrol-logo-png_seeklogo-307500.png",
+    "/assets/sparco.png",
   ];
 
   const adImagesSide2 = [
-    "/assets/castrol-logo-png_seeklogo-307500.png",
+    "/assets/momo.png",
     "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
+    "/assets/gulf.png",
+    "/assets/mascarello.png",
   ];
 
   const [parts, setParts] = useState<AutoPart[]>([]);
@@ -135,7 +135,10 @@ const AutoPartsPage: React.FC = () => {
                 // specificPartCategories={['Motor', 'Frenos', 'Suspensión']} // Opciones de categoría de repuestos
               />
               <div className="hidden lg:block">
-                <AdvertisementCarousel images={adImagesSide1} interval={7000} />
+                <AdvertisementCarouselLateral
+                  images={adImagesSide1}
+                  interval={7000}
+                />
               </div>
             </div>
 
@@ -154,7 +157,10 @@ const AutoPartsPage: React.FC = () => {
 
             {/* Columna Derecha: Anuncio Lateral 2 */}
             <div className="lg:col-span-1 hidden lg:block space-y-8">
-              <AdvertisementCarousel images={adImagesSide2} interval={8000} />
+              <AdvertisementCarouselLateral
+                images={adImagesSide2}
+                interval={8000}
+              />
             </div>
           </div>
         </main>

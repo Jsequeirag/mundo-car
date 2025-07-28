@@ -42,7 +42,7 @@ const AdvertisementCarousel: React.FC<AdvertisementCarouselProps> = ({
       <img
         src={images[currentImageIndex]} // Usa el índice del estado para mostrar la imagen correcta
         alt={`Advertisement ${currentImageIndex + 1}`}
-        className="w-full h-full lg:object-cover md:object-contain sm:object-contain rounded-lg transition-opacity duration-700 ease-in-out"
+        className="w-full h-full  object-contain rounded-lg transition-opacity duration-700 ease-in-out"
         // Agregamos una transición para un efecto de "fade" suave al cambiar de imagen
       />
 

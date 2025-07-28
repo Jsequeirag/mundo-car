@@ -14,26 +14,20 @@ import HowItWorks from "@/components/HowItWorks"; // Sección de beneficios
 import SecondaryCTA from "@/components/SecondaryCTA"; // CTA para vender coche
 import MobileSidebar from "../components/MobileSidebar";
 import { useParams, Outlet } from "react-router-dom";
+import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
 const UsedCarsPage: React.FC = () => {
-  // Las imágenes de anuncios pueden ser las mismas o diferentes si tienes específicas para autos usados
-  const adImagesTop = [
-    "/assets/thumb-bridgestone.png",
-    "/assets/TEX_LandingPage-1.jpg",
-  ];
-
+  const adImagesTop = ["/assets/bridgestone.png"];
   const adImagesSide1 = [
-    "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
+    "/assets/toyota.png",
     "/assets/castrol-logo-png_seeklogo-307500.png",
+    "/assets/sparco.png",
   ];
 
   const adImagesSide2 = [
-    "/assets/castrol-logo-png_seeklogo-307500.png",
+    "/assets/momo.png",
     "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
-  ];
-
-  const adImagesBottom = [
-    "/assets/Firestone-Symbol.png",
-    "/assets/logo-royal-dutch-shell-filling-station-shell-oil-company-brand-png-favpng-y4Si4QEbbP2AEVbswKNFvFfDR.jpeg",
+    "/assets/gulf.png",
+    "/assets/mascarello.png",
   ];
 
   const [usedCars, setUsedCars] = useState([]);
@@ -125,7 +119,7 @@ const UsedCarsPage: React.FC = () => {
         />
         <main className="mx-auto px-6 py-10">
           <div className="mb-8">
-            <AdvertisementCarousel images={adImagesTop} interval={6000} />
+            <AdvertisementCarousel images={adImagesTop} />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
@@ -136,7 +130,7 @@ const UsedCarsPage: React.FC = () => {
                 initialCategory="used_cars" // <-- Cambiado a "used_cars"
               />
               <div className="hidden lg:block">
-                <AdvertisementCarousel images={adImagesSide1} interval={7000} />
+                <AdvertisementCarouselLateral images={adImagesSide1} />
               </div>
             </div>
 
@@ -155,7 +149,7 @@ const UsedCarsPage: React.FC = () => {
 
             {/* Columna Derecha: Anuncio Lateral 2 */}
             <div className="lg:col-span-1 hidden lg:block space-y-8">
-              <AdvertisementCarousel images={adImagesSide2} interval={8000} />
+              <AdvertisementCarouselLateral images={adImagesSide2} />
             </div>
           </div>
         </main>

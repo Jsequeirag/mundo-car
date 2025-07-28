@@ -12,25 +12,24 @@ import BlogPreview from "@/components/BlogPreview";
 import Hero from "@/components/Hero";
 import SecondaryCTA from "@/components/SecondaryCTA";
 import MobileSidebar from "../components/MobileSidebar";
+import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
 // Si estás usando Next.js 13+ App Router, esta será una "Client Component"
 // ya que utiliza useState y useEffect.
 // "use client";
 import { useParams, Outlet } from "react-router-dom";
 const RentalCarsPage: React.FC = () => {
-  // Las imágenes de anuncios
-  const adImagesTop = [
-    "/assets/thumb-bridgestone.png",
-    "/assets/TEX_LandingPage-1.jpg",
-  ];
-
+  const adImagesTop = ["/assets/bridgestone.png"];
   const adImagesSide1 = [
-    "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
+    "/assets/toyota.png",
     "/assets/castrol-logo-png_seeklogo-307500.png",
+    "/assets/sparco.png",
   ];
 
   const adImagesSide2 = [
-    "/assets/castrol-logo-png_seeklogo-307500.png",
+    "/assets/momo.png",
     "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
+    "/assets/gulf.png",
+    "/assets/mascarello.png",
   ];
 
   const [rentalCars, setRentalCars] = useState<RentalCar[]>([]);
@@ -154,7 +153,7 @@ const RentalCarsPage: React.FC = () => {
                 // showDatesPicker={true} // Para seleccionar fechas de alquiler
               />
               <div className="hidden lg:block">
-                <AdvertisementCarousel images={adImagesSide1} interval={7000} />
+                <AdvertisementCarouselLateral images={adImagesSide1} />
               </div>
             </div>
 
@@ -173,7 +172,7 @@ const RentalCarsPage: React.FC = () => {
 
             {/* Columna Derecha: Anuncio Lateral 2 */}
             <div className="lg:col-span-1 hidden lg:block space-y-8">
-              <AdvertisementCarousel images={adImagesSide2} interval={8000} />
+              <AdvertisementCarouselLateral images={adImagesSide2} />
             </div>
           </div>
         </main>

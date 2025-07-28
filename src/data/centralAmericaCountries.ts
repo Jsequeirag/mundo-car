@@ -10,6 +10,14 @@ export interface Country {
 
 export const centralAmericaCountries: Country[] = [
   {
+    name: "Honduras",
+    code: "hn",
+    flagUrl: "/assets/flags/honduras.png",
+    description:
+      "Explora oportunidades en el mercado automotriz de Honduras. Conecta con vendedores y servicios.",
+    homePageUrl: "/hn",
+  },
+  {
     name: "Costa Rica",
     code: "cr",
     flagUrl: "/assets/flags/costarica.png",
@@ -33,14 +41,7 @@ export const centralAmericaCountries: Country[] = [
       "Amplia oferta de vehículos y servicios automotrices en Guatemala. ¡Elige el tuyo!",
     homePageUrl: "/gt",
   },
-  {
-    name: "Honduras",
-    code: "hn",
-    flagUrl: "/assets/flags/honduras.png",
-    description:
-      "Explora oportunidades en el mercado automotriz de Honduras. Conecta con vendedores y servicios.",
-    homePageUrl: "/hn",
-  },
+
   {
     name: "Nicaragua",
     code: "ni",

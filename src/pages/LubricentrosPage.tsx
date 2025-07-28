@@ -13,21 +13,22 @@ import MobileSidebar from "../components/MobileSidebar";
 // ya que utiliza useState y useEffect.
 // "use client";
 import { useParams, Outlet } from "react-router-dom";
+import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
 const LubricentrosPage: React.FC = () => {
   // Las imágenes de anuncios
-  const adImagesTop = [
-    "/assets/thumb-bridgestone.png",
-    "/assets/TEX_LandingPage-1.jpg",
-  ];
+  const adImagesTop = ["/assets/bridgestone.png"];
 
   const adImagesSide1 = [
-    "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
+    "/assets/toyota.png",
     "/assets/castrol-logo-png_seeklogo-307500.png",
+    "/assets/sparco.png",
   ];
 
   const adImagesSide2 = [
-    "/assets/castrol-logo-png_seeklogo-307500.png",
+    "/assets/momo.png",
     "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
+    "/assets/gulf.png",
+    "/assets/mascarello.png",
   ];
 
   const [lubricentros, setLubricentros] = useState<Lubricentro[]>([]);
@@ -132,7 +133,7 @@ const LubricentrosPage: React.FC = () => {
                 // showLocationFilter={true} // Para filtrar por ciudad/provincia
               />
               <div className="hidden lg:block">
-                <AdvertisementCarousel images={adImagesSide1} interval={7000} />
+                <AdvertisementCarouselLateral images={adImagesSide1} />
               </div>
             </div>
 
@@ -151,7 +152,7 @@ const LubricentrosPage: React.FC = () => {
 
             {/* Columna Derecha: Anuncio Lateral 2 */}
             <div className="lg:col-span-1 hidden lg:block space-y-8">
-              <AdvertisementCarousel images={adImagesSide2} interval={8000} />
+              <AdvertisementCarouselLateral images={adImagesSide2} />
             </div>
           </div>
         </main>
