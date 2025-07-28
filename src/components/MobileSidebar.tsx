@@ -29,7 +29,7 @@ const navItemsMobile = [
     ],
   },
   { label: "Autorepuestos", icon: Package, href: "/repuestos" },
-  { label: "Lubicentros", icon: Droplets, href: "/lubicentros" },
+  { label: "Lubicentros", icon: Droplets, href: "/lubricentros" },
   { type: "link", label: "Publicar", icon: PlusCircle, href: "/publicar" },
 ];
 
