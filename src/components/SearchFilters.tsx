@@ -15,14 +15,18 @@ import { Search, Filter, Car, MapPin, Package, Droplets } from "lucide-react"; /
 
 interface SearchFiltersProps {
   onSearch: (filters: any) => void;
+  initialCategory?: string; // <<-- NUEVO PROP
 }
 
-const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
+const SearchFilters: React.FC<SearchFiltersProps> = ({
+  onSearch,
+  initialCategory = "",
+}) => {
   const [searchTerm, setSearchTerm] = React.useState<string>("");
   const [priceRange, setPriceRange] = React.useState([0, 100000]);
   const [yearRange, setYearRange] = React.useState([2010, 2024]);
   const [department, setDepartment] = React.useState<string>("");
-  const [category, setCategory] = React.useState<string>(""); // Estado para la categoría
+  const [category, setCategory] = React.useState<string>(initialCategory); // <<-- USA initialCategory
 
   // Define las opciones de categoría
   const categoryOptions = [
@@ -30,7 +34,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
     { label: "Autos usados", value: "used_cars", icon: Car },
     { label: "Renta de autos", value: "car_rental", icon: MapPin },
     { label: "Autorepuestos", value: "auto_parts", icon: Package },
-    { label: "Lubicentros", value: "lubricenters", icon: Droplets },
+    { label: "Lubricentros", value: "lubricenters", icon: Droplets },
   ];
 
   // Función de búsqueda para incluir todos los filtros

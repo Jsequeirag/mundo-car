@@ -7,7 +7,10 @@ import { mockCars } from "@/data/mockCars";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Award, Shield, Users } from "lucide-react";
 import AdvertisementCarousel from "./AdvertisementCarousel";
+import BlogPreview from "./BlogPreview";
 import Hero from "./Hero";
+import CategoryShowcase from "./CategoryShowcase";
+import MobileSidebar from "./MobileSidebar";
 // IMPORTA LAS NUEVAS SECCIONES AQUÍ:
 import HowItWorks from "./HowItWorks"; // O BenefitsSection
 
@@ -45,17 +48,28 @@ const AppLayout: React.FC = () => {
       setLoading(false);
     }, 1000);
   };
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header onMenuClick={toggleMobileMenu} />
+      <MobileSidebar
+        isOpen={isMobileMenuOpen}
+        onClose={toggleMobileMenu}
+        // Puedes pasar los navItems al MobileSidebar si no los define internamente
+        // navItems={/* el mismo array navItems que tienes en Header, o adaptado */}
+      />
       {/* ESTE ES EL DIV QUE VA A EMPUJAR TODO EL CONTENIDO HACIA ABAJO */}
       {/* El padding-top debe ser igual a la altura máxima del Header */}
       <div className="pt-[80px]">
-        {" "}
-        {/* Altura máxima del Header es 80px (h-20) */}
         {/* Hero Section - QUITAMOS el padding-top de aquí */}
         <Hero />
+        <CategoryShowcase />
+        {/* Altura máxima del Header es 80px (h-20) */}
         {/* NUEVA SECCIÓN: CATEGORY SHOWCASE */}
         <HowItWorks />
         <SecondaryCTA />
@@ -95,9 +109,10 @@ const AppLayout: React.FC = () => {
             <AdvertisementCarousel images={adImagesBottom} interval={6500} />
           </div> */}
         </main>
-      </div>{" "}
-      {/* 8. CALL TO ACTION SECUNDARIO (NUEVA SECCIÓN) */}
-      {/* CIERRE DEL DIV CON EL PADDING-TOP */}
+      </div>
+      {/*<BlogPreview />*/}
+      {/* CIERRE DEL DIV CON EL PADDING-TOP */}{" "}
+      {/* Aquí es donde renderizarías el menú lateral para móvil */}
       <Footer />
     </div>
   );

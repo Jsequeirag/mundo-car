@@ -44,9 +44,9 @@ const categoryItems = [
 
 const CategoryShowcase: React.FC = () => {
   return (
-    <section className="py-12 md:py-16 bg-gray-50">
+    <section className="py-12 md:py-16 bg-brand-primary">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-10">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10">
           Explora nuestras categorías
         </h2>
 

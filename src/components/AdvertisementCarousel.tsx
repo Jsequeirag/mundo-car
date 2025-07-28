@@ -1,111 +1,98 @@
-import React, { useCallback, useEffect } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import Autoplay from "embla-carousel-autoplay";
+// src/components/AdvertisementCarousel.tsx
+import React, { useState, useEffect, useRef } from "react";
+// Importa lo necesario para el carrusel, por ejemplo, de shadcn/ui si lo usas
+// import {
+//   Carousel,
+//   CarouselContent,
+//   CarouselItem,
+//   CarouselNext,
+//   CarouselPrevious,
+// } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay"; // Si usas Embla Carousel con autoplay
 
 interface AdvertisementCarouselProps {
   images: string[];
-  interval?: number;
-  className?: string; // Permitir clases CSS adicionales desde el componente padre
+  interval?: number; // Intervalo en ms para el autoplay
+  // Nueva prop para controlar la altura
+  heightClass?: string; // Ejemplo: "h-32", "h-48", "h-64"
 }
 
 const AdvertisementCarousel: React.FC<AdvertisementCarouselProps> = ({
   images,
-  interval = 5000, // Por defecto 5 segundos para pruebas
-  className, // Desestructurar la prop className
+  interval = 5000,
+  heightClass = "h-48 md:h-64 lg:h-80", // Altura por defecto: un poco más pequeña
 }) => {
-  const autoplayOptions = {
-    delay: interval,
-    stopOnInteraction: false,
-    stopOnMouseEnter: true,
-    stopOnFocusIn: true,
-  };
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      loop: true,
-    },
-    [Autoplay(autoplayOptions)]
+  const plugin = useRef(
+    Autoplay({ delay: interval, stopOnInteraction: false })
   );
+  // Suponiendo que estás usando Embla Carousel o algo similar con un hook useEmblaCarousel
 
-  // --- Código de depuración ---
-  useEffect(() => {
-    if (emblaApi) {
-      console.log("Embla API está inicializado.");
-      emblaApi.on("select", () => {
-        console.log(
-          "¡La diapositiva ha cambiado! Índice actual:",
-          emblaApi.selectedScrollSnap()
-        );
-      });
-      return () => {
-        emblaApi.off("select");
-      };
-    } else {
-      console.log("Embla API aún NO está inicializado.");
-    }
-  }, [emblaApi]);
-  // --- FIN: Código de depuración ---
-
-  // Funciones de scroll comentadas, no hay botones
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
-
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
-
-  if (!images || images.length === 0) {
-    console.warn("AdvertisementCarousel: No hay imágenes para mostrar.");
-    return null;
-  }
+  // Este es un esqueleto de cómo luciría con Embla Carousel / shadcn/ui.
+  // Ajusta esto según tu implementación real del carrusel.
+  // Si no usas shadcn/ui para el carrusel, solo modifica el div principal y la imagen.
 
   return (
-    // Se ajustan las clases de ancho para ser más consistentes y claras
-    // Usamos 'w-full' por defecto y lo ajustamos en breakpoints más grandes
-    // La prop 'className' permite que el padre defina anchos específicos si lo necesita
-    <div
-      className={`relative w-full max-w-4xl mx-auto rounded-lg overflow-hidden shadow-xl bg-white ${
-        className || ""
-      }`}
-    >
-      <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex -ml-4">
-          {images.map((src, index) => (
-            <div key={index} className="flex-none min-w-0 w-full pl-4">
-              <img
-                src={src}
-                alt={`Advertisement ${index + 1}`}
-                // Mantener aspect-video para la proporción
-                // Añadir clases para asegurar que la imagen cubra bien y se vea profesional
-                className="w-full h-auto object-cover rounded-lg aspect-video"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Botones de navegación (COMENTADOS, como se pidió) */}
+    // Contenedor principal del carrusel
+    <div className={`relative overflow-hidden rounded-lg ${heightClass} `}>
+      {/* Si usas Embla/shadcn, descomenta esto y ajusta */}
       {/*
-      {emblaApi && (
-        <>
-          <Button
-            className="absolute top-1/2 left-4 -translate-y-1/2 bg-white/70 hover:bg-white text-gray-800 p-2 rounded-full shadow-md z-10"
-            onClick={scrollPrev}
-            aria-label="Previous advertisement"
-          >
-            <ArrowLeft className="h-6 w-6" />
-          </Button>
-          <Button
-            className="absolute top-1/2 right-4 -translate-y-1/2 bg-white/70 hover:bg-white text-gray-800 p-2 rounded-full shadow-md z-10"
-            onClick={scrollNext}
-            aria-label="Next advertisement"
-          >
-            <ArrowRight className="h-6 w-6" />
-          </Button>
-        </>
-      )}
+      <Carousel
+        plugins={[plugin.current]}
+        className="w-full h-full"
+        onMouseEnter={plugin.current.stop}
+        onMouseLeave={plugin.current.play}
+      >
+        <CarouselContent className="h-full">
+          {images.map((image, index) => (
+            <CarouselItem key={index} className="flex items-center justify-center h-full">
+              <img
+                src={image}
+                alt={`Advertisement ${index + 1}`}
+                className="w-full h-full object-cover rounded-lg" // object-cover para que la imagen cubra el espacio
+              />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/50 text-brand-primary rounded-full p-2" />
+        <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/50 text-brand-primary rounded-full p-2" />
+      </Carousel>
       */}
+
+      {/* Si usas un carrusel simple de React (sin librerías complejas como Embla/Swiper): */}
+      {/* Este es un ejemplo simplificado de cómo podrías rotar manualmente.
+          Para un carrusel completo, necesitarías estado para el índice actual, etc. */}
+      {images.length > 0 && (
+        <img
+          src={images[0]} // Muestra solo la primera imagen para este ejemplo simplificado
+          alt="Advertisement"
+          className="w-full h-full object-cover rounded-lg"
+        />
+      )}
+
+      {/* PARA UN CARRUSEL FUNCIONAL (ASUMIENDO QUE YA LO TIENES IMPLEMENTADO): */}
+      {/* La clave es que el contenedor del carrusel y las imágenes dentro tengan una altura controlada
+          y que la imagen use `object-cover` para llenar el espacio sin deformarse. */}
+      {/* Un carrusel real de 3 imágenes pequeñas rotando automáticamente. */}
+      {/* Por favor, reemplaza el contenido de este div con tu implementación real del carrusel */}
+      {/* Aquí un placeholder que asume un slider que ya tienes */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {/* Tu lógica de slider existente, asegúrate de que cada imagen se ajuste */}
+        {images.map((imgSrc, index) => (
+          <div
+            key={index}
+            // Agrega lógica para solo mostrar la imagen actual del slider
+            // Por ejemplo: className={index === currentImageIndex ? 'block' : 'hidden'}
+            className="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0" // Esto es solo un placeholder
+            // Agrega una clase para la imagen activa, por ejemplo: 'opacity-100'
+          >
+            <img
+              src={imgSrc}
+              alt={`Anuncio ${index + 1}`}
+              className="w-full h-full object-cover rounded-lg" // Ajusta esto
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
