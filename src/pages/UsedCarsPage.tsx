@@ -12,7 +12,7 @@ import BrandShowcase from "@/components/BrandShowCase"; // Si quieres mostrar la
 // IMPORTA LAS SECCIONES ADICIONALES SI LAS USARÁS AQUÍ
 import HowItWorks from "@/components/HowItWorks"; // Sección de beneficios
 import SecondaryCTA from "@/components/SecondaryCTA"; // CTA para vender coche
-
+import MobileSidebar from "../components/MobileSidebar";
 const UsedCarsPage: React.FC = () => {
   // Las imágenes de anuncios pueden ser las mismas o diferentes si tienes específicas para autos usados
   const adImagesTop = [
@@ -91,6 +91,11 @@ const UsedCarsPage: React.FC = () => {
       setLoading(false);
     }, 1000);
   };
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -100,10 +105,15 @@ const UsedCarsPage: React.FC = () => {
         <Hero
           title="Autos Usados de Calidad"
           subtitle="Encuentra vehículos confiables con las mejores ofertas y verificación garantizada."
+        />{" "}
+        <MobileSidebar
+          isOpen={isMobileMenuOpen}
+          onClose={toggleMobileMenu}
+          // Puedes pasar los navItems al MobileSidebar si no los define internamente
+          // navItems={/* el mismo array navItems que tienes en Header, o adaptado */}
         />
         {/* Puedes añadir el BrandShowcase aquí también si es relevante para autos usados */}
         {/* <BrandShowcase /> */}
-
         {/* Aquí podrías poner el HowItWorks o SecondaryCTA si aplican también a esta página */}
         {/* <HowItWorks />*/}
         <SecondaryCTA
@@ -112,7 +122,6 @@ const UsedCarsPage: React.FC = () => {
           sectionBgColor="bg-white"
           buttonTextColor="bg-brand-primary"
         />
-
         <main className="mx-auto px-6 py-10">
           <div className="mb-8">
             <AdvertisementCarousel images={adImagesTop} interval={6000} />

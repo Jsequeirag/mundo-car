@@ -12,7 +12,7 @@ import BrandShowCase from "@/components/BrandShowCase"; // Puedes decidir si qui
 // IMPORTA LAS SECCIONES ADICIONALES SI LAS USARÁS AQUÍ
 import HowItWorks from "@/components/HowItWorks"; // Sección de beneficios
 import SecondaryCTA from "@/components/SecondaryCTA"; // CTA para vender coche
-
+import MobileSidebar from "../components/MobileSidebar";
 const NewCarsPage: React.FC = () => {
   const adImagesTop = [
     "/assets/thumb-bridgestone.png",
@@ -83,6 +83,11 @@ const NewCarsPage: React.FC = () => {
       setLoading(false);
     }, 1000);
   };
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -92,12 +97,17 @@ const NewCarsPage: React.FC = () => {
         <Hero
           title="Autos Nuevos para Ti"
           subtitle="Explora la más reciente colección de vehículos 0 km."
+        />{" "}
+        <MobileSidebar
+          isOpen={isMobileMenuOpen}
+          onClose={toggleMobileMenu}
+          // Puedes pasar los navItems al MobileSidebar si no los define internamente
+          // navItems={/* el mismo array navItems que tienes en Header, o adaptado */}
         />
         <BrandShowCase />
         {/* Aquí podrías poner el HowItWorks o SecondaryCTA si aplican también a esta página */}
         {/* <HowItWorks /> */}
         {/* <SecondaryCTA /> */}
-
         <main className="mx-auto px-6 py-10">
           <div className="mb-8">
             <AdvertisementCarousel images={adImagesTop} interval={6000} />

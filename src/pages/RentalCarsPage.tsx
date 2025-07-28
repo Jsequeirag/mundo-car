@@ -1,9 +1,12 @@
+// pages/RentalCarsPage.tsx
+// O en Next.js App Router: app/renta/page.tsx
+
 import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import SearchFilters from "@/components/SearchFilters"; // Reutilizaremos
-import LubricentrosGrid from "@/components/LubricentrosGrid"; // Nuevo componente
+import SearchFilters from "@/components/SearchFilters"; // Reutilizaremos este componente
+import RentalCarGrid from "@/components/RentalCarGrid"; // Nuevo componente
 import Footer from "@/components/Footer";
-import { mockLubricentros, Lubricentro } from "@/data/mockLubricentros"; // Importa los datos y la interfaz
+import { mockRentalCars, RentalCar } from "@/data/mockRentalCars"; // Importa los datos y la interfaz
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import BlogPreview from "@/components/BlogPreview";
 import Hero from "@/components/Hero";
@@ -13,7 +16,7 @@ import MobileSidebar from "../components/MobileSidebar";
 // ya que utiliza useState y useEffect.
 // "use client";
 
-const LubricentrosPage: React.FC = () => {
+const RentalCarsPage: React.FC = () => {
   // Las imágenes de anuncios
   const adImagesTop = [
     "/assets/thumb-bridgestone.png",
@@ -30,15 +33,15 @@ const LubricentrosPage: React.FC = () => {
     "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
   ];
 
-  const [lubricentros, setLubricentros] = useState<Lubricentro[]>([]);
+  const [rentalCars, setRentalCars] = useState<RentalCar[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Carga inicial de todos los lubricentros
+  // Carga inicial de todos los autos de renta
   useEffect(() => {
     setLoading(true);
     // Simula una llamada API
     setTimeout(() => {
-      setLubricentros(mockLubricentros);
+      setRentalCars(mockRentalCars);
       setLoading(false);
     }, 500);
   }, []);
@@ -46,44 +49,55 @@ const LubricentrosPage: React.FC = () => {
   const handleSearch = (filters: any) => {
     setLoading(true);
     setTimeout(() => {
-      let results = mockLubricentros;
+      let results = mockRentalCars;
 
-      // Aplicar filtros de búsqueda de lubricentros
+      // Aplicar filtros de búsqueda para autos de renta
       if (filters.searchTerm) {
         const searchTermLower = filters.searchTerm.toLowerCase();
         results = results.filter(
-          (lub) =>
-            lub.name.toLowerCase().includes(searchTermLower) ||
-            lub.address.toLowerCase().includes(searchTermLower) ||
-            lub.city.toLowerCase().includes(searchTermLower) ||
-            lub.province.toLowerCase().includes(searchTermLower) ||
-            lub.services.some((service) =>
-              service.toLowerCase().includes(searchTermLower)
-            )
+          (car) =>
+            car.make.toLowerCase().includes(searchTermLower) ||
+            car.model.toLowerCase().includes(searchTermLower) ||
+            car.location.toLowerCase().includes(searchTermLower) ||
+            car.type.toLowerCase().includes(searchTermLower) ||
+            car.company.name.toLowerCase().includes(searchTermLower)
         );
       }
 
-      // Puedes añadir filtros específicos para lubricentros aquí,
-      // dependiendo de cómo adaptes tu SearchFilters.tsx
-      if (filters.serviceType) {
-        // Ejemplo si tu filtro lo permite
-        results = results.filter((lub) =>
-          lub.services.includes(filters.serviceType)
-        );
-      }
-      if (filters.city) {
+      if (filters.location) {
         // Ejemplo si tu filtro lo permite
         results = results.filter(
-          (lub) => lub.city.toLowerCase() === filters.city.toLowerCase()
+          (car) => car.location.toLowerCase() === filters.location.toLowerCase()
         );
       }
-      // ... otros filtros como horario, rating, etc.
+      if (filters.carType) {
+        // Ejemplo si tu filtro lo permite
+        results = results.filter(
+          (car) => car.type.toLowerCase() === filters.carType.toLowerCase()
+        );
+      }
+      if (filters.minDailyRate) {
+        results = results.filter(
+          (car) => car.dailyRate >= filters.minDailyRate
+        );
+      }
+      if (filters.maxDailyRate) {
+        results = results.filter(
+          (car) => car.dailyRate <= filters.maxDailyRate
+        );
+      }
+      // Filtros de fecha de disponibilidad serían más complejos y necesitarían un selector de fechas en SearchFilters
+      // Por ejemplo, si tienes filters.pickupDate y filters.dropoffDate
+      // results = results.filter(car => car.availability.some(slot =>
+      //   new Date(filters.pickupDate) >= new Date(slot.startDate) && new Date(filters.dropoffDate) <= new Date(slot.endDate)
+      // ));
 
-      setLubricentros(results);
+      setRentalCars(results);
       setLoading(false);
     }, 1000);
   };
 
+  // Necesitarás un MobileSidebar aquí también
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -92,8 +106,10 @@ const LubricentrosPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header onMenuClick={toggleMobileMenu} />
-
+      <Header onMenuClick={toggleMobileMenu} />{" "}
+      {/* Pasa la prop para el menú móvil */}
+      {/* Importa y usa MobileSidebar si lo tienes */}
+      {/* <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} /> */}{" "}
       <MobileSidebar
         isOpen={isMobileMenuOpen}
         onClose={toggleMobileMenu}
@@ -103,12 +119,15 @@ const LubricentrosPage: React.FC = () => {
       <div className="pt-[80px]">
         {" "}
         {/* Padding para compensar el header fijo */}
-        {/* Hero Section para Lubricentros */}
+        {/* Hero Section para Renta de Autos */}
         <Hero
-          title="Lubricentros Cercanos"
-          subtitle="Encuentra los mejores centros de lubricación para el mantenimiento de tu vehículo."
+          title="Renta el Auto Perfecto para tu Viaje"
+          subtitle="Amplia selección de vehículos para cualquier ocasión, con tarifas flexibles."
+          // Si tienes el Hero modificado para aceptar showSearch, puedes pasarlo aquí
+          // showSearch={false}
         />
-        <main className=" mx-auto px-4 py-10">
+        {/* Sección de CTA para empresas de renta de autos */}
+        <main className="mx-auto px-4 py-10">
           <div className="mb-8">
             <AdvertisementCarousel
               images={adImagesTop}
@@ -120,33 +139,36 @@ const LubricentrosPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
             <div className="lg:col-span-1 space-y-8">
-              {/* Ajusta SearchFilters para lubricentros. */}
+              {/* Ajusta SearchFilters para renta de autos. */}
               <SearchFilters
                 onSearch={handleSearch}
-                initialCategory="lubricenters" // Nuevo tipo de categoría para lubricentros
+                initialCategory="car_rental" // Nuevo tipo de categoría para renta de autos
                 // Puedes añadir otras props para que SearchFilters se adapte:
-                // showVehicleType={false}
-                // showCondition={false}
-                // showPriceRange={false}
-                // specificServiceTypes={['Cambio de aceite', 'Filtros', 'Engrase']} // Opciones de servicios
-                // showLocationFilter={true} // Para filtrar por ciudad/provincia
+                // showMakeModel={true}
+                // showYear={false}
+                // showTransmission={true}
+                // showFuelType={true}
+                // showSeats={true}
+                // showDailyRateRange={true} // Rango de precio diario
+                // showPickupLocation={true}
+                // showDatesPicker={true} // Para seleccionar fechas de alquiler
               />
               <div className="hidden lg:block">
                 <AdvertisementCarousel images={adImagesSide1} interval={7000} />
               </div>
             </div>
 
-            {/* Columna Central: Grid de Lubricentros */}
+            {/* Columna Central: Grid de Autos de Renta */}
             <div className="lg:col-span-2 xl:col-span-3">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                  Lubricentros Disponibles
+                  Autos de Renta Disponibles
                 </h2>
                 <p className="text-gray-600">
-                  {lubricentros.length} lubricentros encontrados
+                  {rentalCars.length} vehículos de renta encontrados
                 </p>
               </div>
-              <LubricentrosGrid lubricentros={lubricentros} loading={loading} />
+              <RentalCarGrid cars={rentalCars} loading={loading} />
             </div>
 
             {/* Columna Derecha: Anuncio Lateral 2 */}
@@ -162,4 +184,4 @@ const LubricentrosPage: React.FC = () => {
   );
 };
 
-export default LubricentrosPage;
+export default RentalCarsPage;

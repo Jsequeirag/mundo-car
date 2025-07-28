@@ -86,10 +86,10 @@ const AutoPartsPage: React.FC = () => {
     }, 1000);
   };
 
-  // Necesitarás un MobileSidebar aquí también
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((prevState) => !prevState);
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   return (
@@ -105,19 +105,8 @@ const AutoPartsPage: React.FC = () => {
         <Hero
           title="Repuestos para tu Vehículo"
           subtitle="Encuentra piezas nuevas, usadas y remanufacturadas para todas las marcas y modelos."
-          showSearch={false} // No mostramos la barra de búsqueda grande aquí, los filtros son aparte
         />
         {/* Sección de CTA para vender un repuesto, adaptado */}
-        <SecondaryCTA
-          sectionTextColor="brand-primary"
-          buttonBgColor="bg-brand-primary"
-          sectionBgColor="bg-white"
-          buttonTextColor="text-white"
-          title="¿Tienes repuestos para vender?"
-          subtitle="Publica tus piezas automotrices y llega a miles de compradores interesados."
-          buttonText="Publicar Repuesto"
-          buttonLink="/publicar-repuesto" // Cambia el enlace a tu página de publicación de repuestos
-        />
         <main className="mx-auto px-4 py-10">
           <div className="mb-8">
             <AdvertisementCarousel

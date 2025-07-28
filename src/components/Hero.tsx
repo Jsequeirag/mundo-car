@@ -1,3 +1,4 @@
+// components/Hero.tsx
 import React from "react";
 import { TrendingUp, Award, Shield, Users } from "lucide-react";
 
@@ -5,6 +6,7 @@ import { TrendingUp, Award, Shield, Users } from "lucide-react";
 interface HeroProps {
   title?: string; // Hacemos el título opcional por si quieres un valor por defecto
   subtitle?: string; // Hacemos el subtítulo opcional
+  // showSearch?: boolean; // <-- Esta prop no es necesaria en tu Hero actual, pero si la tenías definida, podrías quitarla.
 }
 
 const Hero: React.FC<HeroProps> = ({

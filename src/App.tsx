@@ -9,6 +9,7 @@ import NewCarsPage from "./pages/NewCarsPage";
 import UsedCarsPage from "./pages/UsedCarsPage";
 import AutoPartsPage from "./pages/AutoPartsPage";
 import LubricentrosPage from "./pages/LubricentrosPage";
+import RentalCarsPage from "./pages/RentalCarsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +26,8 @@ const App = () => (
             <Route path="/autos-nuevos" element={<NewCarsPage />} />
             <Route path="/autos-usados" element={<UsedCarsPage />} />
             <Route path="/repuestos" element={<AutoPartsPage />} />{" "}
-            <Route path="/lubricentros" element={<LubricentrosPage />} />
+            <Route path="/lubricentros" element={<LubricentrosPage />} />{" "}
+            <Route path="/renta" element={<RentalCarsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
