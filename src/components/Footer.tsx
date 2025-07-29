@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2 bg-white rounded-sm">
+            <div className="flex items-center bg-white rounded-lg">
               <img src="/assets/mundocar-logo.png" />
             </div>
             <p className="text-gray-400 text-sm">

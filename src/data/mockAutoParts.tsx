@@ -27,7 +27,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2010, 2018],
     price: 45.99,
     condition: "new",
-    imageUrl: "/assets/pastillas-freno.jpg", // Asegúrate de tener una imagen para esto
+    imageUrl: "/assets/autoparts/pastillas-freno-delanteras.jpg", // Asegúrate de tener una imagen para esto
     description:
       "Juego de pastillas de freno cerámicas de alta durabilidad para Toyota Corolla y Camry.",
     sellerInfo: { name: "Repuestos Auto Veloz", location: "San José" },
@@ -41,7 +41,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2015, 2022],
     price: 15.0,
     condition: "new",
-    imageUrl: "/assets/filtro-aire.jpg", // Asegúrate de tener una imagen para esto
+    imageUrl: "/assets/autoparts/filtro.jpg", // Asegúrate de tener una imagen para esto
     description:
       "Filtro de aire de alto rendimiento para motores Honda. Mejora el flujo de aire.",
     sellerInfo: { name: "Honda Parts CR", location: "Alajuela" },
@@ -55,7 +55,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2008, 2012],
     price: 75.5,
     condition: "used",
-    imageUrl: "/assets/amortiguador.jpg", // Asegúrate de tener una imagen para esto
+    imageUrl: "/assets/autoparts/amortiguador.jpg", // Asegúrate de tener una imagen para esto
     description:
       "Amortiguador usado en buen estado, retirado de Nissan Sentra 2010.",
     sellerInfo: { name: "Deshuesadero El Sol", location: "Cartago" },
@@ -69,7 +69,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2000, 2025],
     price: 120.0,
     condition: "new",
-    imageUrl: "/assets/bateria.jpg", // Asegúrate de tener una imagen para esto
+    imageUrl: "/assets/autoparts/bateria.jpeg", // Asegúrate de tener una imagen para esto
     description:
       "Batería de ácido-plomo de 12V, 600CCA, compatible con la mayoría de vehículos.",
     sellerInfo: { name: "Baterías CR", location: "Heredia" },
@@ -83,7 +83,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2016, 2020],
     price: 180.0,
     condition: "remanufactured",
-    imageUrl: "/assets/parachoques.jpg", // Asegúrate de tener una imagen para esto
+    imageUrl: "/assets/autoparts/parachoques.avif", // Asegúrate de tener una imagen para esto
     description:
       "Parachoques delantero remanufacturado, listo para pintar. Incluye rejillas.",
     sellerInfo: { name: "Carrocerías Express", location: "Guanacaste" },
@@ -97,7 +97,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2012, 2017],
     price: 95.0,
     condition: "new",
-    imageUrl: "/assets/bomba-agua.jpg",
+    imageUrl: "/assets/autoparts/bomba.avif", // Asegúrate de tener una imagen para esto
     description: "Bomba de agua de repuesto para Mazda 3 y 6.",
     sellerInfo: { name: "Auto Parts Pro", location: "San José" },
   },
@@ -110,7 +110,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2010, 2015],
     price: 60.0,
     condition: "used",
-    imageUrl: "/assets/espejo-lateral.jpg",
+    imageUrl: "/assets/autoparts/espejo.jpg",
     description:
       "Espejo retrovisor lateral izquierdo original de Kia Sportage usado.",
     sellerInfo: { name: "Repuestos Usados Del Valle", location: "Alajuela" },
@@ -124,7 +124,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2005, 2014],
     price: 35.0,
     condition: "new",
-    imageUrl: "/assets/bobina-encendido.jpg",
+    imageUrl: "/assets/autoparts/bobina-encendido.jpg",
     description: "Bobina de encendido compatible con varios modelos Chevrolet.",
     sellerInfo: { name: "ElectriAuto", location: "Limón" },
   },
@@ -137,7 +137,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2013, 2019],
     price: 110.0,
     condition: "new",
-    imageUrl: "/assets/discos-freno.jpg",
+    imageUrl: "/assets/autoparts/frenos.webp",
     description:
       "Par de discos de freno ventilados para Volkswagen Jetta y Golf.",
     sellerInfo: { name: "Frenos Master", location: "Puntarenas" },
@@ -151,7 +151,7 @@ export const mockAutoParts: AutoPart[] = [
     yearCompatibility: [2012, 2018],
     price: 150.0,
     condition: "new",
-    imageUrl: "/assets/radiador.jpg",
+    imageUrl: "/assets/autoparts/radiador.jpg",
     description:
       "Radiador de aluminio para Ford Focus. Máxima eficiencia de enfriamiento.",
     sellerInfo: { name: "RefriPartes CR", location: "San José" },
