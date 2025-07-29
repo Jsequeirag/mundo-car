@@ -37,7 +37,7 @@ const RentalCarGrid: React.FC<RentalCarGridProps> = ({ cars, loading }) => {
           className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden flex flex-col"
         >
           <img
-            src={car.imageUrl}
+            src={car.image}
             alt={`${car.make} ${car.model}`}
             className="w-full h-48 object-cover object-center"
           />

@@ -38,7 +38,7 @@ const UsedCarsPage: React.FC = () => {
     setLoading(true);
     // Simula una llamada API
     setTimeout(() => {
-      const filteredCars = mockCars.filter((car) => car.condition === "used");
+      const filteredCars = mockCars.filter((car) => car.condition === "usado");
       setUsedCars(filteredCars);
       setLoading(false);
     }, 500); // Retraso para simular carga
@@ -49,12 +49,12 @@ const UsedCarsPage: React.FC = () => {
     setTimeout(() => {
       // Filtra primero por condición "used" y luego aplica otros filtros
       const filteredByCondition = mockCars.filter(
-        (car) => car.condition === "used"
+        (car) => car.condition === "usado"
       );
       let results = filteredByCondition;
 
       // Ejemplo de aplicación de filtros adicionales (puedes expandirlo)
-      if (filters.searchTerm) {
+      /*if (filters.searchTerm) {
         results = results.filter(
           (car) =>
             car.make.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
@@ -77,9 +77,10 @@ const UsedCarsPage: React.FC = () => {
         // Asegúrate de aplicar el filtro de año también
         results = results.filter(
           (car) =>
-            car.year >= filters.yearRange[0] && car.year <= filters.yearRange[1]
+            //   car.year >= filters.yearRange[0] && car.year <= filters.yearRange[1]
+            car
         );
-      }
+      }*/
       // ... otros filtros
 
       setUsedCars(results);

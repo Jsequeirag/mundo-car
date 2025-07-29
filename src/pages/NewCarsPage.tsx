@@ -40,7 +40,7 @@ const NewCarsPage: React.FC = () => {
     setLoading(true);
     // Simula una llamada API
     setTimeout(() => {
-      const filteredCars = mockCars.filter((car) => car.condition === "new");
+      const filteredCars = mockCars.filter((car) => car.condition === "nuevo");
       setNewCars(filteredCars);
       setLoading(false);
     }, 500); // Retraso más corto para simular carga
@@ -51,12 +51,12 @@ const NewCarsPage: React.FC = () => {
     setTimeout(() => {
       // Filtra primero por condición "new" y luego aplica otros filtros
       const filteredByCondition = mockCars.filter(
-        (car) => car.condition === "new"
+        (car) => car.condition === "nuevo"
       );
       let results = filteredByCondition;
 
       // Ejemplo de aplicación de filtros adicionales (puedes expandirlo)
-      if (filters.searchTerm) {
+      /*if (filters.searchTerm) {
         results = results.filter(
           (car) =>
             car.make.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
@@ -74,7 +74,7 @@ const NewCarsPage: React.FC = () => {
             car.price >= filters.priceRange[0] &&
             car.price <= filters.priceRange[1]
         );
-      }
+      }*/
       // ... otros filtros
 
       setNewCars(results);

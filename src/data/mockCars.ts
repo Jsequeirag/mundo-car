@@ -22,7 +22,7 @@ export const mockCars: Car[] = [
     location: "Los Angeles, CA",
     image:
       "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop",
-    condition: "Usado",
+    condition: "usado",
     description: "Well-maintained Toyota Camry with low mileage",
   },
   {
@@ -35,7 +35,7 @@ export const mockCars: Car[] = [
     location: "Miami, FL",
     image:
       "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400&h=300&fit=crop",
-    condition: "Usado",
+    condition: "usado",
     description: "Reliable Honda Civic, perfect for daily commuting",
   },
   {
@@ -45,10 +45,10 @@ export const mockCars: Car[] = [
     year: 2023,
     price: 65000,
     mileage: 8000,
-    location: "New York, NY",
+    location: "nuevo York, NY",
     image:
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop",
-    condition: "Usado",
+    condition: "usado",
     description: "Luxury BMW X5 with premium features",
   },
   {
@@ -61,7 +61,7 @@ export const mockCars: Car[] = [
     location: "Dallas, TX",
     image:
       "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=400&h=300&fit=crop",
-    condition: "Usado",
+    condition: "usado",
     description: "Classic Ford Mustang with powerful V8 engine",
   },
   {
@@ -74,7 +74,7 @@ export const mockCars: Car[] = [
     location: "Chicago, IL",
     image:
       "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=300&fit=crop",
-    condition: "Usado",
+    condition: "usado",
     description: "Elegant Mercedes C-Class with luxury interior",
   },
   {
@@ -87,7 +87,7 @@ export const mockCars: Car[] = [
     location: "San Francisco, CA",
     image:
       "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop",
-    condition: "Usado",
+    condition: "usado",
     description: "Electric Tesla Model 3 with autopilot features",
   },
   {
@@ -102,7 +102,7 @@ export const mockCars: Car[] = [
     location: "San Francisco, CA",
     description:
       "Toyota Corolla 2024, totalmente nuevo, con tecnología de punta y máxima eficiencia.",
-    condition: "new", // <<-- AÑADE ESTO
+    condition: "nuevo", // <<-- AÑADE ESTO
     // ... otras propiedades
   },
   {
@@ -117,7 +117,7 @@ export const mockCars: Car[] = [
     location: "San Francisco, CA",
     description:
       "Honda Civic 2023, en excelente estado, único dueño y bajo kilometraje.",
-    condition: "used", // <<-- AÑADE ESTO
+    condition: "usado", // <<-- AÑADE ESTO
     // ... otras propiedades
   },
   {
@@ -132,7 +132,35 @@ export const mockCars: Car[] = [
     location: "San Francisco, CA",
     description:
       "Nissan Kicks 2024, SUV compacto y versátil, ideal para la ciudad y carretera.",
-    condition: "new", // <<-- AÑADE ESTO
+    condition: "nuevo", // <<-- AÑADE ESTO
     // ... otras propiedades
+  },
+  {
+    id: "2",
+    make: "Honda",
+    model: "Civic",
+    year: 2023,
+    price: 25000,
+    mileage: 15000,
+    image:
+      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop",
+    location: "San Francisco, CA",
+    description:
+      "Honda Civic 2023, en excelente estado, único dueño y bajo kilometraje.",
+    condition: "nuevo", // <<-- AÑADE ESTO
+    // ... otras propiedades
+  },
+  {
+    id: "5",
+    make: "Mercedes",
+    model: "C-Class",
+    year: 2022,
+    price: 45000,
+    mileage: 12000,
+    location: "Chicago, IL",
+    image:
+      "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=300&fit=crop",
+    condition: "nuevo",
+    description: "Elegant Mercedes C-Class with luxury interior",
   },
 ];

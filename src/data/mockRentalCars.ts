@@ -12,7 +12,7 @@ export interface RentalCar {
   dailyRate: number; // Tarifa por día
   mileageLimit?: string; // Límite de kilometraje, e.g., "Kilometraje ilimitado" o "200 km/día"
   features: string[]; // E.g., ["AC", "GPS", "Bluetooth", "Asientos de cuero"]
-  imageUrl: string;
+  image: string;
   location: string; // Ubicación de recogida/devolución (ciudad/provincia)
   availability: {
     startDate: string; // Formato 'YYYY-MM-DD'
@@ -38,7 +38,7 @@ export const mockRentalCars: RentalCar[] = [
     dailyRate: 45.0,
     mileageLimit: "Kilometraje ilimitado",
     features: ["AC", "Bluetooth", "Apple CarPlay"],
-    imageUrl: "/assets/rental-corolla.jpg", // Asegúrate de tener una imagen
+    image: "/assets/rental-corolla.jpg", // Asegúrate de tener una imagen
     location: "San José",
     availability: [{ startDate: "2025-08-01", endDate: "2025-08-31" }],
     company: {
@@ -59,7 +59,7 @@ export const mockRentalCars: RentalCar[] = [
     dailyRate: 60.0,
     mileageLimit: "Kilometraje ilimitado",
     features: ["AC", "GPS", "Cámara de reversa"],
-    imageUrl: "/assets/rental-tucson.jpg",
+    image: "/assets/rental-tucson.jpg",
     location: "Alajuela",
     availability: [{ startDate: "2025-08-05", endDate: "2025-09-15" }],
     company: {
@@ -80,7 +80,7 @@ export const mockRentalCars: RentalCar[] = [
     dailyRate: 40.0,
     mileageLimit: "300 km/día",
     features: ["AC", "Bluetooth"],
-    imageUrl: "/assets/rental-versa.jpg",
+    image: "/assets/rental-versa.jpg",
     location: "Heredia",
     availability: [{ startDate: "2025-08-10", endDate: "2025-09-10" }],
     company: {
@@ -101,7 +101,7 @@ export const mockRentalCars: RentalCar[] = [
     dailyRate: 150.0,
     mileageLimit: "200 km/día",
     features: ["Asientos de cuero", "Sonido Premium", "Techo panorámico"],
-    imageUrl: "/assets/rental-mercedes.jpg",
+    image: "/assets/rental-mercedes.jpg",
     location: "San José",
     availability: [{ startDate: "2025-08-01", endDate: "2025-08-15" }],
     company: { name: "Premium Ride CR", phone: "2200-7777", address: "Escazú" },
@@ -122,7 +122,7 @@ export const mockRentalCars: RentalCar[] = [
       "Puertas corredizas automáticas",
       "Pantalla de entretenimiento",
     ],
-    imageUrl: "/assets/rental-carnival.jpg",
+    image: "/assets/rental-carnival.jpg",
     location: "Guanacaste",
     availability: [{ startDate: "2025-08-20", endDate: "2025-09-30" }],
     company: {
@@ -143,7 +143,7 @@ export const mockRentalCars: RentalCar[] = [
     dailyRate: 90.0,
     mileageLimit: "250 km/día",
     features: ["Autopilot", "Carga rápida", "Pantalla táctil grande"],
-    imageUrl: "/assets/rental-tesla.jpg",
+    image: "/assets/rental-tesla.jpg",
     location: "San José",
     availability: [{ startDate: "2025-08-01", endDate: "2025-08-10" }],
     company: {
@@ -164,7 +164,7 @@ export const mockRentalCars: RentalCar[] = [
     dailyRate: 75.0,
     mileageLimit: "Kilometraje ilimitado",
     features: ["4x4", "Techo removible", "Off-road ready"],
-    imageUrl: "/assets/rental-wrangler.jpg",
+    image: "/assets/rental-wrangler.jpg",
     location: "Puntarenas",
     availability: [{ startDate: "2025-09-01", endDate: "2025-09-20" }],
     company: { name: "Aventura Wheels", phone: "2643-8888", address: "Jaco" },

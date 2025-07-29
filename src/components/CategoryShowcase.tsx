@@ -14,35 +14,35 @@ const categoryItems = [
     label: "Autos Nuevos",
     icon: Car,
     href: "/autos-nuevos",
-    image: "/images/new-cars.jpg", // Asegúrate de tener estas imágenes
+    image: "/assets/categories/newCars.jpg", // Asegúrate de tener estas imágenes
     description: "Explora los últimos modelos y estrenos del mercado.",
   },
   {
     label: "Autos Usados",
     icon: Car, // Podrías usar otro ícono para usados si tienes
     href: "/autos-usados",
-    image: "/images/used-cars.jpg", // Asegúrate de tener estas imágenes
+    image: "/assets/categories/usedCars.jpg", // Asegúrate de tener estas imágenes
     description: "Encuentra tu próximo vehículo de ocasión con confianza.",
   },
   {
     label: "Renta de Autos",
     icon: MapPin,
     href: "/renta",
-    image: "/images/car-rental.jpg", // Asegúrate de tener estas imágenes
+    image: "/assets/categories/rentCars.jpeg", // Asegúrate de tener estas imágenes
     description: "Servicios de alquiler flexibles para tus viajes.",
   },
   {
     label: "Autorepuestos",
     icon: Package,
     href: "/repuestos",
-    image: "/images/auto-parts.jpg", // Asegúrate de tener estas imágenes
+    image: "/assets/categories/parts.jpg", // Asegúrate de tener estas imágenes
     description: "Repuestos originales y de calidad para tu vehículo.",
   },
   {
     label: "Lubicentros",
     icon: Droplets,
     href: "/lubricentros",
-    image: "/images/lubricants.jpg", // Asegúrate de tener estas imágenes
+    image: "/assets/categories/lubri.jpg",
     description: "Mantenimiento y lubricación profesional para tu motor.",
   },
 ];
