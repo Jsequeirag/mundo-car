@@ -13,25 +13,9 @@ import Hero from "@/components/Hero";
 import SecondaryCTA from "@/components/SecondaryCTA";
 import MobileSidebar from "../components/MobileSidebar";
 import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
-// Si estás usando Next.js 13+ App Router, esta será una "Client Component"
-// ya que utiliza useState y useEffect.
-// "use client";
+
 import { useParams, Outlet } from "react-router-dom";
 const RentalCarsPage: React.FC = () => {
-  const adImagesTop = ["/assets/bridgestone.png"];
-  const adImagesSide1 = [
-    "/assets/toyota.png",
-    "/assets/castrol-logo-png_seeklogo-307500.png",
-    "/assets/sparco.png",
-  ];
-
-  const adImagesSide2 = [
-    "/assets/momo.png",
-    "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
-    "/assets/gulf.png",
-    "/assets/mascarello.png",
-  ];
-
   const [rentalCars, setRentalCars] = useState<RentalCar[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -129,12 +113,26 @@ const RentalCarsPage: React.FC = () => {
         <main className="mx-auto px-4 py-10">
           <div className="mb-8">
             <AdvertisementCarousel
-              images={adImagesTop}
-              interval={6000}
-              heightClass="h-40 md:h-48 lg:h-56"
+              slides={[
+                {
+                  src: "/assets/bridgestone.png",
+                  title: "Durabilidad y estilo en cada kilómetro.",
+                  subtitle: "Rueda con confianza",
+                  ctaText: "Ver sitio",
+                  ctaHref: "https://www.bridgestone.co.cr/",
+                  badge: "",
+                },
+                {
+                  src: "/assets/texaco.png",
+                  title: "Energía y servicio para tu camino.",
+                  subtitle: "Llena tu tanque, sigue tu rumbo.",
+                  ctaText: "Ver sitio",
+                  ctaHref: "https://www.bridgestone.co.cr/",
+                  badge: "",
+                },
+              ]}
             />
           </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
             <div className="lg:col-span-1 space-y-8">
@@ -153,7 +151,38 @@ const RentalCarsPage: React.FC = () => {
                 // showDatesPicker={true} // Para seleccionar fechas de alquiler
               />
               <div className="hidden lg:block">
-                <AdvertisementCarouselLateral images={adImagesSide1} />
+                <AdvertisementCarouselLateral
+                  ads={[
+                    {
+                      src: "/assets/meguiarSpray.jpg",
+                      title: "Innovación que impulsa el futuro.",
+                      ctaText: "Ver más",
+                      ctaHref: "https://www.bridgestone.co.cr/",
+                    },
+                    {
+                      src: "/assets/meguiar.jpg",
+                      title: "Potencia y elegancia en cada viaje",
+                      ctaText: "Ver sitio",
+                      ctaHref: "https://meguiarsdirect.com/",
+                    },
+                  ]}
+                />{" "}
+                <AdvertisementCarouselLateral
+                  ads={[
+                    {
+                      src: "/assets/castrolOil.png",
+                      title: "Innovación que impulsa el futuro.",
+                      ctaText: "Ver más",
+                      ctaHref: "https://www.bridgestone.co.cr/",
+                    },
+                    {
+                      src: "/assets/castrol.png",
+                      title: "Potencia y elegancia en cada viaje",
+                      ctaText: "Ver sitio",
+                      ctaHref: "https://www.toyota.com/",
+                    },
+                  ]}
+                />
               </div>
             </div>
 
@@ -172,8 +201,62 @@ const RentalCarsPage: React.FC = () => {
 
             {/* Columna Derecha: Anuncio Lateral 2 */}
             <div className="lg:col-span-1 hidden lg:block space-y-8">
-              <AdvertisementCarouselLateral images={adImagesSide2} />
+              {" "}
+              <AdvertisementCarouselLateral
+                ads={[
+                  {
+                    src: "/assets/castrolOil.png",
+                    title: "Innovación que impulsa el futuro.",
+                    ctaText: "Ver más",
+                    ctaHref: "https://www.bridgestone.co.cr/",
+                  },
+                  {
+                    src: "/assets/castrol.png",
+                    title: "Potencia y elegancia en cada viaje",
+                    ctaText: "Ver sitio",
+                    ctaHref: "https://www.toyota.com/",
+                  },
+                ]}
+              />
+              <AdvertisementCarouselLateral
+                ads={[
+                  {
+                    src: "/assets/meguiarSpray.jpg",
+                    title: "Innovación que impulsa el futuro.",
+                    ctaText: "Ver más",
+                    ctaHref: "https://www.bridgestone.co.cr/",
+                  },
+                  {
+                    src: "/assets/meguiar.jpg",
+                    title: "Potencia y elegancia en cada viaje",
+                    ctaText: "Ver sitio",
+                    ctaHref: "https://meguiarsdirect.com/",
+                  },
+                ]}
+              />{" "}
             </div>
+          </div>{" "}
+          <div className="mt-8">
+            <AdvertisementCarousel
+              slides={[
+                {
+                  src: "/assets/tesla.svg",
+                  title: "Innovación que impulsa el futuro.",
+                  subtitle: "Energía sin límites.",
+                  ctaText: "Ir a sitio",
+                  ctaHref: "https://www.bridgestone.co.cr/",
+                  badge: "",
+                },
+                {
+                  src: "/assets/toyotaxl.png",
+                  title: "Potencia y elegancia en cada viaje",
+                  subtitle: "Conduce tu destino.",
+                  ctaText: "Ver sitio",
+                  ctaHref: "https://www.toyota.com/",
+                  badge: "",
+                },
+              ]}
+            />
           </div>
         </main>
       </div>

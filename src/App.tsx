@@ -14,6 +14,12 @@ import UsedCarsPage from "./pages/UsedCarsPage";
 import AutoPartsPage from "./pages/AutoPartsPage";
 import LubricentrosPage from "./pages/LubricentrosPage";
 import RentalCarsPage from "./pages/RentalCarsPage";
+import Car360CaptureGuide from "./pages/Car360CaptureGuide";
+import CarDetailsPage from "./pages/CarDetailsPage";
+import PublishCarPage from "./pages/PublishCarPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import CarImageUploadAndDrag from "./pages/CarImageUploadAndDrag";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,9 +34,9 @@ const App = () => (
           <Routes>
             {/* Ruta inicial que maneja la redirección */}
             <Route path="/" element={<Index />} />
-
-            {/* Ruta para la página de selección de país */}
             <Route path="/select-country" element={<CountrySelectionPage />} />
+            {/* Ruta para la página de selección de país */}
+            <Route path="/cars/:carId" element={<CarDetailsPage />} />
 
             {/* Rutas parametrizadas por el código del país */}
             {/* Todas estas rutas recibirán 'countryCode' como parámetro */}
@@ -49,11 +55,16 @@ const App = () => (
               element={<LubricentrosPage />}
             />
             <Route path="/:countryCode/renta" element={<RentalCarsPage />} />
+            <Route path="/publicar/360" element={<Car360CaptureGuide />} />
+            <Route path="/:countryCode/publicar" element={<PublishCarPage />} />
 
-            {/* Agrega aquí cualquier otra ruta que necesite ser específica por país, como '/:countryCode/publicar' */}
-            {/* Por ejemplo: <Route path="/:countryCode/publicar" element={<PublishCarPage />} /> */}
-
-            {/* Ruta para el 404 (manejar rutas no encontradas) */}
+            {/*  <Route path="/:countryCode/login" element={<LoginPage />} />*/}
+            <Route
+              path="/CarImageUploadAndDrag"
+              element={<CarImageUploadAndDrag />}
+            />
+            <Route path="/:countryCode/inicio" element={<LoginPage />} />
+            <Route path="/:countryCode/registro" element={<RegisterPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -76,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, currentCountryCode }) => {
       type: "link",
       label: "Publicar",
       icon: PlusCircle,
-      href: getCountryPath("/publicar"),
+      href: getCountryPath("/inicio"),
     }, // Usa la función auxiliar
     // Puedes añadir más elementos si tienes Blog, Contacto, etc.
     // { type: "link", label: "Blog", icon: Rss, href: getCountryPath("/blog") },
@@ -114,14 +114,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, currentCountryCode }) => {
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <div
-            className={`bg-white p-2 rounded-sm transition-all duration-300`}
-          >
-            {/* CAMBIO: Usa Link de react-router-dom para el logo */}
+          <div className="bg-white/85 backdrop-blur-sm p-2 rounded-sm shadow-lg">
             <Link to={getCountryPath("/")}>
               <img
                 src="/assets/mundocar-logo.png"
-                className="w-24 h-auto md:w-32 lg:w-40"
+                className="w-24 h-auto md:w-32 lg:w-40 drop-shadow-lg  logo-glow"
                 alt="Mundocar Logo"
               />
             </Link>
@@ -212,7 +209,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, currentCountryCode }) => {
               Favoritos
             </Button>
           </Link>
-          <Link to={getCountryPath("/cuenta")} className="hidden md:flex">
+          <Link to={getCountryPath("/inicio")} className="hidden md:flex">
             <Button
               variant="ghost"
               size="sm"

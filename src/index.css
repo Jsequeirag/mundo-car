@@ -1,5 +1,4 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -96,7 +95,8 @@
     @apply bg-background text-foreground font-sans dark:bg-background dark:text-foreground;
   }
 
-  pre, code {
+  pre,
+  code {
     @apply font-mono;
   }
 }
@@ -129,4 +129,116 @@
 .markdown-preview ul,
 .markdown-preview ol {
   @apply my-4 ml-6;
+}
+@layer utilities {
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 1.2s ease forwards;
+  }
+}
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  }
+  .text-shadow-md {
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  }
+  .text-shadow-lg {
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+  }
+}
+
+@layer utilities {
+  .text-stroke {
+    -webkit-text-stroke: 0.1px black; /* color y grosor del borde */
+  }
+  .text-stroke-2 {
+    -webkit-text-stroke: 1px #034651;
+  }
+  /* Animaciones de hero */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 1s ease forwards;
+  }
+  @keyframes fadeInSmall {
+    0% {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .animate-fadeInSmall {
+    animation: fadeInSmall 700ms ease forwards;
+  }
+  /* Flotación sutil */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  /* Shine al hover (pseudoelemento) */
+  .shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%) skewX(-20deg);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.25) 50%,
+      transparent 100%
+    );
+    transition: transform 0.7s ease;
+    pointer-events: none;
+  }
+  .shine:hover::after {
+    transform: translateX(120%) skewX(-20deg);
+  }
+
+  /* Respeta preferencias de movimiento */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float {
+      animation: none;
+    }
+    .shine::after {
+      display: none;
+    }
+  }
+
+  .glow {
+    filter: drop-shadow(0 0 12px #181818) drop-shadow(0 0 24px #242424);
+  }
+  .logo-glow {
+    filter: drop-shadow(0 0 6px rgba(164, 164, 164, 0.7))
+      drop-shadow(0 0 12px rgba(148, 148, 148, 0.5));
+  }
 }

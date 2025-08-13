@@ -55,28 +55,6 @@ const NewCarsPage: React.FC = () => {
       );
       let results = filteredByCondition;
 
-      // Ejemplo de aplicación de filtros adicionales (puedes expandirlo)
-      /*if (filters.searchTerm) {
-        results = results.filter(
-          (car) =>
-            car.make.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-            car.model
-              .toLowerCase()
-              .includes(filters.searchTerm.toLowerCase()) ||
-            car.description
-              .toLowerCase()
-              .includes(filters.searchTerm.toLowerCase())
-        );
-      }
-      if (filters.priceRange) {
-        results = results.filter(
-          (car) =>
-            car.price >= filters.priceRange[0] &&
-            car.price <= filters.priceRange[1]
-        );
-      }*/
-      // ... otros filtros
-
       setNewCars(results);
       setLoading(false);
     }, 1000);
@@ -119,7 +97,26 @@ const NewCarsPage: React.FC = () => {
         /> */}
         <main className="mx-auto px-6 py-10">
           <div className="mb-8">
-            <AdvertisementCarousel images={adImagesTop} interval={6000} />
+            <AdvertisementCarousel
+              slides={[
+                {
+                  src: "/assets/bridgestone.png",
+                  title: "Durabilidad y estilo en cada kilómetro.",
+                  subtitle: "Rueda con confianza",
+                  ctaText: "Ver sitio",
+                  ctaHref: "https://www.bridgestone.co.cr/",
+                  badge: "",
+                },
+                {
+                  src: "/assets/texaco.png",
+                  title: "Energía y servicio para tu camino.",
+                  subtitle: "Llena tu tanque, sigue tu rumbo.",
+                  ctaText: "Ver sitio",
+                  ctaHref: "https://www.bridgestone.co.cr/",
+                  badge: "",
+                },
+              ]}
+            />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
@@ -130,7 +127,38 @@ const NewCarsPage: React.FC = () => {
                 initialCategory="new_cars"
               />
               <div className="hidden lg:block">
-                <AdvertisementCarouselLateral images={adImagesSide1} />
+                <AdvertisementCarouselLateral
+                  ads={[
+                    {
+                      src: "/assets/meguiarSpray.jpg",
+                      title: "Innovación que impulsa el futuro.",
+                      ctaText: "Ver más",
+                      ctaHref: "https://www.bridgestone.co.cr/",
+                    },
+                    {
+                      src: "/assets/meguiar.jpg",
+                      title: "Potencia y elegancia en cada viaje",
+                      ctaText: "Ver sitio",
+                      ctaHref: "https://meguiarsdirect.com/",
+                    },
+                  ]}
+                />{" "}
+                <AdvertisementCarouselLateral
+                  ads={[
+                    {
+                      src: "/assets/castrolOil.png",
+                      title: "Innovación que impulsa el futuro.",
+                      ctaText: "Ver más",
+                      ctaHref: "https://www.bridgestone.co.cr/",
+                    },
+                    {
+                      src: "/assets/castrol.png",
+                      title: "Potencia y elegancia en cada viaje",
+                      ctaText: "Ver sitio",
+                      ctaHref: "https://www.toyota.com/",
+                    },
+                  ]}
+                />
               </div>
             </div>
 
@@ -149,9 +177,65 @@ const NewCarsPage: React.FC = () => {
 
             {/* Columna Derecha: Anuncio Lateral 2 */}
             <div className="lg:col-span-1 hidden lg:block space-y-8">
-              <AdvertisementCarouselLateral images={adImagesSide2} />
+              <AdvertisementCarouselLateral
+                ads={[
+                  {
+                    src: "/assets/castrolOil.png",
+                    title: "Innovación que impulsa el futuro.",
+                    ctaText: "Ver más",
+                    ctaHref: "https://www.bridgestone.co.cr/",
+                  },
+                  {
+                    src: "/assets/castrol.png",
+                    title: "Potencia y elegancia en cada viaje",
+                    ctaText: "Ver más",
+                    ctaHref: "https://www.toyota.com/",
+                  },
+                ]}
+              />{" "}
+              <AdvertisementCarouselLateral
+                ads={[
+                  {
+                    src: "/assets/meguiarSpray.jpg",
+                    title: "Innovación que impulsa el futuro.",
+                    ctaText: "Ver más",
+                    ctaHref: "https://www.bridgestone.co.cr/",
+                  },
+                  {
+                    src: "/assets/meguiar.jpg",
+                    title: "Potencia y elegancia en cada viaje",
+                    ctaText: "Ver más",
+                    ctaHref: "https://meguiarsdirect.com/",
+                  },
+                ]}
+              />{" "}
             </div>
-          </div>
+          </div>{" "}
+          {/* Anuncio Banner Inferior */}
+          {
+            <div className="mt-8">
+              <AdvertisementCarousel
+                slides={[
+                  {
+                    src: "/assets/tesla.svg",
+                    title: "Innovación que impulsa el futuro.",
+                    subtitle: "Energía sin límites.",
+                    ctaText: "Ir a sitio",
+                    ctaHref: "https://www.bridgestone.co.cr/",
+                    badge: "",
+                  },
+                  {
+                    src: "/assets/toyotaxl.png",
+                    title: "Potencia y elegancia en cada viaje",
+                    subtitle: "Conduce tu destino.",
+                    ctaText: "Ver sitio",
+                    ctaHref: "https://www.toyota.com/",
+                    badge: "",
+                  },
+                ]}
+              />
+            </div>
+          }
         </main>
       </div>
       <BlogPreview />

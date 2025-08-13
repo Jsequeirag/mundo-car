@@ -1,48 +1,80 @@
 // components/SecondaryCTA.tsx
 import React from "react";
 import { PlusCircle } from "lucide-react";
-import { Button } from "@/components/ui/button"; // Asegúrate de importar tu Button
-
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 interface SecondaryCTAProps {
-  // Prop para el color de fondo de la sección (ej. "bg-brand-primary", "bg-white")
-  sectionBgColor?: string;
-  // Prop para el color del texto de la sección (ej. "text-white", "text-brand-primary")
+  sectionBgColor?: string; // Solo se usa si no hay imagen
   sectionTextColor?: string;
-  // Prop para el color de fondo del botón (ej. "bg-white", "bg-brand-primary")
   buttonBgColor?: string;
-  // Prop para el color del texto del botón (ej. "text-brand-primary", "text-white")
   buttonTextColor?: string;
+  backgroundImage?: string; // Nueva prop para imagen de fondo
 }
 
 const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
-  sectionBgColor = "bg-brand-primary", // Valor por defecto: fondo brand-primary
-  sectionTextColor = "text-white", // Valor por defecto: texto blanco
-  buttonBgColor = "bg-white", // Valor por defecto: botón blanco
-  buttonTextColor = "text-brand-primary", // Valor por defecto: texto del botón brand-primary
+  sectionBgColor = "bg-brand-primary",
+  sectionTextColor = "text-white",
+  buttonBgColor = "bg-white",
+  buttonTextColor = "text-brand-primary",
+  backgroundImage, // Nueva prop
 }) => {
-  // Clases para el hover del botón
+  const { countryCode } = useParams<{ countryCode?: string }>();
+  const getCountryPath = (path: string) => {
+    if (!countryCode || path === "/") {
+      return path;
+    }
+    if (path.startsWith("/")) {
+      return `/${countryCode}${path}`;
+    }
+    return `/${countryCode}/${path}`;
+  };
   const buttonHoverClasses =
     buttonBgColor === "bg-white"
-      ? "hover:bg-gray-100" // Si el botón es blanco, el hover es gris claro
-      : "hover:bg-brand-primary/90"; // Si el botón es brand-primary, el hover es un tono más oscuro
+      ? "hover:bg-gray-100"
+      : "hover:bg-brand-primary/90";
 
   return (
     <section
-      className={`py-16 ${sectionBgColor} ${sectionTextColor} text-center`}
+      className={`relative py-16 text-center ${
+        backgroundImage ? "" : `${sectionBgColor} ${sectionTextColor}`
+      }`}
+      style={
+        backgroundImage
+          ? {
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
+          : undefined
+      }
     >
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      {/* Overlay suave solo si hay imagen */}
+      {backgroundImage && <div className="absolute inset-0 bg-white/20" />}
+
+      <div className="relative container mx-auto px-4">
+        <h2
+          className={`text-3xl md:text-4xl font-bold mb-4 text-shadow-md ${
+            backgroundImage ? "text-gray-900" : sectionTextColor
+          }`}
+        >
           ¿Quieres vender tu vehículo?
         </h2>
-        <p className="text-xl mb-8 opacity-90">
+        <p
+          className={`text-xl mb-8 opacity-90 text-shadow-md ${
+            backgroundImage ? "text-gray-800" : sectionTextColor
+          }`}
+        >
           Publica tu anuncio de forma rápida y sencilla y llega a miles de
           compradores.
         </p>
-        <Button
-          className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg`}
-        >
-          <PlusCircle className="h-6 w-6 mr-2" /> Publica tu Anuncio
-        </Button>
+        <Link to={`${getCountryPath("inicio")}`}>
+          <Button
+            className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg`}
+          >
+            <PlusCircle className="h-6 w-6 mr-2" /> Publica tu Anuncio
+          </Button>
+        </Link>
       </div>
     </section>
   );
