@@ -65,7 +65,7 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
             backgroundImage ? "text-gray-800" : sectionTextColor
           }`}
         >
-          Publica tu anuncio de forma rápida y sencilla y llega a miles de
+          Publica tu anuncio de forma rápida, sencilla y llega a miles de
           compradores.
         </p>
         <Link to={`${getCountryPath("inicio")}`}>

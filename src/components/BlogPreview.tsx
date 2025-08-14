@@ -9,21 +9,21 @@ const BlogPreview: React.FC = () => {
       id: 1,
       title: "Guía para comprar tu primer auto usado",
       date: "15 Julio, 2025",
-      image: "/images/blog-post-1.jpg", // Asegúrate de tener estas imágenes
-      href: "/blog/guia-comprar-auto-usado",
+      image: "/assets/blog/noticia1.png", // Asegúrate de tener estas imágenes
+      href: "/blog/elegir-auto-usado",
     },
     {
       id: 2,
       title: "¿Cómo elegir el lubricentro adecuado?",
       date: "10 Julio, 2025",
-      image: "/images/blog-post-2.jpg",
+      image: "/assets/blog/noticia2.png", // Asegúrate de tener estas imágenes
       href: "/blog/elegir-lubricentro",
     },
     {
       id: 3,
       title: "Las 5 tecnologías automotrices más innovadoras de 2025",
       date: "01 Julio, 2025",
-      image: "/images/blog-post-3.jpg",
+      image: "/assets/blog/noticia3.png", // Asegúrate de tener estas imágenes
       href: "/blog/tecnologias-automotrices",
     },
   ];

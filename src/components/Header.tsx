@@ -14,6 +14,7 @@ import {
   Droplets,
   PlusCircle,
   ChevronDown,
+  LogOut,
 } from "lucide-react";
 import { Link } from "react-router-dom"; // CAMBIO CLAVE: Importa Link de react-router-dom
 
@@ -217,6 +218,19 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, currentCountryCode }) => {
             >
               <User className="h-4 w-4 mr-2" />
               Cuenta
+            </Button>
+          </Link>{" "}
+          <Link to={getCountryPath("/")} className="hidden md:flex">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 hover:text-white"
+              onClick={() => {
+                localStorage.removeItem("selectedCountryCode");
+              }}
+            >
+              <LogOut className="h-4 w-4 mr-2 text-red-400" />
+              <p className="text-red-400">Salir</p>
             </Button>
           </Link>
           {/* Si tu login es una página separada, también debería usar getCountryPath */}
