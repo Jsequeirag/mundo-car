@@ -182,7 +182,7 @@ const RegisterPage: React.FC = () => {
                   w-full flex items-center justify-center gap-2
                   bg-brand-primary text-white font-semibold p-3 rounded-xl
                   shadow-sm hover:shadow-md hover:bg-brand-primary/90
-                  transition-all focus:outline-none focus:ring-2 focus:ring-brand-primary
+                  transition-all focus:outline-none focus:ring-2 focus:ring-brand-primary mt-4
                 "
                   aria-label="Crear cuenta"
                 >
