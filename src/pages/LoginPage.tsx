@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+
 import { useParams, Link } from "react-router-dom";
 const LoginPage: React.FC = () => {
   const handleLogin = (email: string, password: string) => {
@@ -32,11 +32,8 @@ const LoginPage: React.FC = () => {
       <div className="flex flex-col lg:grid lg:grid-cols-2 flex-1">
         {/* Izquierda: Formulario de login */}
         <div className="bg-white flex items-center justify-center px-6 md:px-10 py-10">
-          {" "}
           <div className="w-full max-w-md text-center">
-            {" "}
             <Link to={`${getCountryPath("/")}`}>
-              {" "}
               <button className="mb-6 px-4 py-2 bg-[#034651] text-white rounded-md hover:bg-[#023a44] transition-colors duration-300 flex items-center gap-2">
                 <svg
                   className="w-5 h-5"

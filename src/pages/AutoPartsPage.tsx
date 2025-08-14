@@ -148,7 +148,7 @@ const AutoPartsPage: React.FC = () => {
                 // showCondition={true} // Mostrar condición para repuestos (nuevo/usado/remanufacturado)
                 // specificPartCategories={['Motor', 'Frenos', 'Suspensión']} // Opciones de categoría de repuestos
               />
-              <div className="hidden lg:block">
+              <div className="lg:col-span-1 hidden lg:block space-y-8">
                 <AdvertisementCarouselLateral
                   ads={[
                     {

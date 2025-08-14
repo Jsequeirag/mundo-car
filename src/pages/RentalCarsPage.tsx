@@ -150,7 +150,7 @@ const RentalCarsPage: React.FC = () => {
                 // showPickupLocation={true}
                 // showDatesPicker={true} // Para seleccionar fechas de alquiler
               />
-              <div className="hidden lg:block">
+              <div className="lg:col-span-1 hidden lg:block space-y-8">
                 <AdvertisementCarouselLateral
                   ads={[
                     {

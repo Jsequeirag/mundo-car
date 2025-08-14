@@ -149,7 +149,7 @@ const UsedCarsPage: React.FC = () => {
                 onSearch={handleSearch}
                 initialCategory="used_cars" // <-- Cambiado a "used_cars"
               />
-              <div className="hidden lg:block">
+              <div className="lg:col-span-1 hidden lg:block space-y-8">
                 <AdvertisementCarouselLateral
                   ads={[
                     {

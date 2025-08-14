@@ -126,7 +126,7 @@ const NewCarsPage: React.FC = () => {
                 onSearch={handleSearch}
                 initialCategory="new_cars"
               />
-              <div className="hidden lg:block">
+              <div className="lg:col-span-1 hidden lg:block space-y-8">
                 <AdvertisementCarouselLateral
                   ads={[
                     {
@@ -142,7 +142,7 @@ const NewCarsPage: React.FC = () => {
                       ctaHref: "https://meguiarsdirect.com/",
                     },
                   ]}
-                />{" "}
+                />
                 <AdvertisementCarouselLateral
                   ads={[
                     {
@@ -192,7 +192,7 @@ const NewCarsPage: React.FC = () => {
                     ctaHref: "https://www.toyota.com/",
                   },
                 ]}
-              />{" "}
+              />
               <AdvertisementCarouselLateral
                 ads={[
                   {

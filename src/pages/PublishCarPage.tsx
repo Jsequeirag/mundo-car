@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useParams, Link } from "react-router-dom";
-
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -35,7 +34,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { X } from "lucide-react";
+import { X, ChevronRight } from "lucide-react";
 
 // Mock API data (replace with actual CarsXE API calls in production)
 const mockBrands = [
@@ -64,7 +63,6 @@ const schema = z
     ubicacion: z.string().min(1, "Indica la ubicación"),
     publicarInmediatamente: z.boolean(),
     precioNegociable: z.boolean(),
-    // Imágenes no se validan en Zod ya que se manejan en estado local
   })
   .refine((data) => data.tipo === "nuevo" || data.estado, {
     message: "El estado es requerido para autos usados",
@@ -77,6 +75,7 @@ const schema = z
 
 export default function PublishCarPage() {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const getCountryPath = (path: string) => {
     const { countryCode } = useParams<{ countryCode?: string }>();
@@ -88,9 +87,10 @@ export default function PublishCarPage() {
     }
     return `/${countryCode}/${path}`;
   };
+
   const [brands, setBrands] = useState(mockBrands);
   const [models, setModels] = useState<string[]>([]);
-  const [images, setImages] = useState<string[]>([]); // URLs de previsualización
+  const [images, setImages] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [photoType, setPhotoType] = useState<"normal" | "personalizada" | null>(
     null
@@ -153,8 +153,16 @@ export default function PublishCarPage() {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleNext = (e) => {
+    e.preventDefault();
+
+    if (photoType === "personalizada") {
+      alert("asd");
+      navigate(getCountryPath("CarImageUploadAndDrag"));
+    }
+  };
+
   const onSubmit = (values: z.infer<typeof schema>) => {
-    // Aquí iría la lógica para enviar las imágenes al backend
     console.log(values, images);
     toast({
       title: "✅ Publicación creada",
@@ -166,18 +174,14 @@ export default function PublishCarPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Encabezado visual */}
       <div className="relative bg-gray-900 text-white py-12 md:py-16 flex flex-col items-center text-center overflow-hidden">
-        {/* Background Image with Overlay */}
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: `url('/assets/mundo/publishImage.png')`,
           }}
         >
-          <div className="absolute inset-0 bg-black/50"></div>{" "}
-          {/* Overlay for text readability */}
+          <div className="absolute inset-0 bg-black/50"></div>
         </div>
-
-        {/* Content */}
         <div className="relative z-10 flex flex-col items-center">
           <img
             src="/assets/mundocar-logo.png"
@@ -196,7 +200,7 @@ export default function PublishCarPage() {
       {/* Contenedor del formulario */}
       <div className="container mx-auto py-10 px-4">
         <Link to={`${getCountryPath("inicio")}`}>
-          <button className="mb-6 px-4 py-2 bg-[#034651] text-white rounded-md hover:bg-[#023a44] transition-colors duration-300 flex items-center gap-2">
+          <button className="mb-6 px-4 py-2 bg-[#034651] text-white rounded-md hover:bg-[#045166] transition-colors duration-300 flex items-center gap-2">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -226,8 +230,6 @@ export default function PublishCarPage() {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-6"
               >
-                {/* ... Campos existentes ... */}
-                {/* Título */}
                 <FormField
                   control={form.control}
                   name="titulo"
@@ -244,8 +246,6 @@ export default function PublishCarPage() {
                     </FormItem>
                   )}
                 />
-
-                {/* Descripción */}
                 <FormField
                   control={form.control}
                   name="descripcion"
@@ -262,8 +262,6 @@ export default function PublishCarPage() {
                     </FormItem>
                   )}
                 />
-
-                {/* Precio */}
                 <FormField
                   control={form.control}
                   name="precio"
@@ -277,8 +275,6 @@ export default function PublishCarPage() {
                     </FormItem>
                   )}
                 />
-
-                {/* Precio Negociable */}
                 <FormField
                   control={form.control}
                   name="precioNegociable"
@@ -299,8 +295,6 @@ export default function PublishCarPage() {
                     </FormItem>
                   )}
                 />
-
-                {/* Marca */}
                 <FormField
                   control={form.control}
                   name="marca"
@@ -328,8 +322,6 @@ export default function PublishCarPage() {
                     </FormItem>
                   )}
                 />
-
-                {/* Modelo */}
                 <FormField
                   control={form.control}
                   name="modelo"
@@ -358,8 +350,6 @@ export default function PublishCarPage() {
                     </FormItem>
                   )}
                 />
-
-                {/* Modelo Personalizado */}
                 {modelo === "other" && (
                   <FormField
                     control={form.control}
@@ -375,8 +365,6 @@ export default function PublishCarPage() {
                     )}
                   />
                 )}
-
-                {/* Tipo */}
                 <FormField
                   control={form.control}
                   name="tipo"
@@ -405,8 +393,6 @@ export default function PublishCarPage() {
                     </FormItem>
                   )}
                 />
-
-                {/* Estado (Condicional) */}
                 {tipo === "usado" && (
                   <FormField
                     control={form.control}
@@ -434,8 +420,6 @@ export default function PublishCarPage() {
                     )}
                   />
                 )}
-
-                {/* Ubicación */}
                 <FormField
                   control={form.control}
                   name="ubicacion"
@@ -452,8 +436,6 @@ export default function PublishCarPage() {
                     </FormItem>
                   )}
                 />
-
-                {/* Sección de Imágenes */}
                 <FormItem>
                   <FormLabel>Imágenes del vehículo</FormLabel>
                   <div className="space-y-4">
@@ -511,7 +493,7 @@ export default function PublishCarPage() {
                               </label>
                             </div>
                           </RadioGroup>
-                          {photoType && (
+                          {photoType === "normal" && (
                             <div className="mt-4">
                               <Input
                                 type="file"
@@ -525,6 +507,18 @@ export default function PublishCarPage() {
                             <Button onClick={() => setIsModalOpen(false)}>
                               Cancelar
                             </Button>
+                            {photoType === "personalizada" && (
+                              <Link
+                                to={`${getCountryPath(
+                                  "/CarImageUploadAndDrag"
+                                )}`}
+                              >
+                                <Button className="bg-[#034651] hover:bg-[#045166] text-white flex items-center gap-2">
+                                  Siguiente
+                                  <ChevronRight className="w-5 Access to h-5" />
+                                </Button>
+                              </Link>
+                            )}
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
@@ -598,8 +592,6 @@ export default function PublishCarPage() {
                     </div>
                   </div>
                 </FormItem>
-
-                {/* Publicar inmediatamente */}
                 <FormField
                   control={form.control}
                   name="publicarInmediatamente"
@@ -621,7 +613,6 @@ export default function PublishCarPage() {
                   )}
                 />
                 <div className="flex justify-center items-center">
-                  {/* Botón */}
                   <Button
                     type="submit"
                     className="bg-[#034651] hover:bg-[#045166] text-white lg:w-[300px] md:w-full w-full"

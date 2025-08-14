@@ -146,7 +146,7 @@ const LubricentrosPage: React.FC = () => {
                 // specificServiceTypes={['Cambio de aceite', 'Filtros', 'Engrase']} // Opciones de servicios
                 // showLocationFilter={true} // Para filtrar por ciudad/provincia
               />
-              <div className="hidden lg:block">
+              <div className="lg:col-span-1 hidden lg:block space-y-8">
                 <AdvertisementCarouselLateral
                   ads={[
                     {

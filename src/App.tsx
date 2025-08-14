@@ -60,7 +60,7 @@ const App = () => (
 
             {/*  <Route path="/:countryCode/login" element={<LoginPage />} />*/}
             <Route
-              path="/CarImageUploadAndDrag"
+              path="/:countryCode/CarImageUploadAndDrag"
               element={<CarImageUploadAndDrag />}
             />
             <Route path="/:countryCode/inicio" element={<LoginPage />} />
