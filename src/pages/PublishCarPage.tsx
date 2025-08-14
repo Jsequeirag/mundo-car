@@ -190,9 +190,6 @@ export default function PublishCarPage() {
           <p className="mt-3 text-base md:text-lg opacity-90 max-w-xl px-4">
             Llega a miles de compradores en tu región en minutos.
           </p>
-          <button className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
-            Comienza Ahora
-          </button>
         </div>
       </div>
 
@@ -623,14 +620,15 @@ export default function PublishCarPage() {
                     </FormItem>
                   )}
                 />
-
-                {/* Botón */}
-                <Button
-                  type="submit"
-                  className="w-full bg-[#034651] hover:bg-[#045166] text-white"
-                >
-                  Publicar
-                </Button>
+                <div className="flex justify-center items-center">
+                  {/* Botón */}
+                  <Button
+                    type="submit"
+                    className="bg-[#034651] hover:bg-[#045166] text-white lg:w-[300px] md:w-full w-full"
+                  >
+                    Publicar
+                  </Button>
+                </div>
               </form>
             </Form>
           </CardContent>
