@@ -126,7 +126,7 @@ const UsedCarsPage: React.FC = () => {
                   src: "/assets/bridgestone.png",
                   title: "Durabilidad y estilo en cada kilómetro.",
                   subtitle: "Rueda con confianza",
-                  ctaText: "Ver sitio",
+                  ctaText: "Ver más",
                   ctaHref: "https://www.bridgestone.co.cr/",
                   badge: "",
                 },
@@ -134,7 +134,7 @@ const UsedCarsPage: React.FC = () => {
                   src: "/assets/texaco.png",
                   title: "Energía y servicio para tu camino.",
                   subtitle: "Llena tu tanque, sigue tu rumbo.",
-                  ctaText: "Ver sitio",
+                  ctaText: "Ver más",
                   ctaHref: "https://www.bridgestone.co.cr/",
                   badge: "",
                 },
@@ -161,7 +161,7 @@ const UsedCarsPage: React.FC = () => {
                     {
                       src: "/assets/meguiar.jpg",
                       title: "Potencia y elegancia en cada viaje",
-                      ctaText: "Ver sitio",
+                      ctaText: "Ver más",
                       ctaHref: "https://meguiarsdirect.com/",
                     },
                   ]}
@@ -177,7 +177,7 @@ const UsedCarsPage: React.FC = () => {
                     {
                       src: "/assets/castrol.png",
                       title: "Potencia y elegancia en cada viaje",
-                      ctaText: "Ver sitio",
+                      ctaText: "Ver más",
                       ctaHref: "https://www.toyota.com/",
                     },
                   ]}
@@ -250,7 +250,7 @@ const UsedCarsPage: React.FC = () => {
                     src: "/assets/toyotaxl.png",
                     title: "Potencia y elegancia en cada viaje",
                     subtitle: "Conduce tu destino.",
-                    ctaText: "Ver sitio",
+                    ctaText: "Ver más",
                     ctaHref: "https://www.toyota.com/",
                     badge: "",
                   },

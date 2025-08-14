@@ -29,7 +29,9 @@ const CountrySelectionPage: React.FC = () => {
         {/* izquierda: selección de país */}
         <div className="bg-white flex items-center justify-center px-6 md:px-10 py-10">
           <div className="w-full max-w-md text-center">
-            <p className="text-gray-600 text-sm">Te damos la bienvenida a</p>
+            <p className="text-gray-600 text-xl font-semibold">
+              Te damos la bienvenida a
+            </p>
             <img
               src="/assets/mundocar-logo.png"
               alt="MundoCar"
