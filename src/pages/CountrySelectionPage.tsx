@@ -117,3 +117,53 @@ const CountrySelectionPage: React.FC = () => {
 };
 
 export default CountrySelectionPage;
+Nota:DEJAR "Encuenta el auto perfecto"
+quitar miles..
+dejar los iconos al principio
+
+-Banderas de paises
+
+-Quitar lubricentro, cambiar por renta de auto
+
+-Quitar seccion"porque elegirnos"
+
+-Quitar seccion "quieres vender tu vehiculo"
+
+-Quitar texto de publicidad en moviles"
+
+-"Dejar publica tu anuncio"
+
+publicar-> publica tu anuncio
+
+ya  registrada->Edita tu anuncio
+
+Opciones  super destacados pagina de inicio
+opciones destacados en autos usados
+
+Cambiar departamento por  municipios
+
+-Autolotes
+
+-en usados(quitar publicidad en el top y colocar autolotes, ver mas debe debe entrar a la pagina de la marca de auto lotes
+
+en usados/vez de marcas auto lotes en usados
+
+publicacion/en publicar maximo 5 fotos despues, se paga, movimiento manual o automatico 
+
+autos usados/ marca de autolotes en vez de la publicidad
+
+autos nuevos/Explorar por marca-> Agencias autorizados
+
+autos nuevos/se quita Categoria
+
+publica tu anuncio/
+
+inicion de sesion/ Quitar el texto del video y todo 
+
+cambiar atras->Regresar
+
+cuando se publica/pedir el registro
+
+revisar la publicar de crautos/ solo pueden publicar sin pagar 5 fotos y un auto
+
+
