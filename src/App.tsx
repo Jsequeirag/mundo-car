@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"; // Añadido Navigate
 import { ThemeProvider } from "@/components/theme-provider";
-
+import ScrollToTop from "@/components/ScrollToTop";
 // Importa los componentes de las páginas
 import Index from "./pages/Index"; // Ahora es tu componente de redirección
 import CountrySelectionPage from "./pages/CountrySelectionPage";
@@ -35,6 +35,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Ruta inicial que redirige a /hr */}
             <Route path="/" element={<Navigate to="/hr" replace />} />
