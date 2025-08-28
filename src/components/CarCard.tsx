@@ -62,7 +62,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, highlighted = false }) => {
           {highlighted && (
             <div className="absolute top-3 left-3 bg-brand-primary bg-opacity-90 text-yellow-600 text-sm font-bold py-2 px-4 rounded-full shadow-lg border border-yellow-500 flex items-center gap-1.5">
               <Star className="h-5 w-5" style={{ fill: "currentColor" }} />
-              <span>Premium</span>
+              <span>Destacado</span>
             </div>
           )}
         </div>

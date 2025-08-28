@@ -42,6 +42,7 @@ import AdvertisementCarousel from "@/components/AdvertisementCarousel"; // Publi
 import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral"; // Publicidad lateral
 import MobileSidebar from "@/components/MobileSidebar"; // Añadido desde AppLayout
 import Footer from "@/components/Footer"; // Añadido desde AppLayout
+import { hondurasMunicipalities } from "@/data/HondurasMunicipalities";
 const EQUIPAMIENTO_GROUPS: {
   title?: string;
   items: { value: string; label: string }[];
@@ -110,6 +111,7 @@ const EQUIPAMIENTO_GROUPS: {
     ],
   },
 ];
+
 // Mock API data
 const mockBrands = [
   { id: "toyota", name: "Toyota" },
@@ -565,17 +567,17 @@ export default function PublishCarPage() {
                           )}
                         />
 
-                        {/* Precio (Colones) */}
+                        {/* Precio (Lempiras) */}
                         <FormField
                           control={form.control}
                           name="precio"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Precio (₡)</FormLabel>
+                              <FormLabel>Precio (L)</FormLabel>
                               <FormControl>
                                 <Input
                                   type="number"
-                                  placeholder="₡ (total del vehículo en colones)"
+                                  placeholder="L (total del vehículo en lempiras)"
                                   {...field}
                                 />
                               </FormControl>
@@ -859,7 +861,7 @@ export default function PublishCarPage() {
                           name="provincia"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Provincia</FormLabel>
+                              <FormLabel>Municipio</FormLabel>
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
@@ -870,25 +872,16 @@ export default function PublishCarPage() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="san_jose">
-                                    San José
-                                  </SelectItem>
-                                  <SelectItem value="alajuela">
-                                    Alajuela
-                                  </SelectItem>
-                                  <SelectItem value="cartago">
-                                    Cartago
-                                  </SelectItem>
-                                  <SelectItem value="heredia">
-                                    Heredia
-                                  </SelectItem>
-                                  <SelectItem value="guanacaste">
-                                    Guanacaste
-                                  </SelectItem>
-                                  <SelectItem value="puntarenas">
-                                    Puntarenas
-                                  </SelectItem>
-                                  <SelectItem value="limon">Limón</SelectItem>
+                                  {hondurasMunicipalities.map(
+                                    (municipality) => (
+                                      <SelectItem
+                                        key={municipality}
+                                        value={municipality.toLowerCase()}
+                                      >
+                                        {municipality}
+                                      </SelectItem>
+                                    )
+                                  )}
                                 </SelectContent>
                               </Select>
                               <FormMessage />
@@ -1179,7 +1172,7 @@ export default function PublishCarPage() {
                                     <strong>
                                       Confirmación automática de anuncio
                                     </strong>
-                                    . Precio: <strong>₡ 2,260</strong>.
+                                    . Precio: <strong>L 2,260</strong>.
                                   </p>
                                   <p className="text-xs text-gray-500 mt-1">
                                     Seleccione esta opción si desea que su
@@ -1199,13 +1192,13 @@ export default function PublishCarPage() {
                                   <div className="flex items-center gap-2">
                                     <RadioGroupItem value="no" id="op1-no" />
                                     <label htmlFor="op1-no" className="text-sm">
-                                      NO deseo esta opción — ₡ 0
+                                      NO deseo esta opción — L 0
                                     </label>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <RadioGroupItem value="si" id="op1-si" />
                                     <label htmlFor="op1-si" className="text-sm">
-                                      SÍ deseo esta opción — ₡ 2,260
+                                      SÍ deseo esta opción — L 2,260
                                     </label>
                                   </div>
                                 </RadioGroup>
@@ -1248,12 +1241,12 @@ export default function PublishCarPage() {
                                       un <em>post</em> en nuestro muro de
                                       Facebook (≈ 110,000 seguidores) con costo
                                       adicional de{" "}
-                                      <strong>₡ 2,500 + IVA</strong>.
+                                      <strong>L 2,500 + IVA</strong>.
                                     </li>
                                     <li>
                                       Ambas permiten subir{" "}
                                       <strong>8 fotografías</strong> de su
-                                      anuncio (en vez de 5).
+                                      anuncio (en vez de 3).
                                     </li>
                                   </ul>
                                 </div>
@@ -1268,7 +1261,7 @@ export default function PublishCarPage() {
                                   <div className="flex items-center gap-2">
                                     <RadioGroupItem value="no" id="op2-no" />
                                     <label htmlFor="op2-no" className="text-sm">
-                                      NO deseo esta opción — ₡ 0
+                                      NO deseo esta opción — L 0
                                     </label>
                                   </div>
                                   <div className="flex items-center gap-2">
@@ -1281,7 +1274,7 @@ export default function PublishCarPage() {
                                       className="text-sm"
                                     >
                                       SÍ, deseo la opción de{" "}
-                                      <strong>DESTACADO</strong> — ₡ 9,605
+                                      <strong>DESTACADO</strong> — L 9,605
                                     </label>
                                   </div>
                                   <div className="flex items-center gap-2">
@@ -1294,7 +1287,7 @@ export default function PublishCarPage() {
                                       className="text-sm"
                                     >
                                       SÍ, deseo la opción de{" "}
-                                      <strong>SÚPER DESTACADO</strong> — ₡
+                                      <strong>SÚPER DESTACADO</strong> — L
                                       12,430
                                     </label>
                                   </div>
@@ -1326,7 +1319,7 @@ export default function PublishCarPage() {
                                   <p className="text-sm text-gray-800">
                                     <strong>Mensaje de “nuevo”</strong> y
                                     confirmación automática. Precio:{" "}
-                                    <strong>₡ 2,825</strong>.
+                                    <strong>L 2,825</strong>.
                                   </p>
                                   <p className="text-xs text-gray-600 mt-1">
                                     El anuncio mostrará la etiqueta “Nuevo”
@@ -1346,13 +1339,13 @@ export default function PublishCarPage() {
                                   <div className="flex items-center gap-2">
                                     <RadioGroupItem value="no" id="op3-no" />
                                     <label htmlFor="op3-no" className="text-sm">
-                                      NO deseo esta opción — ₡ 0
+                                      NO deseo esta opción — L 0
                                     </label>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <RadioGroupItem value="si" id="op3-si" />
                                     <label htmlFor="op3-si" className="text-sm">
-                                      SÍ deseo esta opción — ₡ 2,825
+                                      SÍ deseo esta opción — L 2,825
                                     </label>
                                   </div>
                                 </RadioGroup>
@@ -1362,6 +1355,8 @@ export default function PublishCarPage() {
                             </FormItem>
                           )}
                         />
+
+                        {/* OPCIÓN 4: Mensaje ESPECIAL */}
                         <FormField
                           control={form.control}
                           name="servicios.opcion4"
@@ -1377,8 +1372,8 @@ export default function PublishCarPage() {
                                     <strong>Mensaje ESPECIAL</strong> y
                                     confirmación automática de anuncio.
                                     <br />
-                                    Precio: <strong>₡ 5,085</strong> o{" "}
-                                    <strong>₡ 6,215</strong> dependiendo de la
+                                    Precio: <strong>L 5,085</strong> o{" "}
+                                    <strong>L 6,215</strong> dependiendo de la
                                     opción seleccionada.
                                   </p>
                                   <p className="text-xs text-gray-600 mt-1">
@@ -1399,11 +1394,11 @@ export default function PublishCarPage() {
                                   <div className="flex items-center gap-2 col-span-2">
                                     <RadioGroupItem value="no" id="op4-no" />
                                     <label htmlFor="op4-no" className="text-sm">
-                                      NO deseo esta opción — ₡ 0
+                                      NO deseo esta opción — L 0
                                     </label>
                                   </div>
 
-                                  {/* Opciones individuales (₡ 5,085) */}
+                                  {/* Opciones individuales (L 5,085) */}
                                   {[
                                     { v: "ganga", l: "GAN (GANGA)" },
                                     { v: "full", l: "Full extras" },
@@ -1438,12 +1433,12 @@ export default function PublishCarPage() {
                                         htmlFor={`op4-${opt.v}`}
                                         className="text-sm"
                                       >
-                                        SÍ deseo esta opción ({opt.l}) — ₡ 5,085
+                                        SÍ deseo esta opción ({opt.l}) — L 5,085
                                       </label>
                                     </div>
                                   ))}
 
-                                  {/* Combinaciones (₡ 6,215) */}
+                                  {/* Combinaciones (L 6,215) */}
                                   {[
                                     {
                                       v: "ganga-fin-recibo",
@@ -1490,7 +1485,7 @@ export default function PublishCarPage() {
                                         htmlFor={`op4-${opt.v}`}
                                         className="text-sm"
                                       >
-                                        SÍ deseo esta opción ({opt.l}) — ₡ 6,215
+                                        SÍ deseo esta opción ({opt.l}) — L 6,215
                                       </label>
                                     </div>
                                   ))}
