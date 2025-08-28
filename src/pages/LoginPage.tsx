@@ -49,7 +49,7 @@ const LoginPage: React.FC = () => {
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                Atrás
+                Regresar
               </button>
             </Link>
             <img

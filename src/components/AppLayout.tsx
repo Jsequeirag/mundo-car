@@ -161,7 +161,7 @@ const AppLayout: React.FC = () => {
                       style={{ fill: "currentColor" }}
                     />
                   </div>
-                  Autos Usados Destacados
+                  Autos Usados Super Destacados
                 </h2>
                 <p className="text-lg text-gray-700 mt-4 font-semibold">
                   {usedCars.length} Autos Disponibles

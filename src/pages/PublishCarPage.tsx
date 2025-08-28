@@ -298,7 +298,7 @@ export default function PublishCarPage() {
                   badge: "",
                 },
                 {
-                  src: "/assets/toyota-logo.png",
+                  src: "/assets/texaco.png",
                   ctaText: "",
                   ctaHref: "https://www.toyota.com/",
                   badge: "",
@@ -323,7 +323,7 @@ export default function PublishCarPage() {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              Atrás
+              Regresar
             </button>
           </Link>
           <Card className="shadow-lg border border-gray-200 mb-4">
@@ -1246,7 +1246,7 @@ export default function PublishCarPage() {
                                     <li>
                                       Ambas permiten subir{" "}
                                       <strong>8 fotografías</strong> de su
-                                      anuncio (en vez de 3).
+                                      anuncio (en vez de 5).
                                     </li>
                                   </ul>
                                 </div>
@@ -1523,7 +1523,7 @@ export default function PublishCarPage() {
                             {!isPremium && (
                               <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
                                 Plan Gratis: puedes subir hasta{" "}
-                                <strong>3 imágenes</strong>. Para subir{" "}
+                                <strong>5 imágenes</strong>. Para subir{" "}
                                 <strong>más imágenes y video</strong>, mejora a{" "}
                                 <strong>Premium</strong>.
                                 <div className="mt-2">

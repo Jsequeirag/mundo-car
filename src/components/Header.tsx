@@ -61,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({
     },
     {
       type: "link",
-      label: "Publicar Anuncio",
+      label: "Publica tu anuncio",
       icon: PlusCircle,
       href: getCountryPath("/publicar"),
     },
@@ -148,7 +148,7 @@ const Header: React.FC<HeaderProps> = ({
                 className={`
                   flex items-center space-x-2 transition-colors
                   ${
-                    item.label === "Publicar Anuncio"
+                    item.label === "Publica tu anuncio"
                       ? "text-green-300 hover:bg-green-500/20 hover:text-green-200"
                       : "text-white hover:bg-white/20 hover:text-white"
                   }
@@ -160,7 +160,7 @@ const Header: React.FC<HeaderProps> = ({
                     className={`
                       h-5 w-5
                       ${
-                        item.label === "Publicar Anuncio"
+                        item.label === "Publica tu anuncio"
                           ? "text-green-300"
                           : ""
                       }

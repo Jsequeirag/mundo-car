@@ -44,7 +44,7 @@ const AutoLotHero: React.FC<AutoLotHeroProps> = ({ autoLot }) => {
               aria-label="Volver a la página anterior"
               onClick={() => navigate(-1)}
             >
-              <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5" /> Atrás
+              <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5" /> Regresar
             </Button>
 
             <a href="#autolot-cars">

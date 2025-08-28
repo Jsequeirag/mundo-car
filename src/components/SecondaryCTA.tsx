@@ -68,7 +68,7 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
           <Button
             className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg`}
           >
-            <PlusCircle className="h-6 w-6 mr-2" /> Publicar Anuncio
+            <PlusCircle className="h-6 w-6 mr-2" /> Publica tu anuncio
           </Button>
         </Link>
       </div>

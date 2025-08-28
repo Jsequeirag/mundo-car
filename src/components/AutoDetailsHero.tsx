@@ -32,7 +32,7 @@ const AutoDetailsHero: React.FC = () => {
               aria-label="Volver a la página anterior"
               onClick={() => navigate(-1)}
             >
-              <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5" /> Atrás
+              <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5" /> Regresar
             </Button>{" "}
             <div className="flex items-center justify-center rounded-md bg-slate-500/40 px-1">
               <p className="font-bold">Compartir:</p>
