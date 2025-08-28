@@ -53,7 +53,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     { label: "Autos usados", value: "used_cars", icon: Car },
     { label: "Renta de autos", value: "car_rental", icon: MapPin },
     { label: "Autorepuestos", value: "auto_parts", icon: Package },
-    { label: "Lubricentros", value: "lubricenters", icon: Droplets },
   ];
 
   // Opciones de nombres comerciales para Lubricentros y Autorepuestos
