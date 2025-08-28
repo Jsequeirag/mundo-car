@@ -242,3 +242,28 @@
       drop-shadow(0 0 12px rgba(148, 148, 148, 0.5));
   }
 }
+/* Animaciones de carousel */
+@keyframes kenburns {
+  0% {
+    transform: scale(1.05) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate3d(2%, -2%, 0);
+  }
+}
+
+@keyframes carouselProgress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-kenburns {
+  animation: kenburns 10s ease-in-out infinite alternate;
+}
+.aspect-\[3\/2\] {
+  aspect-ratio: 3 / 2 !important;
+}

@@ -142,7 +142,8 @@ const AutoPartsPage: React.FC = () => {
               {/* Ajusta SearchFilters para repuestos. Podrías necesitar un prop 'type' */}
               <SearchFilters
                 onSearch={handleSearch}
-                initialCategory="auto_parts" // Nuevo tipo de categoría para repuestos
+                initialCategory="auto_parts"
+                lockCategory={true} // Nuevo tipo de categoría para repuestos
                 // Puedes añadir otras props para que SearchFilters se adapte
                 // showVehicleType={false} // Oculta filtros de tipo de vehículo
                 // showCondition={true} // Mostrar condición para repuestos (nuevo/usado/remanufacturado)
@@ -258,7 +259,6 @@ const AutoPartsPage: React.FC = () => {
           </div>
         </main>
       </div>
-      <BlogPreview />
       <Footer />
     </div>
   );

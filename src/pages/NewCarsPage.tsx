@@ -4,7 +4,7 @@ import Header from "@/components/Header"; // Asegúrate de que las rutas de impo
 import SearchFilters from "@/components/SearchFilters";
 import CarGrid from "@/components/CarGrid";
 import Footer from "@/components/Footer";
-import { mockCars } from "@/data/mockCars";
+import { mockNewCars } from "@/data/mockNewCars";
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import BlogPreview from "@/components/BlogPreview";
 import Hero from "@/components/Hero"; // Puedes decidir si quieres un Hero específico o no
@@ -40,7 +40,9 @@ const NewCarsPage: React.FC = () => {
     setLoading(true);
     // Simula una llamada API
     setTimeout(() => {
-      const filteredCars = mockCars.filter((car) => car.condition === "nuevo");
+      const filteredCars = mockNewCars.filter(
+        (car) => car.condition === "nuevo"
+      );
       setNewCars(filteredCars);
       setLoading(false);
     }, 500); // Retraso más corto para simular carga
@@ -50,7 +52,7 @@ const NewCarsPage: React.FC = () => {
     setLoading(true);
     setTimeout(() => {
       // Filtra primero por condición "new" y luego aplica otros filtros
-      const filteredByCondition = mockCars.filter(
+      const filteredByCondition = mockNewCars.filter(
         (car) => car.condition === "nuevo"
       );
       let results = filteredByCondition;
@@ -101,18 +103,12 @@ const NewCarsPage: React.FC = () => {
               slides={[
                 {
                   src: "/assets/bridgestone.png",
-                  title: "Durabilidad y estilo en cada kilómetro.",
-                  subtitle: "Rueda con confianza",
-                  ctaText: "Ver más",
-                  ctaHref: "https://www.bridgestone.co.cr/",
+
                   badge: "",
                 },
                 {
                   src: "/assets/texaco.png",
-                  title: "Energía y servicio para tu camino.",
-                  subtitle: "Llena tu tanque, sigue tu rumbo.",
-                  ctaText: "Ver más",
-                  ctaHref: "https://www.bridgestone.co.cr/",
+
                   badge: "",
                 },
               ]}
@@ -125,21 +121,16 @@ const NewCarsPage: React.FC = () => {
               <SearchFilters
                 onSearch={handleSearch}
                 initialCategory="new_cars"
+                lockCategory={true}
               />
               <div className="lg:col-span-1 hidden lg:block space-y-8">
                 <AdvertisementCarouselLateral
                   ads={[
                     {
                       src: "/assets/meguiarSpray.jpg",
-                      title: "Innovación que impulsa el futuro.",
-                      ctaText: "Ver más",
-                      ctaHref: "https://www.bridgestone.co.cr/",
                     },
                     {
                       src: "/assets/meguiar.jpg",
-                      title: "Potencia y elegancia en cada viaje",
-                      ctaText: "Ver más",
-                      ctaHref: "https://meguiarsdirect.com/",
                     },
                   ]}
                 />
@@ -147,15 +138,9 @@ const NewCarsPage: React.FC = () => {
                   ads={[
                     {
                       src: "/assets/castrolOil.png",
-                      title: "Innovación que impulsa el futuro.",
-                      ctaText: "Ver más",
-                      ctaHref: "https://www.bridgestone.co.cr/",
                     },
                     {
                       src: "/assets/castrol.png",
-                      title: "Potencia y elegancia en cada viaje",
-                      ctaText: "Ver más",
-                      ctaHref: "https://www.toyota.com/",
                     },
                   ]}
                 />
@@ -181,15 +166,9 @@ const NewCarsPage: React.FC = () => {
                 ads={[
                   {
                     src: "/assets/castrolOil.png",
-                    title: "Innovación que impulsa el futuro.",
-                    ctaText: "Ver más",
-                    ctaHref: "https://www.bridgestone.co.cr/",
                   },
                   {
                     src: "/assets/castrol.png",
-                    title: "Potencia y elegancia en cada viaje",
-                    ctaText: "Ver más",
-                    ctaHref: "https://www.toyota.com/",
                   },
                 ]}
               />
@@ -197,15 +176,9 @@ const NewCarsPage: React.FC = () => {
                 ads={[
                   {
                     src: "/assets/meguiarSpray.jpg",
-                    title: "Innovación que impulsa el futuro.",
-                    ctaText: "Ver más",
-                    ctaHref: "https://www.bridgestone.co.cr/",
                   },
                   {
                     src: "/assets/meguiar.jpg",
-                    title: "Potencia y elegancia en cada viaje",
-                    ctaText: "Ver más",
-                    ctaHref: "https://meguiarsdirect.com/",
                   },
                 ]}
               />{" "}
@@ -218,18 +191,12 @@ const NewCarsPage: React.FC = () => {
                 slides={[
                   {
                     src: "/assets/tesla.svg",
-                    title: "Innovación que impulsa el futuro.",
-                    subtitle: "Energía sin límites.",
-                    ctaText: "Ir a sitio",
-                    ctaHref: "https://www.bridgestone.co.cr/",
+
                     badge: "",
                   },
                   {
                     src: "/assets/toyotaxl.png",
-                    title: "Potencia y elegancia en cada viaje",
-                    subtitle: "Conduce tu destino.",
-                    ctaText: "Ver más",
-                    ctaHref: "https://www.toyota.com/",
+
                     badge: "",
                   },
                 ]}
@@ -238,7 +205,7 @@ const NewCarsPage: React.FC = () => {
           }
         </main>
       </div>
-      <BlogPreview />
+
       <Footer />
     </div>
   );

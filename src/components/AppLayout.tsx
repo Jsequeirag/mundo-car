@@ -3,11 +3,13 @@ import Header from "./Header";
 import SearchFilters from "./SearchFilters";
 import CarGrid from "./CarGrid";
 import Footer from "./Footer";
-import { mockCars } from "@/data/mockCars";
-
+import { mockUsedPremiumCars } from "@/data/mockUsedPremiumCars";
+import { mockNewCars } from "@/data/mockNewCars";
+import { Star } from "lucide-react";
 import AdvertisementCarousel from "./AdvertisementCarousel";
 import AdvertisementCarouselLateral from "./AdvertisementCarouselLateral";
 
+import AutoLotCarousel from "@/components/AutoLotCarousel";
 import Hero from "./Hero";
 import CategoryShowcase from "./CategoryShowcase";
 import MobileSidebar from "./MobileSidebar";
@@ -17,29 +19,16 @@ import HowItWorks from "./HowItWorks"; // O BenefitsSection
 import SecondaryCTA from "./SecondaryCTA"; // O SellCarCTA
 import { useParams, Outlet } from "react-router-dom";
 const AppLayout: React.FC = () => {
-  const adImagesTop = ["/assets/bridgestone.png"];
-  const adImagesSide1 = [
-    "/assets/toyota.png",
-    "/assets/castrol-logo-png_seeklogo-307500.png",
-    "/assets/sparco.png",
-  ];
-  const adImagesSide2 = [
-    "/assets/momo.png",
-    "/assets/meg-logo_506074c9-6b27-4912-b837-4d61fa365e7f.webp",
-    "/assets/gulf.png",
-    "/assets/mascarello.png",
-  ];
-
-  const adImagesBottom = ["/assets/texaco.png"];
-
-  const [cars, setCars] = useState(mockCars);
+  const [usedCars, setUsedCars] = useState(mockUsedPremiumCars);
+  const [newCars, setNewCars] = useState(mockNewCars);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = (filters: any) => {
     setLoading(true);
     // Simulate API call
     setTimeout(() => {
-      setCars(mockCars);
+      setUsedCars(mockUsedPremiumCars);
+      setNewCars(mockNewCars);
       setLoading(false);
     }, 1000);
   };
@@ -49,6 +38,24 @@ const AppLayout: React.FC = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
   const { countryCode } = useParams<{ countryCode?: string }>();
+  const autoLots = [
+    {
+      id: "1",
+      name: "AutoLote El Sol",
+      image: "/assets/autolotes/autolote-premium.png",
+    },
+    {
+      id: "2",
+      name: "AutoLote La Estrella",
+      image: "/assets/autolotes/autolote-laestrella.png",
+    },
+    {
+      id: "3",
+      name: "AutoLote Premium",
+      image: "/assets/autolotes/autolote-premium.png",
+    },
+    // Agrega más autolotes
+  ];
   return (
     <div className="min-h-screen bg-gray-50">
       <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
@@ -66,7 +73,7 @@ const AppLayout: React.FC = () => {
         <CategoryShowcase />
         {/* Altura máxima del Header es 80px (h-20) */}
         {/* NUEVA SECCIÓN: CATEGORY SHOWCASE */}
-        <HowItWorks />
+        {/* <HowItWorks /> */}
         <SecondaryCTA />
         {/* 6. "HOW IT WORKS" / BENEFICIOS (NUEVA SECCIÓN) */}
         {/* Main Content */}
@@ -76,104 +83,118 @@ const AppLayout: React.FC = () => {
               slides={[
                 {
                   src: "/assets/bridgestone.png",
-                  title: "Durabilidad y estilo en cada kilómetro.",
-                  subtitle: "Rueda con confianza",
-                  ctaText: "Ver más",
+
+                  ctaText: "",
                   ctaHref: "https://www.bridgestone.co.cr/",
                   badge: "",
                 },
                 {
                   src: "/assets/texaco.png",
-                  title: "Energía y servicio para tu camino.",
-                  subtitle: "Llena tu tanque, sigue tu rumbo.",
-                  ctaText: "Ver más",
+
+                  ctaText: "",
                   ctaHref: "https://www.bridgestone.co.cr/",
                   badge: "",
                 },
               ]}
             />
           </div>
+          <div className="flex flex-col sm:flex-row gap-8 mb-8 justify-center items-center">
+            <div className="flex-1">
+              <AutoLotCarousel autoLots={autoLots} />
+            </div>
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
-            <div className="lg:col-span-1 space-y-8">
-              <SearchFilters onSearch={handleSearch} />
-              <div className="hidden lg:block">
-                <AdvertisementCarouselLateral
-                  ads={[
-                    {
-                      src: "/assets/meguiarSpray.jpg",
-                      title: "Innovación que impulsa el futuro.",
-                      ctaText: "Ver más",
-                      ctaHref: "https://www.bridgestone.co.cr/",
-                    },
-                    {
-                      src: "/assets/meguiar.jpg",
-                      title: "Potencia y elegancia en cada viaje",
-                      ctaText: "Ver más",
-                      ctaHref: "https://meguiarsdirect.com/",
-                    },
-                  ]}
-                />{" "}
-                <AdvertisementCarouselLateral
-                  ads={[
-                    {
-                      src: "/assets/castrolOil.png",
-                      title: "Innovación que impulsa el futuro.",
-                      ctaText: "Ver más",
-                      ctaHref: "https://www.bridgestone.co.cr/",
-                    },
-                    {
-                      src: "/assets/castrol.png",
-                      title: "Potencia y elegancia en cada viaje",
-                      ctaText: "Ver más",
-                      ctaHref: "https://www.toyota.com/",
-                    },
-                  ]}
-                />
-              </div>
-            </div>
-
-            {/* Columna Central: Grid de Carros (ocupa más espacio) */}
-            <div className="lg:col-span-2 xl:col-span-3">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                  Featured Vehicles
-                </h2>
-                <p className="text-gray-600">{cars.length} cars available</p>
-              </div>
-              <CarGrid cars={cars} loading={loading} />
-            </div>
-
-            {/* Columna Derecha: Anuncio Lateral 2 */}
             <div className="lg:col-span-1 hidden lg:block space-y-8">
+              <SearchFilters onSearch={handleSearch} />
               <AdvertisementCarouselLateral
                 ads={[
                   {
-                    src: "/assets/castrolOil.png",
-                    title: "Innovación que impulsa el futuro.",
-                    ctaText: "Ver más",
+                    src: "/assets/meguiarSpray.jpg",
+
                     ctaHref: "https://www.bridgestone.co.cr/",
                   },
                   {
-                    src: "/assets/castrol.png",
-                    title: "Potencia y elegancia en cada viaje",
-                    ctaText: "Ver más",
-                    ctaHref: "https://www.toyota.com/",
+                    src: "/assets/meguiar.jpg",
+
+                    ctaHref: "https://meguiarsdirect.com/",
                   },
                 ]}
               />{" "}
               <AdvertisementCarouselLateral
                 ads={[
                   {
+                    src: "/assets/castrolOil.png",
+
+                    ctaHref: "https://www.bridgestone.co.cr/",
+                  },
+                  {
+                    src: "/assets/castrol.png",
+
+                    ctaHref: "https://www.toyota.com/",
+                  },
+                ]}
+              />
+            </div>
+            <div className="lg:col-span-2 xl:col-span-3">
+              <div className="mb-8">
+                <h2 className="text-4xl font-extrabold text-brand-primary bg-white/90 px-4 py-4 rounded-md shadow-md mb-2 flex items-center">
+                  <div className="flex space-x-1 mr-2">
+                    <Star
+                      className="h-8 w-8 text-yellow-500"
+                      style={{ fill: "currentColor" }}
+                    />
+                    <Star
+                      className="h-8 w-8 text-yellow-500"
+                      style={{ fill: "currentColor" }}
+                    />
+                    <Star
+                      className="h-8 w-8 text-yellow-500"
+                      style={{ fill: "currentColor" }}
+                    />
+                    <Star
+                      className="h-8 w-8 text-yellow-500"
+                      style={{ fill: "currentColor" }}
+                    />
+                    <Star
+                      className="h-8 w-8 text-yellow-500"
+                      style={{ fill: "currentColor" }}
+                    />
+                  </div>
+                  Autos Usados Destacados
+                </h2>
+                <p className="text-lg text-gray-700 mt-4 font-semibold">
+                  {usedCars.length} Autos Disponibles
+                </p>
+              </div>
+              <CarGrid cars={usedCars} loading={loading} />
+            </div>
+            {/* Columna Derecha: Anuncio Lateral 2 */}
+            <div className="lg:col-span-1 hidden lg:block space-y-8">
+              <AdvertisementCarouselLateral
+                ads={[
+                  {
+                    src: "/assets/castrolOil.png",
+
+                    ctaHref: "https://www.bridgestone.co.cr/",
+                  },
+                  {
+                    src: "/assets/castrol.png",
+
+                    ctaHref: "https://www.toyota.com/",
+                  },
+                ]}
+              />
+              <AdvertisementCarouselLateral
+                ads={[
+                  {
                     src: "/assets/meguiarSpray.jpg",
-                    title: "Innovación que impulsa el futuro.",
-                    ctaText: "Ver más",
+
                     ctaHref: "https://www.bridgestone.co.cr/",
                   },
                   {
                     src: "/assets/meguiar.jpg",
-                    title: "Potencia y elegancia en cada viaje",
-                    ctaText: "Ver más",
+
                     ctaHref: "https://meguiarsdirect.com/",
                   },
                 ]}
@@ -187,17 +208,13 @@ const AppLayout: React.FC = () => {
                 slides={[
                   {
                     src: "/assets/tesla.svg",
-                    title: "Innovación que impulsa el futuro.",
-                    subtitle: "Energía sin límites.",
-                    ctaText: "Ir a sitio",
+
                     ctaHref: "https://www.bridgestone.co.cr/",
                     badge: "",
                   },
                   {
                     src: "/assets/toyotaxl.png",
-                    title: "Potencia y elegancia en cada viaje",
-                    subtitle: "Conduce tu destino.",
-                    ctaText: "Ver más",
+
                     ctaHref: "https://www.toyota.com/",
                     badge: "",
                   },

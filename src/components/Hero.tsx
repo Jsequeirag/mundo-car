@@ -10,8 +10,8 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({
-  title = "Encuentra Tu Auto Perfecto",
-  subtitle = "Miles de vehículos de calidad a precios inmejorables",
+  title = "Encuentra El Auto Perfecto",
+  subtitle = "",
   logoSrc = "/assets/mundocar-logo.png",
   showLogo = true,
 }) => {

@@ -139,7 +139,8 @@ const RentalCarsPage: React.FC = () => {
               {/* Ajusta SearchFilters para renta de autos. */}
               <SearchFilters
                 onSearch={handleSearch}
-                initialCategory="car_rental" // Nuevo tipo de categoría para renta de autos
+                initialCategory="car_rental"
+                lockCategory={true} // Nuevo tipo de categoría para renta de autos
                 // Puedes añadir otras props para que SearchFilters se adapte:
                 // showMakeModel={true}
                 // showYear={false}
@@ -260,7 +261,6 @@ const RentalCarsPage: React.FC = () => {
           </div>
         </main>
       </div>
-      <BlogPreview />
       <Footer />
     </div>
   );

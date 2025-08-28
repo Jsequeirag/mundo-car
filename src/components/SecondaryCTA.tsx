@@ -39,15 +39,11 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
       className={`relative py-16 text-center ${
         backgroundImage ? "" : `${sectionBgColor} ${sectionTextColor}`
       }`}
-      style={
-        backgroundImage
-          ? {
-              backgroundImage: `url(${backgroundImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }
-          : undefined
-      }
+      style={{
+        backgroundImage: "url('/assets/mundo/howItWorks.webp')", // Imagen clara generada en Sora
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
       {/* Overlay suave solo si hay imagen */}
       {backgroundImage && <div className="absolute inset-0 bg-white/20" />}
@@ -68,11 +64,11 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
           Publica tu anuncio de forma rápida, sencilla y llega a miles de
           compradores.
         </p>
-        <Link to={`${getCountryPath("inicio")}`}>
+        <Link to={`${getCountryPath("publicar")}`}>
           <Button
             className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg`}
           >
-            <PlusCircle className="h-6 w-6 mr-2" /> Publica tu Anuncio
+            <PlusCircle className="h-6 w-6 mr-2" /> Publicar Anuncio
           </Button>
         </Link>
       </div>

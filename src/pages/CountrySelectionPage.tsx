@@ -117,7 +117,7 @@ const CountrySelectionPage: React.FC = () => {
 };
 
 export default CountrySelectionPage;
-Nota:DEJAR "Encuenta el auto perfecto"
+/*Nota:DEJAR "Encuenta el auto perfecto"
 quitar miles..
 dejar los iconos al principio
 
@@ -166,4 +166,4 @@ cuando se publica/pedir el registro
 
 revisar la publicar de crautos/ solo pueden publicar sin pagar 5 fotos y un auto
 
-
+*/

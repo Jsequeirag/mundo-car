@@ -1,6 +1,6 @@
 import React from "react";
 import CarCard from "./CarCard";
-import { Car } from "@/data/mockCars";
+import { Car } from "@/data/mockUsedCars";
 
 interface CarGridProps {
   cars: Car[];
@@ -23,9 +23,7 @@ const CarGrid: React.FC<CarGridProps> = ({ cars, loading }) => {
   if (cars.length === 0) {
     return (
       <div className="text-center py-12">
-        {/* Changed background of the circle to a subtle brand-primary tint */}
         <div className="bg-brand-primary/10 rounded-full w-24 h-24 mx-auto mb-4 flex items-center justify-center">
-          {/* Changed emoji to a relevant icon from lucide-react and colored it with brand-primary */}
           <img
             src="/assets/car_icon_search.png"
             alt="No cars"
@@ -43,7 +41,11 @@ const CarGrid: React.FC<CarGridProps> = ({ cars, loading }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {cars.map((car) => (
-        <CarCard key={car.id} car={car} />
+        <CarCard
+          key={car.id}
+          car={car}
+          highlighted={car.highlighted || false}
+        />
       ))}
     </div>
   );

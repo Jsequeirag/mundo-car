@@ -255,7 +255,7 @@ const LubricentrosPage: React.FC = () => {
           </div>
         </main>
       </div>
-      <BlogPreview />
+
       <Footer />
     </div>
   );

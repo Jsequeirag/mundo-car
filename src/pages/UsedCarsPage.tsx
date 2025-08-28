@@ -4,7 +4,7 @@ import Header from "@/components/Header"; // Asegúrate de que las rutas de impo
 import SearchFilters from "@/components/SearchFilters";
 import CarGrid from "@/components/CarGrid";
 import Footer from "@/components/Footer";
-import { mockCars } from "@/data/mockCars";
+import { mockUsedCars } from "@/data/mockUsedCars";
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import BlogPreview from "@/components/BlogPreview";
 import Hero from "@/components/Hero"; // Reutilizaremos el Hero, pasándole diferentes props
@@ -15,6 +15,7 @@ import SecondaryCTA from "@/components/SecondaryCTA"; // CTA para vender coche
 import MobileSidebar from "../components/MobileSidebar";
 import { useParams, Outlet } from "react-router-dom";
 import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
+import AutoLotCarousel from "@/components/AutoLotCarousel";
 const UsedCarsPage: React.FC = () => {
   const adImagesTop = ["/assets/bridgestone.png"];
   const adImagesSide1 = [
@@ -29,7 +30,24 @@ const UsedCarsPage: React.FC = () => {
     "/assets/gulf.png",
     "/assets/mascarello.png",
   ];
-
+  const autoLots = [
+    {
+      id: "1",
+      name: "AutoLote El Sol",
+      image: "/assets/autolotes/autolote-premium.png",
+    },
+    {
+      id: "2",
+      name: "AutoLote La Estrella",
+      image: "/assets/autolotes/autolote-laestrella.png",
+    },
+    {
+      id: "3",
+      name: "AutoLote Premium",
+      image: "/assets/autolotes/autolote-premium.png",
+    },
+    // Agrega más autolotes
+  ];
   const [usedCars, setUsedCars] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +56,9 @@ const UsedCarsPage: React.FC = () => {
     setLoading(true);
     // Simula una llamada API
     setTimeout(() => {
-      const filteredCars = mockCars.filter((car) => car.condition === "usado");
+      const filteredCars = mockUsedCars.filter(
+        (car) => car.condition === "usado"
+      );
       setUsedCars(filteredCars);
       setLoading(false);
     }, 500); // Retraso para simular carga
@@ -48,40 +68,10 @@ const UsedCarsPage: React.FC = () => {
     setLoading(true);
     setTimeout(() => {
       // Filtra primero por condición "used" y luego aplica otros filtros
-      const filteredByCondition = mockCars.filter(
+      const filteredByCondition = mockUsedCars.filter(
         (car) => car.condition === "usado"
       );
       let results = filteredByCondition;
-
-      // Ejemplo de aplicación de filtros adicionales (puedes expandirlo)
-      /*if (filters.searchTerm) {
-        results = results.filter(
-          (car) =>
-            car.make.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-            car.model
-              .toLowerCase()
-              .includes(filters.searchTerm.toLowerCase()) ||
-            car.description
-              .toLowerCase()
-              .includes(filters.searchTerm.toLowerCase())
-        );
-      }
-      if (filters.priceRange) {
-        results = results.filter(
-          (car) =>
-            car.price >= filters.priceRange[0] &&
-            car.price <= filters.priceRange[1]
-        );
-      }
-      if (filters.yearRange) {
-        // Asegúrate de aplicar el filtro de año también
-        results = results.filter(
-          (car) =>
-            //   car.year >= filters.yearRange[0] && car.year <= filters.yearRange[1]
-            car
-        );
-      }*/
-      // ... otros filtros
 
       setUsedCars(results);
       setLoading(false);
@@ -124,22 +114,23 @@ const UsedCarsPage: React.FC = () => {
               slides={[
                 {
                   src: "/assets/bridgestone.png",
-                  title: "Durabilidad y estilo en cada kilómetro.",
-                  subtitle: "Rueda con confianza",
-                  ctaText: "Ver más",
+
                   ctaHref: "https://www.bridgestone.co.cr/",
                   badge: "",
                 },
                 {
                   src: "/assets/texaco.png",
-                  title: "Energía y servicio para tu camino.",
-                  subtitle: "Llena tu tanque, sigue tu rumbo.",
-                  ctaText: "Ver más",
+
                   ctaHref: "https://www.bridgestone.co.cr/",
                   badge: "",
                 },
               ]}
             />
+          </div>{" "}
+          <div className="flex flex-col sm:flex-row gap-8 mb-8 justify-center items-center">
+            <div className="flex-1">
+              <AutoLotCarousel autoLots={autoLots} />
+            </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
@@ -148,20 +139,19 @@ const UsedCarsPage: React.FC = () => {
               <SearchFilters
                 onSearch={handleSearch}
                 initialCategory="used_cars" // <-- Cambiado a "used_cars"
+                lockCategory={true}
               />
               <div className="lg:col-span-1 hidden lg:block space-y-8">
                 <AdvertisementCarouselLateral
                   ads={[
                     {
                       src: "/assets/meguiarSpray.jpg",
-                      title: "Innovación que impulsa el futuro.",
-                      ctaText: "Ver más",
+
                       ctaHref: "https://www.bridgestone.co.cr/",
                     },
                     {
                       src: "/assets/meguiar.jpg",
-                      title: "Potencia y elegancia en cada viaje",
-                      ctaText: "Ver más",
+
                       ctaHref: "https://meguiarsdirect.com/",
                     },
                   ]}
@@ -170,14 +160,12 @@ const UsedCarsPage: React.FC = () => {
                   ads={[
                     {
                       src: "/assets/castrolOil.png",
-                      title: "Innovación que impulsa el futuro.",
-                      ctaText: "Ver más",
+
                       ctaHref: "https://www.bridgestone.co.cr/",
                     },
                     {
                       src: "/assets/castrol.png",
-                      title: "Potencia y elegancia en cada viaje",
-                      ctaText: "Ver más",
+
                       ctaHref: "https://www.toyota.com/",
                     },
                   ]}
@@ -204,14 +192,10 @@ const UsedCarsPage: React.FC = () => {
                 ads={[
                   {
                     src: "/assets/castrolOil.png",
-                    title: "Innovación que impulsa el futuro.",
-                    ctaText: "Ver más",
                     ctaHref: "https://www.bridgestone.co.cr/",
                   },
                   {
                     src: "/assets/castrol.png",
-                    title: "Potencia y elegancia en cada viaje",
-                    ctaText: "Ver más",
                     ctaHref: "https://www.toyota.com/",
                   },
                 ]}
@@ -220,14 +204,10 @@ const UsedCarsPage: React.FC = () => {
                 ads={[
                   {
                     src: "/assets/meguiarSpray.jpg",
-                    title: "Innovación que impulsa el futuro.",
-                    ctaText: "Ver más",
                     ctaHref: "https://www.bridgestone.co.cr/",
                   },
                   {
                     src: "/assets/meguiar.jpg",
-                    title: "Potencia y elegancia en cada viaje",
-                    ctaText: "Ver más",
                     ctaHref: "https://meguiarsdirect.com/",
                   },
                 ]}
@@ -240,17 +220,11 @@ const UsedCarsPage: React.FC = () => {
                 slides={[
                   {
                     src: "/assets/tesla.svg",
-                    title: "Innovación que impulsa el futuro.",
-                    subtitle: "Energía sin límites.",
-                    ctaText: "Ir a sitio",
                     ctaHref: "https://www.bridgestone.co.cr/",
                     badge: "",
                   },
                   {
                     src: "/assets/toyotaxl.png",
-                    title: "Potencia y elegancia en cada viaje",
-                    subtitle: "Conduce tu destino.",
-                    ctaText: "Ver más",
                     ctaHref: "https://www.toyota.com/",
                     badge: "",
                   },
@@ -260,7 +234,6 @@ const UsedCarsPage: React.FC = () => {
           }
         </main>
       </div>
-      <BlogPreview />
       <Footer />
     </div>
   );
