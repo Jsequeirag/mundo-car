@@ -28,7 +28,7 @@ const BrandShowcase: React.FC<BrandShowcaseProps> = ({ brandLogos }) => {
               key={brand.name}
               to={
                 brand.type === "concesionario"
-                  ? `/${countryCode}/concesionario/${brand.id}`
+                  ? `/${countryCode}/autoBrandPage`
                   : `/${countryCode}/autolote/${brand.id}`
               }
               className="flex flex-col items-center justify-center p-4 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group w-[250px] h-[220px]"

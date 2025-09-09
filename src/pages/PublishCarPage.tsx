@@ -872,16 +872,14 @@ export default function PublishCarPage() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {hondurasMunicipalities.map(
-                                    (municipality) => (
-                                      <SelectItem
-                                        key={municipality}
-                                        value={municipality.toLowerCase()}
-                                      >
-                                        {municipality}
-                                      </SelectItem>
-                                    )
-                                  )}
+                                  {hondurasDepartment.map((municipality) => (
+                                    <SelectItem
+                                      key={municipality}
+                                      value={municipality.toLowerCase()}
+                                    >
+                                      {municipality}
+                                    </SelectItem>
+                                  ))}
                                 </SelectContent>
                               </Select>
                               <FormMessage />

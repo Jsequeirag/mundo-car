@@ -83,24 +83,6 @@ const AutoBrandPage: React.FC = () => {
       <div className="pt-[80px]">
         <AutoLotHero autoLot={featuredAutoLot} />
         <main className="mx-auto px-4 sm:px-6 py-8 sm:py-10">
-          <div className="flex flex-col gap-8 mb-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/bridgestone.png",
-
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-                {
-                  src: "/assets/texaco.png",
-
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-              ]}
-            />
-          </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8">
             <div className="lg:col-span-1 hidden lg:block space-y-6 sm:space-y-8">
               <SearchFilters
@@ -123,22 +105,8 @@ const AutoBrandPage: React.FC = () => {
                   },
                 ]}
               />{" "}
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/castrolOil.png",
-
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/castrol.png",
-
-                    ctaHref: "https://www.toyota.com/",
-                  },
-                ]}
-              />
             </div>
-            <div className="lg:col-span-2 xl:col-span-3" id="autolot-cars">
+            <div className="lg:col-span-3 xl:col-span-4" id="autolot-cars">
               {/* Contact Info Section */}
               {/* Contact Info Section */}
               <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -178,50 +146,6 @@ const AutoBrandPage: React.FC = () => {
               </div>
               <CarGrid cars={mockNewCars} loading={loading} />
             </div>
-            <div className="lg:col-span-1 hidden lg:block space-y-6 sm:space-y-8">
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/castrolOil.png",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/castrol.png",
-                    ctaHref: "https://www.toyota.com/",
-                  },
-                ]}
-              />{" "}
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/meguiarSpray.jpg",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/meguiar.jpg",
-                    ctaHref: "https://meguiarsdirect.com/",
-                  },
-                ]}
-              />{" "}
-            </div>
-          </div>
-          <div className="mt-6 sm:mt-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/tesla.svg",
-
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-                {
-                  src: "/assets/toyotaxl.png",
-
-                  ctaHref: "https://www.toyota.com/",
-                  badge: "",
-                },
-              ]}
-            />
           </div>
         </main>
       </div>

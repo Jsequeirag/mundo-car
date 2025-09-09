@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Car, MapPin, Package, Droplets } from "lucide-react";
+import { Car, MapPin, Package, PlusCircle } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,19 +21,6 @@ const autoLotes = [
     id: "3",
     name: "AutoLote Premium",
     image: "/assets/autolotes/autolote-premium.png",
-  },
-];
-
-const concesonarios = [
-  {
-    id: "1",
-    name: "Dimasa",
-    image: "/assets/concesionarios/dimasa.jpeg",
-  },
-  {
-    id: "2",
-    name: "Grupo Flores",
-    image: "/assets/concesionarios/flores.png",
   },
 ];
 
@@ -64,6 +51,13 @@ const CategoryShowcase: React.FC = () => {
       description: "Encuentra tu próximo vehículo de ocasión con confianza.",
     },
     {
+      label: "Publicar Anuncio",
+      icon: PlusCircle,
+      href: `/${countryCode}/inicio`,
+      image: "/assets/mundo/publishImage2.png",
+      description: "Publica tu anuncio de forma rápida y sencilla.",
+    },
+    {
       label: "Renta de Autos",
       icon: MapPin,
       href: `/${countryCode}/renta`,
@@ -76,13 +70,6 @@ const CategoryShowcase: React.FC = () => {
       href: `/${countryCode}/repuestos`,
       image: "/assets/categories/parts.jpg",
       description: "Repuestos originales y de calidad para tu vehículo.",
-    },
-    {
-      label: "Publicar Anuncio",
-      icon: Droplets,
-      href: `/${countryCode}/inicio`,
-      image: "/assets/categories/sellCar.jpeg",
-      description: "Publica tu anuncio de forma rápida y sencilla.",
     },
   ];
   // Componente interno para el carrusel reutilizable
@@ -331,13 +318,7 @@ const CategoryShowcase: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
           {/* Columna izquierda: Carrusel de AutoLotes (PC) */}
-          <div className="lg:block lg:col-span-1">
-            <CarouselComponent
-              dealers={autoLotes}
-              title="Autolotes"
-              subtitle="Descubre los mejores vehículos usados"
-            />
-          </div>
+          <div className="lg:block lg:col-span-1"></div>
 
           {/* Columna central: Categorías */}
           <div className="lg:col-span-4">
@@ -357,13 +338,18 @@ const CategoryShowcase: React.FC = () => {
                       onClick={() => navigate(item.href)}
                     >
                       <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-opacity flex flex-col justify-end p-4">
-                        <div className="flex items-center text-white mb-2">
-                          <Icon className="h-5 w-5 mr-2" />
-                          <h3 className="text-sm font-semibold truncate">
+                        <div
+                          className={`flex items-center text-white mb-2  ${
+                            item.label === "Publicar Anuncio" &&
+                            "bg-brand-primary rounded-full px-1 py-1"
+                          }`}
+                        >
+                          <Icon className={`h-5 w-5 mr-2 `} />
+                          <h3 className=" font-semibold truncate">
                             {item.label}
                           </h3>
                         </div>
-                        <p className="text-white text-xs opacity-90 group-hover:opacity-100 transition-opacity line-clamp-2">
+                        <p className="text-white text-sm opacity-90 group-hover:opacity-100 transition-opacity line-clamp-2">
                           {item.description}
                         </p>
                       </div>
@@ -372,15 +358,6 @@ const CategoryShowcase: React.FC = () => {
                 })}
               </div>
             </div>
-          </div>
-
-          {/* Columna derecha: Carrusel de Concesionarios (PC) */}
-          <div className="lg:block lg:col-span-1">
-            <CarouselComponent
-              dealers={concesonarios}
-              title="Concesionarios"
-              subtitle="Explora opciones de compra certificadas"
-            />
           </div>
         </div>
       </div>

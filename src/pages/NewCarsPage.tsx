@@ -103,6 +103,12 @@ const NewCarsPage: React.FC = () => {
           subtitle="Explora la más reciente colección de vehículos 0 km."
           // Si tu Hero acepta showSearch, puedes pasarlo aquí
           // showSearch={false} // O true, según necesites el buscador en el hero para esta página
+        />{" "}
+        <SecondaryCTA
+          sectionTextColor="brand-primary"
+          buttonBgColor="bg-brand-primary"
+          sectionBgColor="bg-white"
+          buttonTextColor="bg-brand-primary"
         />
         <BrandShowCase brandLogos={brandLogos} />
         {/* Aquí podrías poner el HowItWorks o SecondaryCTA si aplican también a esta página */}

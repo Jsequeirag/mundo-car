@@ -64,7 +64,7 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
           Publica tu anuncio de forma rápida, sencilla y llega a miles de
           compradores.
         </p>
-        <Link to={`${getCountryPath("publicar")}`}>
+        <Link to={`${getCountryPath("inicio")}`}>
           <Button
             className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg`}
           >
