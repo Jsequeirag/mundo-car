@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { LucideMail, MessageCircle, ArrowLeft } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const AutoDetailsHero: React.FC = () => {
@@ -28,29 +28,7 @@ const AutoDetailsHero: React.FC = () => {
           </p>
           <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Button
-              className="inline-flex items-center gap-2 bg-gray-600 text-white hover:bg-gray-700 font-semibold px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
-              aria-label="Volver a la página anterior"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5" /> Regresar
-            </Button>{" "}
-            <div className="flex items-center justify-center rounded-md bg-slate-500/40 px-1">
-              <p className="font-bold">Compartir:</p>
-            </div>
-            <Button
-              className="inline-flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700 font-semibold px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
-              aria-label="Compartir Ford Ranger XL 2025 en Facebook"
-              onClick={() =>
-                window.open(
-                  `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
-                  "_blank"
-                )
-              }
-            >
-              <LucideMail className="w-4 sm:w-5 h-4 sm:h-5" /> Facebook
-            </Button>
-            <Button
-              className="inline-flex items-center gap-2 bg-green-600 text-white hover:bg-green-700 font-semibold px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center gap-2 bg-red-500 text-white hover:bg-red-600 font-semibold px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
               aria-label="Compartir Ford Ranger XL 2025 en WhatsApp"
               onClick={() =>
                 window.open(
@@ -59,7 +37,7 @@ const AutoDetailsHero: React.FC = () => {
                 )
               }
             >
-              <MessageCircle className="w-4 sm:w-5 h-4 sm:h-5" /> WhatsApp
+              <Heart className="w-4 sm:w-5 h-4 sm:h-5" /> Agregar a favoritos
             </Button>
           </div>
         </div>

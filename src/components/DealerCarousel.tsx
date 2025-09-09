@@ -4,7 +4,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-type AutoLot = {
+type Dealer = {
   id: string;
   name: string;
   image: string;
@@ -14,8 +14,8 @@ type AutoLot = {
   badge?: string;
 };
 
-interface AutoLotCarouselProps {
-  autoLots: AutoLot[];
+interface DealerCarouselProps {
+  dealers: Dealer[];
   interval?: number; // ms (default 5000)
   showIndicators?: boolean; // puntos de paginación
   showArrows?: boolean; // flechas
@@ -25,8 +25,8 @@ interface AutoLotCarouselProps {
   onSlideChange?: (index: number) => void;
 }
 
-const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
-  autoLots,
+const DealerCarousel: React.FC<DealerCarouselProps> = ({
+  dealers,
   interval = 5000,
   showIndicators = true,
   showArrows = true,
@@ -44,21 +44,21 @@ const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
   const { countryCode } = useParams<{ countryCode?: string }>();
   // Preload next image
   useEffect(() => {
-    const next = (index + 1) % autoLots.length;
+    const next = (index + 1) % dealers.length;
     const img = new Image();
-    img.src = autoLots[next]?.image ?? "";
-  }, [index, autoLots]);
+    img.src = dealers[next]?.image ?? "";
+  }, [index, dealers]);
 
   // Autoplay with pause on hover/visibility
   useEffect(() => {
-    const tick = () => setIndex((i) => (i + 1) % autoLots.length);
-    if (!paused && autoLots.length > 1) {
+    const tick = () => setIndex((i) => (i + 1) % dealers.length);
+    if (!paused && dealers.length > 1) {
       timerRef.current = window.setTimeout(tick, interval) as unknown as number;
     }
     return () => {
       if (timerRef.current) window.clearTimeout(timerRef.current);
     };
-  }, [index, paused, interval, autoLots.length]);
+  }, [index, paused, interval, dealers.length]);
 
   useEffect(() => {
     const onVisibility = () => setPaused(document.hidden);
@@ -76,7 +76,7 @@ const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
   }, [index, interval, onSlideChange, showProgress]);
 
   const go = (to: number) => {
-    setIndex(((to % autoLots.length) + autoLots.length) % autoLots.length);
+    setIndex(((to % dealers.length) + dealers.length) % dealers.length);
   };
   const prev = () => go(index - 1);
   const next = () => go(index + 1);
@@ -108,8 +108,8 @@ const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
     };
   }, [index]);
 
-  const hasLots = autoLots && autoLots.length > 0;
-  const current = useMemo(() => autoLots[index], [autoLots, index]);
+  const hasLots = dealers && dealers.length > 0;
+  const current = useMemo(() => dealers[index], [dealers, index]);
 
   if (!hasLots) return null;
 
@@ -135,7 +135,7 @@ const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
           aria-roledescription="carousel"
           aria-label="Autolotes patrocinados"
         >
-          {autoLots.map((lot, i) => (
+          {dealers.map((lot, i) => (
             <div
               key={lot.id}
               className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
@@ -204,7 +204,7 @@ const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
             </div>
           ))}
           {/* Progress bar */}
-          {showProgress && autoLots.length > 1 && (
+          {showProgress && dealers.length > 1 && (
             <div className="absolute left-0 right-0 bottom-0 h-1 bg-white/20">
               <div
                 ref={progressRef}
@@ -214,7 +214,7 @@ const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
             </div>
           )}
           {/* Arrows */}
-          {showArrows && autoLots.length > 1 && (
+          {showArrows && dealers.length > 1 && (
             <>
               <button
                 aria-label="Slide anterior"
@@ -233,9 +233,9 @@ const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
             </>
           )}
           {/* Indicators */}
-          {showIndicators && autoLots.length > 1 && (
+          {showIndicators && dealers.length > 1 && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
-              {autoLots.map((_, i) => (
+              {dealers.map((_, i) => (
                 <button
                   key={i}
                   aria-label={`Ir al autolote ${i + 1}`}
@@ -255,4 +255,4 @@ const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
   );
 };
 
-export default AutoLotCarousel;
+export default DealerCarousel;

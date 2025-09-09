@@ -120,7 +120,7 @@ const AdvertisementCarousel: React.FC<AdvertisementCarouselProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden ${rounded} ${heightClass} group`}
+      className={`relative overflow-hidden  ${rounded} ${heightClass} group`}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -160,7 +160,7 @@ const AdvertisementCarousel: React.FC<AdvertisementCarouselProps> = ({
       ))}
 
       {/* Contenido encima del slide activo */}
-      <div className="pointer-events-none absolute inset-0 flex items-end">
+      <div className="pointer-events-none absolute inset-0 flex items-end ">
         <div className="w-full p-4 sm:p-6 md:p-8">
           {/* Badge */}
           {current.badge && (

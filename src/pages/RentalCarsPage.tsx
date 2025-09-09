@@ -111,28 +111,6 @@ const RentalCarsPage: React.FC = () => {
         />
         {/* Sección de CTA para empresas de renta de autos */}
         <main className="mx-auto px-4 py-10">
-          <div className="mb-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/bridgestone.png",
-                  title: "Durabilidad y estilo en cada kilómetro.",
-                  subtitle: "Rueda con confianza",
-                  ctaText: "Ver más",
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-                {
-                  src: "/assets/texaco.png",
-                  title: "Energía y servicio para tu camino.",
-                  subtitle: "Llena tu tanque, sigue tu rumbo.",
-                  ctaText: "Ver más",
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-              ]}
-            />
-          </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
             <div className="lg:col-span-1 space-y-8">
@@ -168,27 +146,11 @@ const RentalCarsPage: React.FC = () => {
                     },
                   ]}
                 />{" "}
-                <AdvertisementCarouselLateral
-                  ads={[
-                    {
-                      src: "/assets/castrolOil.png",
-                      title: "Innovación que impulsa el futuro.",
-                      ctaText: "Ver más",
-                      ctaHref: "https://www.bridgestone.co.cr/",
-                    },
-                    {
-                      src: "/assets/castrol.png",
-                      title: "Potencia y elegancia en cada viaje",
-                      ctaText: "Ver más",
-                      ctaHref: "https://www.toyota.com/",
-                    },
-                  ]}
-                />
               </div>
             </div>
 
             {/* Columna Central: Grid de Autos de Renta */}
-            <div className="lg:col-span-2 xl:col-span-3">
+            <div className="lg:col-span-3 xl:col-span-4">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
                   Autos de Renta Disponibles
@@ -200,10 +162,8 @@ const RentalCarsPage: React.FC = () => {
               <RentalCarGrid cars={rentalCars} loading={loading} />
             </div>
 
-            {/* Columna Derecha: Anuncio Lateral 2 */}
+            {/*  <AdvertisementCarouselLateral
             <div className="lg:col-span-1 hidden lg:block space-y-8">
-              {" "}
-              <AdvertisementCarouselLateral
                 ads={[
                   {
                     src: "/assets/castrolOil.png",
@@ -234,8 +194,8 @@ const RentalCarsPage: React.FC = () => {
                     ctaHref: "https://meguiarsdirect.com/",
                   },
                 ]}
-              />{" "}
-            </div>
+              />
+            </div>*/}
           </div>{" "}
           <div className="mt-8">
             <AdvertisementCarousel

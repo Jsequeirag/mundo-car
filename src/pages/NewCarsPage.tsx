@@ -34,7 +34,27 @@ const NewCarsPage: React.FC = () => {
   const [newCars, setNewCars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Estado para el menú móvil
-
+  const brandLogos = [
+    {
+      id: 1,
+      name: "HONDA",
+      src: "/assets/brands/honda.svg",
+      type: "concesionario",
+    },
+    {
+      id: 2,
+      name: "GRUPO FLORES",
+      src: "/assets/concesionarios/flores.png",
+      type: "concesionario",
+    }, // Asegúrate de tener estas imágenes
+    {
+      id: 3,
+      name: "DIMASA",
+      src: "/assets/concesionarios/dimasa.jpeg",
+      type: "concesionario",
+    },
+    // Añade más marcas según necesites
+  ];
   // Filtra los autos nuevos cuando el componente se monta
   useEffect(() => {
     setLoading(true);
@@ -83,8 +103,8 @@ const NewCarsPage: React.FC = () => {
           subtitle="Explora la más reciente colección de vehículos 0 km."
           // Si tu Hero acepta showSearch, puedes pasarlo aquí
           // showSearch={false} // O true, según necesites el buscador en el hero para esta página
-        />{" "}
-        <BrandShowCase />
+        />
+        <BrandShowCase brandLogos={brandLogos} />
         {/* Aquí podrías poner el HowItWorks o SecondaryCTA si aplican también a esta página */}
         {/* <HowItWorks /> */}
         {/* <SecondaryCTA
@@ -98,22 +118,6 @@ const NewCarsPage: React.FC = () => {
           buttonLink="/publicar"
         /> */}
         <main className="mx-auto px-6 py-10">
-          <div className="mb-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/bridgestone.png",
-
-                  badge: "",
-                },
-                {
-                  src: "/assets/texaco.png",
-
-                  badge: "",
-                },
-              ]}
-            />
-          </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
             <div className="lg:col-span-1 space-y-8">
@@ -134,21 +138,11 @@ const NewCarsPage: React.FC = () => {
                     },
                   ]}
                 />
-                <AdvertisementCarouselLateral
-                  ads={[
-                    {
-                      src: "/assets/castrolOil.png",
-                    },
-                    {
-                      src: "/assets/castrol.png",
-                    },
-                  ]}
-                />
               </div>
             </div>
 
             {/* Columna Central: Grid de Carros (ocupa más espacio) */}
-            <div className="lg:col-span-2 xl:col-span-3">
+            <div className="lg:col-span-3 xl:col-span-4">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
                   Vehículos Nuevos Destacados
@@ -161,7 +155,7 @@ const NewCarsPage: React.FC = () => {
             </div>
 
             {/* Columna Derecha: Anuncio Lateral 2 */}
-            <div className="lg:col-span-1 hidden lg:block space-y-8">
+            {/*<div className="lg:col-span-1 hidden lg:block space-y-8">
               <AdvertisementCarouselLateral
                 ads={[
                   {
@@ -182,7 +176,7 @@ const NewCarsPage: React.FC = () => {
                   },
                 ]}
               />{" "}
-            </div>
+            </div>*/}
           </div>{" "}
           {/* Anuncio Banner Inferior */}
           {

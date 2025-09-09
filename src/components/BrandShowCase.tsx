@@ -1,55 +1,68 @@
-// src/components/BrandShowcase.tsx
 import React from "react";
+import { Link, useParams } from "react-router-dom";
 
-const BrandShowcase: React.FC = () => {
-  // Aquí puedes listar las rutas a los logos de tus marcas
-  const brandLogos = [
-    { name: "Toyota", src: "/assets/brands/toyota.png" }, // Asegúrate de tener estas imágenes
-    { name: "Honda", src: "/assets/brands/honda.svg" },
-    { name: "Ford", src: "/assets/brands/ford.png" },
-    { name: "Nissan", src: "/assets/brands/nissan.png" },
-    { name: "Hyundai", src: "/assets/brands/hyundai.gif" },
-    { name: "Kia", src: "/assets/brands/kia.svg" },
-    { name: "Chevrolet", src: "/assets/brands/chevrolet.png" },
-    { name: "BMW", src: "/assets/brands/BMW.svg" },
-    { name: "Mercedes-Benz", src: "/assets/brands/mercedes.png" },
-    { name: "Audi", src: "/assets/brands/audi.png" },
-    // Añade más marcas según necesites
-  ];
+interface Brand {
+  id: number;
+  name: string;
+  src: string;
+  type: string;
+}
 
+interface BrandShowcaseProps {
+  brandLogos: Brand[];
+}
+
+const BrandShowcase: React.FC<BrandShowcaseProps> = ({ brandLogos }) => {
+  const { countryCode } = useParams<{ countryCode?: string }>();
   return (
-    <section className="py-10 md:py-16 bg-white">
-      {" "}
-      {/* Fondo blanco o claro para contrastar con el Hero */}
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8">
-          Explora por Marca
+    <section className="py-12 md:py-20 bg-gray-50">
+      <div className="container mx-auto px-6 text-center">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-10 tracking-tight">
+          {brandLogos[0].type === "concesionario"
+            ? " Descubre Nuestros Concesionarios"
+            : " Descubre Nuestros Autolotes"}
         </h2>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 gap-4 md:gap-6 items-center justify-items-center">
+        <div className="flex flex-wrap justify-center gap-6">
           {brandLogos.map((brand) => (
-            <div
+            <Link
               key={brand.name}
-              className="flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer group"
+              to={
+                brand.type === "concesionario"
+                  ? `/${countryCode}/concesionario/${brand.id}`
+                  : `/${countryCode}/autolote/${brand.id}`
+              }
+              className="flex flex-col items-center justify-center p-4 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group w-[250px] h-[220px]"
+              onClick={(e) => {
+                e.currentTarget.classList.add("click-effect");
+                setTimeout(() => {
+                  e.currentTarget.classList.remove("click-effect");
+                }, 400);
+              }}
             >
               <img
                 src={brand.src}
                 alt={`${brand.name} Logo`}
-                width={80} // Ancho por defecto
-                height={40} // Alto por defecto
-                className="w-16 h-auto sm:w-20 md:w-24 object-contain group-hover:scale-105 transition-transform duration-200" // Ajusta el tamaño aquí
+                width={140}
+                height={90}
+                className="w-32 h-auto object-contain group-hover:scale-110 transition-transform duration-300"
               />
-              {/* Puedes añadir el nombre de la marca si lo deseas, o dejar solo el logo */}
-              {/* <span className="mt-2 text-xs sm:text-sm text-gray-600 font-medium group-hover:text-brand-primary">
+              <span className="mt-4 text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
                 {brand.name}
-              </span> */}
-            </div>
+              </span>
+              <style>
+                {`
+                  .click-effect {
+                    animation: clickAnimation 0.3s ease forwards;
+                  }
+                  @keyframes clickAnimation {
+                    0% { transform: scale(1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+                    10% { transform: scale(0.95); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); }
+                    100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+                  }
+                `}
+              </style>
+            </Link>
           ))}
-        </div>
-        {/* Opcional: Un botón para ver todas las marcas */}
-        <div className="mt-10">
-          <button className="bg-brand-primary text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-brand-primary/90 transition-colors">
-            Ver Todas las Marcas
-          </button>
         </div>
       </div>
     </section>

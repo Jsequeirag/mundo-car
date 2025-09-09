@@ -21,6 +21,7 @@ import {
   DollarSign,
   MapPin,
   Calendar,
+  Facebook,
 } from "lucide-react";
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral";
@@ -66,6 +67,7 @@ const AutoDetailPage: React.FC = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
   const { countryCode } = useParams<{ countryCode?: string }>();
   const carDetails = {
     name: "LUXURY CAR",
@@ -147,7 +149,33 @@ const AutoDetailPage: React.FC = () => {
     "Control crucero",
     "Bluetooth",
   ]);
+  const shareUrl = window.location.href; // URL to share (current page)
+  const shareText = `¡Mira este increíble vehículo en ${carDetails.autoLotName}!`;
 
+  const handleShareWhatsApp = () => {
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
+      "_blank"
+    );
+  };
+
+  const handleShareFacebook = () => {
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shareUrl
+      )}`,
+      "_blank"
+    );
+  };
+
+  const handleShareEmail = () => {
+    window.open(
+      `mailto:?subject=${encodeURIComponent(
+        "Mira este vehículo!"
+      )}&body=${encodeURIComponent(shareText + " " + shareUrl)}`,
+      "_blank"
+    );
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
@@ -155,52 +183,8 @@ const AutoDetailPage: React.FC = () => {
       <div className="pt-[80px]">
         <AutoDetailsHero />
         <main className="mx-auto px-4 sm:px-6 py-8 sm:py-10">
-          <div className="mb-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/bridgestone.png",
-                  ctaText: "",
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-                {
-                  src: "/assets/texaco.png",
-                  ctaText: "",
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-              ]}
-            />
-          </div>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            <div className="lg:col-span-1 hidden lg:block space-y-6">
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/meguiarSpray.jpg",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/meguiar.jpg",
-                    ctaHref: "https://meguiarsdirect.com/",
-                  },
-                ]}
-              />
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/castrolOil.png",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/castrol.png",
-                    ctaHref: "https://www.toyota.com/",
-                  },
-                ]}
-              />
-            </div>
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-5">
               {/* Car Images Section */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
                 {carImages.map((item, index) => (
@@ -268,41 +252,73 @@ const AutoDetailPage: React.FC = () => {
                   )}
                 </AutoDetailModal>
               )}
-              {/* Contact Info Section */}
-              <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
-                  Información del Contacto
-                </h2>{" "}
-                <div className="flex flex-col  mb-4">
-                  <h2 className="  font-semibold text-lg text-gray-900  border-gray-200 ">
-                    Autolote: {carDetails.autoLotName}
+              <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex flex-col sm:flex-row gap-6">
+                {/* Contact Info Section */}
+                <div className="flex-1">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
+                    Información del Contacto
                   </h2>
+                  <div className="flex flex-col mb-4">
+                    <h3 className="font-semibold text-lg text-gray-900 border-gray-200">
+                      Autolote: {carDetails.autoLotName}
+                    </h3>
+                  </div>
+                  <p className="mb-2">
+                    <LucidePhone className="inline mr-2 h-5 w-5 text-gray-600" />{" "}
+                    Teléfono: {carDetails.phone}
+                  </p>
+                  <p className="mb-2">
+                    <MessageCircle className="inline mr-2 h-5 w-5 text-gray-600" />{" "}
+                    WhatsApp: {carDetails.whatsapp}
+                  </p>
+                  <p className="mb-4">
+                    <MapPin className="inline mr-2 h-5 w-5 text-gray-600" />{" "}
+                    Dirección: {carDetails.address}
+                  </p>
+                  <div className="">
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition-colors duration-300  w-[200px]">
+                      <LucideMail className="mr-2 h-5 w-5" /> Enviar Email
+                    </button>
+                    <button className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition-colors duration-300 mt-2  w-[200px]">
+                      <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
+                    </button>
+                    <button
+                      onClick={() => navigate(`/hr/autolote/${3}`)}
+                      className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-700 transition-colors duration-300 mt-2 w-[200px]"
+                    >
+                      <MapPin className="mr-2 h-5 w-5" /> Ver Autolote
+                    </button>
+                  </div>
                 </div>
-                <p>
-                  <LucidePhone className="inline mr-2 mb-2" /> Teléfono:{" "}
-                  {carDetails.phone}
-                </p>
-                <p>
-                  <MessageCircle className="inline mr-2 mb-2" /> WhatsApp:{" "}
-                  {carDetails.whatsapp}
-                </p>
-                <p>
-                  <MapPin className="inline mr-2 mb-2" /> Dirección:{" "}
-                  {carDetails.address}
-                </p>
-                <div className="mt-4">
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center mb-4">
-                    <LucideMail className="mr-2" /> Enviar Email
-                  </button>
-                  <button className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center  mb-4">
-                    <MessageCircle className="mr-2" /> WhatsApp
-                  </button>
-                  <button
-                    onClick={() => navigate(`/hr/autolote/${3}`)}
-                    className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-700 transition-colors duration-300"
-                  >
-                    <MapPin className="mr-2" /> Ver Autolote
-                  </button>
+
+                {/* Share Section */}
+                <div className="flex-1">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
+                    Compartir Vehículo
+                  </h2>
+                  <div className="">
+                    <button
+                      onClick={handleShareWhatsApp}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition-colors duration-300 "
+                    >
+                      <MessageCircle className="mr-2 h-5 w-5" /> Compartir por
+                      WhatsApp
+                    </button>
+                    <button
+                      onClick={handleShareFacebook}
+                      className="bg-blue-800 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-900 transition-colors duration-300 mt-2"
+                    >
+                      <Facebook className="mr-2 h-5 w-5" /> Compartir por
+                      Facebook
+                    </button>
+                    <button
+                      onClick={handleShareEmail}
+                      className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-700 transition-colors duration-300 mt-2"
+                    >
+                      <LucideMail className="mr-2 h-5 w-5" /> Compartir por
+                      Email
+                    </button>
+                  </div>
                 </div>
               </div>
               {/* Specifications Section */}
@@ -355,48 +371,6 @@ const AutoDetailPage: React.FC = () => {
                 <CarGrid cars={mockUsedCars} loading={false} />
               </div>
             </div>
-            <div className="lg:col-span-1 hidden lg:block space-y-6">
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/castrolOil.png",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/castrol.png",
-                    ctaHref: "https://www.toyota.com/",
-                  },
-                ]}
-              />
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/meguiarSpray.jpg",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/meguiar.jpg",
-                    ctaHref: "https://meguiarsdirect.com/",
-                  },
-                ]}
-              />
-            </div>
-          </div>
-          <div className="mt-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/tesla.svg",
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-                {
-                  src: "/assets/toyotaxl.png",
-                  ctaHref: "https://www.toyota.com/",
-                  badge: "",
-                },
-              ]}
-            />
           </div>
         </main>
       </div>

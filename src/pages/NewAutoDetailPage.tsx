@@ -21,6 +21,7 @@ import {
   DollarSign,
   MapPin,
   Calendar,
+  Facebook,
 } from "lucide-react";
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral";
@@ -143,7 +144,33 @@ const NewAutoDetailPage: React.FC = () => {
     "Garantía de fábrica",
     "Asistente de conducción autónoma",
   ]);
+  const shareUrl = window.location.href; // URL to share (current page)
+  const shareText = `¡Mira este increíble vehículo en ${carDetails.autoLotName}!`;
 
+  const handleShareWhatsApp = () => {
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
+      "_blank"
+    );
+  };
+
+  const handleShareFacebook = () => {
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shareUrl
+      )}`,
+      "_blank"
+    );
+  };
+
+  const handleShareEmail = () => {
+    window.open(
+      `mailto:?subject=${encodeURIComponent(
+        "Mira este vehículo!"
+      )}&body=${encodeURIComponent(shareText + " " + shareUrl)}`,
+      "_blank"
+    );
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
@@ -151,56 +178,9 @@ const NewAutoDetailPage: React.FC = () => {
       <div className="pt-[80px]">
         <AutoDetailsHero />
         <main className="mx-auto px-4 sm:px-6 py-8 sm:py-10">
-          <div className="mb-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/bridgestone.png",
-
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-                {
-                  src: "/assets/texaco.png",
-
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-              ]}
-            />
-          </div>
+          <div className="mb-8"></div>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            <div className="lg:col-span-1 hidden lg:block space-y-6">
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/meguiarSpray.jpg",
-
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/meguiar.jpg",
-
-                    ctaHref: "https://meguiarsdirect.com/",
-                  },
-                ]}
-              />{" "}
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/castrolOil.png",
-
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/castrol.png",
-
-                    ctaHref: "https://www.toyota.com/",
-                  },
-                ]}
-              />
-            </div>
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-5">
               {/* Car Images Section */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
                 {carImages.map((item, index) => (
@@ -269,41 +249,83 @@ const NewAutoDetailPage: React.FC = () => {
                 </AutoDetailModal>
               )}
               {/* Contact Info Section */}
-              <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
-                  Información de Contacto
-                </h2>{" "}
-                <div className="flex flex-col  mb-4">
-                  <h2 className="  font-semibold text-lg text-gray-900   border-gray-200 ">
-                    Concesionario: Dimasa
+              <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex flex-col sm:flex-row gap-6">
+                {" "}
+                {/* Contact Info Section */}
+                <div className="flex-1">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
+                    Información de Contacto
+                  </h2>{" "}
+                  <div className="flex flex-col  mb-4">
+                    <h2 className="  font-semibold text-lg text-gray-900   border-gray-200 ">
+                      Concesionario: Dimasa
+                    </h2>
+                    <h2 className="  font-semibold text-lg text-gray-900  border-gray-200 ">
+                      Marca: Ford
+                    </h2>
+                  </div>
+                  {carDetails.agencies.map((agency, index) => (
+                    <div key={index} className="mb-4 last:mb-0">
+                      <p className="font-semibold text-lg">{agency.name}</p>
+                      <p>
+                        <LucidePhone className="inline mr-2 mb-2" /> Teléfono:{" "}
+                        {agency.phone}
+                      </p>
+                      <p>
+                        <MessageCircle className="inline mr-2 mb-2" /> WhatsApp:{" "}
+                        {agency.whatsapp}
+                      </p>
+                      <p>
+                        <MapPin className="inline mr-2 mb-2" /> Dirección:{" "}
+                        {agency.address}
+                      </p>
+
+                      <div className="flex flex-col gap-3">
+                        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition-colors duration-300 w-[250px] mt-2">
+                          <LucideMail className="mr-2 h-5 w-5" /> Enviar Email
+                        </button>
+                        <button className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition-colors duration-300 w-[250px]">
+                          <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
+                        </button>{" "}
+                        <button
+                          onClick={() => navigate(`/hr/autoBrandPage`)}
+                          className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center mt-2 hover:bg-gray-700 transition-colors duration-300 w-[250px]"
+                        >
+                          <MapPin className="mr-2" /> Ver Agencia
+                        </button>{" "}
+                      </div>
+                    </div>
+                  ))}{" "}
+                </div>{" "}
+                <div className="flex-1">
+                  {" "}
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
+                    Compartir Vehículo
                   </h2>
-                  <h2 className="  font-semibold text-lg text-gray-900  border-gray-200 ">
-                    Marca: Ford
-                  </h2>
-                </div>
-                {carDetails.agencies.map((agency, index) => (
-                  <div key={index} className="mb-4 last:mb-0">
-                    <p className="font-semibold text-lg">{agency.name}</p>
-                    <p>
-                      <LucidePhone className="inline mr-2 mb-2" /> Teléfono:{" "}
-                      {agency.phone}
-                    </p>
-                    <p>
-                      <MessageCircle className="inline mr-2 mb-2" /> WhatsApp:{" "}
-                      {agency.whatsapp}
-                    </p>
-                    <p>
-                      <MapPin className="inline mr-2 mb-2" /> Dirección:{" "}
-                      {agency.address}
-                    </p>
+                  <div className="">
                     <button
-                      onClick={() => navigate(`/hr/autoBrandPage`)}
-                      className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center mt-2 hover:bg-gray-700 transition-colors duration-300"
+                      onClick={handleShareWhatsApp}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition-colors duration-300"
                     >
-                      <MapPin className="mr-2" /> Ver Agencia
+                      <MessageCircle className="mr-2 h-5 w-5" /> Compartir por
+                      WhatsApp
+                    </button>
+                    <button
+                      onClick={handleShareFacebook}
+                      className="bg-blue-800 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-900 transition-colors duration-300 mt-2"
+                    >
+                      <Facebook className="mr-2 h-5 w-5" /> Compartir por
+                      Facebook
+                    </button>
+                    <button
+                      onClick={handleShareEmail}
+                      className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-700 transition-colors duration-300 mt-2"
+                    >
+                      <LucideMail className="mr-2 h-5 w-5" /> Compartir por
+                      Email
                     </button>
                   </div>
-                ))}{" "}
+                </div>
               </div>
               {/* Specifications Section */}
               <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -355,48 +377,6 @@ const NewAutoDetailPage: React.FC = () => {
                 <CarGrid cars={mockNewCars} loading={false} />
               </div>
             </div>
-            <div className="lg:col-span-1 hidden lg:block space-y-6">
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/castrolOil.png",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/castrol.png",
-                    ctaHref: "https://www.toyota.com/",
-                  },
-                ]}
-              />{" "}
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/meguiarSpray.jpg",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/meguiar.jpg",
-                    ctaHref: "https://meguiarsdirect.com/",
-                  },
-                ]}
-              />{" "}
-            </div>
-          </div>
-          <div className="mt-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/tesla.svg",
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-                {
-                  src: "/assets/toyotaxl.png",
-                  ctaHref: "https://www.toyota.com/",
-                  badge: "",
-                },
-              ]}
-            />
           </div>
         </main>
       </div>

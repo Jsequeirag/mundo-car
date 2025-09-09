@@ -119,7 +119,7 @@ export const mockUsedCars: Car[] = [
       "Honda Civic 2023, en excelente estado, único dueño y bajo kilometraje.",
     condition: "usado",
   },
-  {
+  /*{
     id: "9", // Changed from "3" to avoid duplicate ID
     make: "Nissan",
     model: "Kicks",
@@ -159,5 +159,5 @@ export const mockUsedCars: Car[] = [
       "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=300&fit=crop",
     condition: "usado",
     description: "Elegant Mercedes C-Class with luxury interior",
-  },
+  },*/
 ];

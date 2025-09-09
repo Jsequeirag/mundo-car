@@ -16,6 +16,7 @@ import MobileSidebar from "../components/MobileSidebar";
 import { useParams, Outlet } from "react-router-dom";
 import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
 import AutoLotCarousel from "@/components/AutoLotCarousel";
+import BrandShowCase from "@/components/BrandShowCase";
 const UsedCarsPage: React.FC = () => {
   const adImagesTop = ["/assets/bridgestone.png"];
   const adImagesSide1 = [
@@ -50,7 +51,27 @@ const UsedCarsPage: React.FC = () => {
   ];
   const [usedCars, setUsedCars] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const brandLogos = [
+    {
+      id: "1",
+      name: "AutoLote El Sol",
+      src: "/assets/autolotes/logo-elsol.png",
+      type: "autolotes",
+    },
+    {
+      id: "2",
+      name: "AutoLote La Estrella",
+      src: "/assets/autolotes/logo-laestrella.png",
+      type: "autolotes",
+    },
+    {
+      id: "3",
+      name: "AutoLote Premium",
+      src: "/assets/autolotes/logo-premium.png",
+      type: "autolotes",
+    },
+    // Añade más marcas según necesites
+  ];
   // Filtra los autos usados cuando el componente se monta
   useEffect(() => {
     setLoading(true);
@@ -108,30 +129,8 @@ const UsedCarsPage: React.FC = () => {
           sectionBgColor="bg-white"
           buttonTextColor="bg-brand-primary"
         />
+        <BrandShowCase brandLogos={brandLogos} />
         <main className="mx-auto px-6 py-10">
-          <div className="mb-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/bridgestone.png",
-
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-                {
-                  src: "/assets/texaco.png",
-
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
-                },
-              ]}
-            />
-          </div>{" "}
-          <div className="flex flex-col sm:flex-row gap-8 mb-8 justify-center items-center">
-            <div className="flex-1">
-              <AutoLotCarousel autoLots={autoLots} />
-            </div>
-          </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
             <div className="lg:col-span-1 space-y-8">
@@ -156,25 +155,11 @@ const UsedCarsPage: React.FC = () => {
                     },
                   ]}
                 />{" "}
-                <AdvertisementCarouselLateral
-                  ads={[
-                    {
-                      src: "/assets/castrolOil.png",
-
-                      ctaHref: "https://www.bridgestone.co.cr/",
-                    },
-                    {
-                      src: "/assets/castrol.png",
-
-                      ctaHref: "https://www.toyota.com/",
-                    },
-                  ]}
-                />
               </div>
             </div>
 
             {/* Columna Central: Grid de Carros (ocupa más espacio) */}
-            <div className="lg:col-span-2 xl:col-span-3">
+            <div className="lg:col-span-3 xl:col-span-4">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
                   Vehículos Usados Destacados
@@ -187,7 +172,7 @@ const UsedCarsPage: React.FC = () => {
             </div>
 
             {/* Columna Derecha: Anuncio Lateral 2 */}
-            <div className="lg:col-span-1 hidden lg:block space-y-8">
+            {/*   <div className="lg:col-span-1 hidden lg:block space-y-8">
               <AdvertisementCarouselLateral
                 ads={[
                   {
@@ -212,7 +197,7 @@ const UsedCarsPage: React.FC = () => {
                   },
                 ]}
               />{" "}
-            </div>
+            </div>*/}
           </div>{" "}
           {
             <div className="mt-8">

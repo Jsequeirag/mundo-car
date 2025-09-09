@@ -9,7 +9,6 @@ import { Star } from "lucide-react";
 import AdvertisementCarousel from "./AdvertisementCarousel";
 import AdvertisementCarouselLateral from "./AdvertisementCarouselLateral";
 
-import AutoLotCarousel from "@/components/AutoLotCarousel";
 import Hero from "./Hero";
 import CategoryShowcase from "./CategoryShowcase";
 import MobileSidebar from "./MobileSidebar";
@@ -74,11 +73,12 @@ const AppLayout: React.FC = () => {
         {/* Altura máxima del Header es 80px (h-20) */}
         {/* NUEVA SECCIÓN: CATEGORY SHOWCASE */}
         {/* <HowItWorks /> */}
-        <SecondaryCTA />
+        {/*  <SecondaryCTA />*/}
         {/* 6. "HOW IT WORKS" / BENEFICIOS (NUEVA SECCIÓN) */}
         {/* Main Content */}
         <main className=" mx-auto px-6 py-10">
           <div className="mb-8">
+            {/*
             <AdvertisementCarousel
               slides={[
                 {
@@ -96,15 +96,11 @@ const AppLayout: React.FC = () => {
                   badge: "",
                 },
               ]}
-            />
+            /> */}
           </div>
-          <div className="flex flex-col sm:flex-row gap-8 mb-8 justify-center items-center">
-            <div className="flex-1">
-              <AutoLotCarousel autoLots={autoLots} />
-            </div>
-          </div>
+          {/*
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-            {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
+            {  Columna Izquierda: Filtros y Anuncio Lateral 1 }
             <div className="lg:col-span-1 hidden lg:block space-y-8">
               <SearchFilters onSearch={handleSearch} />
               <AdvertisementCarouselLateral
@@ -169,39 +165,9 @@ const AppLayout: React.FC = () => {
               </div>
               <CarGrid cars={usedCars} loading={loading} />
             </div>
-            {/* Columna Derecha: Anuncio Lateral 2 */}
-            <div className="lg:col-span-1 hidden lg:block space-y-8">
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/castrolOil.png",
-
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/castrol.png",
-
-                    ctaHref: "https://www.toyota.com/",
-                  },
-                ]}
-              />
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/meguiarSpray.jpg",
-
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/meguiar.jpg",
-
-                    ctaHref: "https://meguiarsdirect.com/",
-                  },
-                ]}
-              />{" "}
-            </div>
+            {  Columna Derecha: Anuncio Lateral 2  }
           </div>
-          {/* Anuncio Banner Inferior */}
+          {  Anuncio Banner Inferior  }
           {
             <div className="mt-8">
               <AdvertisementCarousel
@@ -221,7 +187,7 @@ const AppLayout: React.FC = () => {
                 ]}
               />
             </div>
-          }
+          }*/}
         </main>
       </div>
       {/*<BlogPreview />*/}

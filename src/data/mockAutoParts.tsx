@@ -128,7 +128,7 @@ export const mockAutoParts: AutoPart[] = [
     description: "Bobina de encendido compatible con varios modelos Chevrolet.",
     sellerInfo: { name: "ElectriAuto", location: "Limón" },
   },
-  {
+  /*{
     id: "ap9",
     name: "Discos de Freno Delanteros (Par)",
     category: "Frenos",
@@ -155,5 +155,5 @@ export const mockAutoParts: AutoPart[] = [
     description:
       "Radiador de aluminio para Ford Focus. Máxima eficiencia de enfriamiento.",
     sellerInfo: { name: "RefriPartes CR", location: "San José" },
-  },
+  },*/
 ];

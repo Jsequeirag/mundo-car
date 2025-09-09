@@ -42,7 +42,7 @@ import AdvertisementCarousel from "@/components/AdvertisementCarousel"; // Publi
 import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral"; // Publicidad lateral
 import MobileSidebar from "@/components/MobileSidebar"; // Añadido desde AppLayout
 import Footer from "@/components/Footer"; // Añadido desde AppLayout
-import { hondurasMunicipalities } from "@/data/HondurasMunicipalities";
+import { hondurasDepartment } from "@/data/hondurasDepartment";
 const EQUIPAMIENTO_GROUPS: {
   title?: string;
   items: { value: string; label: string }[];
