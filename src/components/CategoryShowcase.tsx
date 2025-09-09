@@ -65,18 +65,13 @@ const autoLotes = [
 const concesonarios = [
   {
     id: "1",
-    name: "Concesionario El Sol",
-    image: "/assets/autolotes/autolote-premium.png",
+    name: "Dimasa",
+    image: "/assets/concesionarios/dimasa.jpeg",
   },
   {
     id: "2",
-    name: "Concesionario La Estrella",
-    image: "/assets/autolotes/autolote-laestrella.png",
-  },
-  {
-    id: "3",
-    name: "Concesionario Premium",
-    image: "/assets/autolotes/autolote-premium.png",
+    name: "Grupo Flores",
+    image: "/assets/concesionarios/flores.png",
   },
 ];
 

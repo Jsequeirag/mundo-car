@@ -1,21 +1,14 @@
 import React, { useState } from "react";
 import Header from "./Header";
-import SearchFilters from "./SearchFilters";
-import CarGrid from "./CarGrid";
+
 import Footer from "./Footer";
 import { mockUsedPremiumCars } from "@/data/mockUsedPremiumCars";
 import { mockNewCars } from "@/data/mockNewCars";
-import { Star } from "lucide-react";
-import AdvertisementCarousel from "./AdvertisementCarousel";
-import AdvertisementCarouselLateral from "./AdvertisementCarouselLateral";
 
 import Hero from "./Hero";
 import CategoryShowcase from "./CategoryShowcase";
 import MobileSidebar from "./MobileSidebar";
-// IMPORTA LAS NUEVAS SECCIONES AQUÍ:
-import HowItWorks from "./HowItWorks"; // O BenefitsSection
 
-import SecondaryCTA from "./SecondaryCTA"; // O SellCarCTA
 import { useParams, Outlet } from "react-router-dom";
 const AppLayout: React.FC = () => {
   const [usedCars, setUsedCars] = useState(mockUsedPremiumCars);
