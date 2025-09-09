@@ -1,46 +1,58 @@
-// components/MobileSidebar.tsx
 import React from "react";
-import {
-  X,
-  Home,
-  Car,
-  Package,
-  Droplets,
-  PlusCircle,
-  Heart, // <-- Asegúrate de que estos están importados
-  User, // <-- Asegúrate de que estos están importados
-} from "lucide-react";
+import { X, Home, Car, Package, PlusCircle, Heart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link, useParams } from "react-router-dom";
 
 interface MobileSidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const navItemsMobile = [
-  { label: "Inicio", icon: Home, href: "/" },
-  {
-    label: "Autos",
-    icon: Car,
-    subItems: [
-      { label: "Autos nuevos", href: "/autos-nuevos" },
-      { label: "Autos usados", href: "/autos-usados" },
-      { label: "Renta de autos", href: "/renta" },
-    ],
-  },
-  { label: "Autorepuestos", icon: Package, href: "/repuestos" },
-  { label: "Lubicentros", icon: Droplets, href: "/lubricentros" },
-  { type: "link", label: "Publicar", icon: PlusCircle, href: "/publicar" },
-];
-
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
+  const { countryCode } = useParams<{ countryCode?: string }>();
+
+  // Función auxiliar para construir las URLs con el prefijo del país
+  const getCountryPath = (path: string) => {
+    if (!countryCode || path === "/") {
+      return path;
+    }
+    if (path.startsWith("/")) {
+      return `/${countryCode}${path}`;
+    }
+    return `/${countryCode}/${path}`;
+  };
+
+  const navItemsMobile = [
+    { label: "Inicio", icon: Home, href: getCountryPath("") },
+    {
+      label: "Autos",
+      icon: Car,
+      subItems: [
+        { label: "Autos Nuevos", href: getCountryPath("/autos-nuevos") },
+        { label: "Autos Usados", href: getCountryPath("/autos-usados") },
+        { label: "Renta de Autos", href: getCountryPath("/renta") },
+      ],
+    },
+    {
+      label: "Autorepuestos",
+      icon: Package,
+      href: getCountryPath("/repuestos"),
+    },
+
+    {
+      label: "Publica tu anuncio",
+      icon: PlusCircle,
+      href: getCountryPath("/publicar"),
+    },
+  ];
+
   return (
     <>
       {/* Overlay oscuro (cuando el menú está abierto) */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
-          onClick={onClose} // Cierra el menú si se hace clic fuera
+          onClick={onClose}
         ></div>
       )}
 
@@ -49,10 +61,8 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
         className={`
           fixed top-0 right-0 h-full w-64 bg-white text-gray-800 shadow-lg
           transform transition-transform duration-300 ease-in-out z-50
-          ${
-            isOpen ? "translate-x-0" : "translate-x-full"
-          } // Controla la entrada/salida
-          md:hidden // IMPORTANTE: Solo visible en pantallas pequeñas
+          ${isOpen ? "translate-x-0" : "translate-x-full"}
+          md:hidden
         `}
       >
         <div className="p-4 border-b flex justify-between items-center">
@@ -65,60 +75,57 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
         <nav className="flex flex-col p-4 space-y-2">
           {navItemsMobile.map((item) => (
             <div key={item.label}>
-              {/* Lógica para mostrar sub-ítems o enlaces directos */}
-              {item.subItems ? ( // Si tiene subItems, es el tipo "dropdown"
+              {item.subItems ? (
                 <>
                   <a
                     href="#"
                     className="flex items-center space-x-2 py-2 px-3 rounded-md font-semibold text-gray-700 hover:bg-gray-100"
-                    onClick={(e) => e.preventDefault()} // Evita la navegación del padre
+                    onClick={(e) => e.preventDefault()}
                   >
                     <item.icon className="h-5 w-5" />
                     <span>{item.label}</span>
                   </a>
                   <div className="ml-6 flex flex-col space-y-1 mt-1">
                     {item.subItems.map((subItem) => (
-                      <a
+                      <Link
                         key={subItem.label}
-                        href={subItem.href}
-                        onClick={onClose} // Cierra el menú al hacer clic en un sub-enlace
+                        to={subItem.href}
+                        onClick={onClose}
                         className="py-2 px-3 text-sm text-gray-600 hover:bg-gray-50 rounded-md"
                       >
                         {subItem.label}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </>
               ) : (
-                // Enlaces normales
-                <a
-                  href={item.href}
-                  onClick={onClose} // Cierra el menú al hacer clic en un enlace normal
+                <Link
+                  to={item.href}
+                  onClick={onClose}
                   className="flex items-center space-x-2 py-2 px-3 rounded-md font-semibold text-gray-700 hover:bg-gray-100"
                 >
                   <item.icon className="h-5 w-5" />
                   <span>{item.label}</span>
-                </a>
+                </Link>
               )}
             </div>
           ))}
-          {/* Enlaces de Favoritos y Cuenta */}
-          <a
-            href="/favoritos"
+          <Link
+            to={getCountryPath("/favoritos")}
             onClick={onClose}
             className="flex items-center space-x-2 py-2 px-3 rounded-md font-semibold text-gray-700 hover:bg-gray-100"
           >
             <Heart className="h-5 w-5" />
             <span>Favoritos</span>
-          </a>
-          <a
-            href="/cuenta"
+          </Link>
+          <Link
+            to={getCountryPath("/cuenta")}
             onClick={onClose}
             className="flex items-center space-x-2 py-2 px-3 rounded-md font-semibold text-gray-700 hover:bg-gray-100"
           >
             <User className="h-5 w-5" />
             <span>Cuenta</span>
-          </a>
+          </Link>
         </nav>
       </aside>
     </>
