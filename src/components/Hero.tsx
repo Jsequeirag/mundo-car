@@ -29,8 +29,6 @@ const HeroSlide: React.FC<HeroSlideProps> = ({
         poster: "/assets/videos/MundoCar3.mp4",
       },
     },
-
-    { type: "image", src: "/assets/TOYOTA-LOGO.jpg" },
   ],
   showIcons = true,
 }) => {
