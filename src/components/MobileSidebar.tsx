@@ -119,7 +119,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             <span>Favoritos</span>
           </Link>
           <Link
-            to={getCountryPath("/cuenta")}
+            to={getCountryPath("/inicio")}
             onClick={onClose}
             className="flex items-center space-x-2 py-2 px-3 rounded-md font-semibold text-gray-700 hover:bg-gray-100"
           >

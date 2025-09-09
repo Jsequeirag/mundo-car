@@ -6,44 +6,6 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const categoryItems = [
-  {
-    label: "Autos Nuevos",
-    icon: Car,
-    href: "/autos-nuevos",
-    image: "/assets/categories/newCars.jpg",
-    description: "Explora los últimos modelos y estrenos del mercado.",
-  },
-  {
-    label: "Autos Usados",
-    icon: Car,
-    href: "/autos-usados",
-    image: "/assets/categories/usedCars.jpg",
-    description: "Encuentra tu próximo vehículo de ocasión con confianza.",
-  },
-  {
-    label: "Renta de Autos",
-    icon: MapPin,
-    href: "/renta",
-    image: "/assets/categories/rentCars.jpeg",
-    description: "Servicios de alquiler flexibles para tus viajes.",
-  },
-  {
-    label: "Autorepuestos",
-    icon: Package,
-    href: "/repuestos",
-    image: "/assets/categories/parts.jpg",
-    description: "Repuestos originales y de calidad para tu vehículo.",
-  },
-  {
-    label: "Publicar Anuncio",
-    icon: Droplets,
-    href: "/publicar",
-    image: "/assets/categories/sellCar.jpeg",
-    description: "Publica tu anuncio de forma rápida y sencilla.",
-  },
-];
-
 const autoLotes = [
   {
     id: "1",
@@ -86,7 +48,43 @@ const CategoryShowcase: React.FC = () => {
     }
     return `/${countryCode}/${path}`;
   };
-
+  const categoryItems = [
+    {
+      label: "Autos Nuevos",
+      icon: Car,
+      href: `/${countryCode}/autos-nuevos`,
+      image: "/assets/categories/newCars.jpg",
+      description: "Explora los últimos modelos y estrenos del mercado.",
+    },
+    {
+      label: "Autos Usados",
+      icon: Car,
+      href: `/${countryCode}/autos-usados`,
+      image: "/assets/categories/usedCars.jpg",
+      description: "Encuentra tu próximo vehículo de ocasión con confianza.",
+    },
+    {
+      label: "Renta de Autos",
+      icon: MapPin,
+      href: `/${countryCode}/renta`,
+      image: "/assets/categories/rentCars.jpeg",
+      description: "Servicios de alquiler flexibles para tus viajes.",
+    },
+    {
+      label: "Autorepuestos",
+      icon: Package,
+      href: `/${countryCode}/repuestos`,
+      image: "/assets/categories/parts.jpg",
+      description: "Repuestos originales y de calidad para tu vehículo.",
+    },
+    {
+      label: "Publicar Anuncio",
+      icon: Droplets,
+      href: `/${countryCode}/inicio`,
+      image: "/assets/categories/sellCar.jpeg",
+      description: "Publica tu anuncio de forma rápida y sencilla.",
+    },
+  ];
   // Componente interno para el carrusel reutilizable
   const CarouselComponent = ({
     dealers,
@@ -260,7 +258,7 @@ const CategoryShowcase: React.FC = () => {
                         className="inline-flex items-center gap-2 bg-white text-brand-primary hover:bg-gray-100 font-semibold px-4 py-2 rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
                         aria-label={`Ir al detalle de ${lot.name}`}
                       >
-                        Ver Autolote
+                        Ver {title}
                         <ChevronRight className="w-4 h-4" />
                       </Button>
                     </div>
@@ -316,7 +314,7 @@ const CategoryShowcase: React.FC = () => {
       </Card>
     );
   };
-
+  const navigate = useNavigate();
   return (
     <section
       className="py-12 md:py-16 bg-brand-primary"
@@ -350,12 +348,13 @@ const CategoryShowcase: React.FC = () => {
                   return (
                     <div
                       className="rounded-lg overflow-hidden shadow-lg
-                               transform transition-transform duration-300 hover:scale-105 hover:shadow-xl w-[220px] h-[220px] mx-1 my-1"
+                               transform transition-transform duration-300 hover:scale-105 hover:shadow-xl w-[220px] h-[220px] mx-1 my-1 cursor-pointer"
                       style={{
                         backgroundImage: `url(${item.image})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                       }}
+                      onClick={() => navigate(item.href)}
                     >
                       <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-opacity flex flex-col justify-end p-4">
                         <div className="flex items-center text-white mb-2">

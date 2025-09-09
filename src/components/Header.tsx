@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({
       type: "link",
       label: "Publica tu anuncio",
       icon: PlusCircle,
-      href: getCountryPath("/publicar"),
+      href: getCountryPath("/inicio"),
     },
   ];
 
