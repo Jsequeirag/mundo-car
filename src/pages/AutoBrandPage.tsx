@@ -167,8 +167,7 @@ const AutoBrandPage: React.FC = () => {
             <div className="lg:col-span-1 hidden lg:block space-y-6 sm:space-y-8">
               <SearchFilters
                 onSearch={handleSearch}
-                disableCategory={true}
-                disableMunicipality={true}
+                initialCategory="used_cars" // <-- Cambiado a "used_cars"
                 lockCategory={true}
               />
               <AdvertisementCarouselLateral
@@ -267,7 +266,7 @@ const AutoBrandPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="mb-6 sm:mb-8">
+              <div className="mb-6 sm:mb-8" id="brandcar">
                 <p className="text-base sm:text-lg text-gray-700 font-semibold">
                   {newCars.length} Autos Nuevos Disponibles
                 </p>

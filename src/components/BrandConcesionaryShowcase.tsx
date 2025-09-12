@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 interface Brand {
   id: number;
   name: string;
@@ -16,6 +17,15 @@ const BrandConcesionaryShowcase: React.FC<BrandConcesionaryShowcaseProps> = ({
   brandLogos,
 }) => {
   const { countryCode } = useParams<{ countryCode?: string }>();
+  const [selectedBrandId, setSelectedBrandId] = useState<number | null>(null);
+
+  const handleBrandSelect = (id: number) => {
+    setSelectedBrandId((prev) => (prev === id ? null : id));
+  };
+
+  const selectedBrand = selectedBrandId
+    ? brandLogos.find((brand) => brand.id === selectedBrandId)?.name
+    : null;
 
   return (
     <section className="py-12 md:py-20 bg-gray-50">
@@ -23,18 +33,25 @@ const BrandConcesionaryShowcase: React.FC<BrandConcesionaryShowcaseProps> = ({
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-10 tracking-tight text-shadow-sm">
             Explorar por Marca
-          </h2>
+          </h2>{" "}
+          <div className="flex justify-center">
+            <Label className="text-xl font-semibold text-gray-700 mb-4 block">
+              Selecciona una marca
+            </Label>
+          </div>
           <div className="flex flex-wrap justify-center gap-6">
             {brandLogos.map((brand) => (
               <Link
                 key={brand.name}
                 to={`/${countryCode}/autoBrandPage`}
-                className="flex flex-col items-center justify-center p-4 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group w-[250px] h-[220px]"
+                className={`flex flex-col items-center justify-center p-4 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group w-[250px] h-[220px] ${
+                  selectedBrandId === brand.id
+                    ? "border-4 border-brand-primary bg-gray-100"
+                    : ""
+                }`}
                 onClick={(e) => {
-                  e.currentTarget.classList.add("click-effect");
-                  setTimeout(() => {
-                    e.currentTarget.classList.remove("click-effect");
-                  }, 400);
+                  e.preventDefault(); // Prevent default navigation
+                  handleBrandSelect(brand.id);
                 }}
               >
                 <img
@@ -62,6 +79,15 @@ const BrandConcesionaryShowcase: React.FC<BrandConcesionaryShowcaseProps> = ({
               </Link>
             ))}
           </div>
+          {selectedBrandId && (
+            <div className="mt-6 text-center">
+              <a href="#brandcar">
+                <Button className="bg-brand-primary text-white px-6 py-3 rounded-lg hover:bg-brand-primary/90 transition-colors duration-300">
+                  Ver Autos de {selectedBrand}
+                </Button>
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </section>
