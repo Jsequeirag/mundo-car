@@ -355,7 +355,7 @@ const NewAutoDetailPage: React.FC = () => {
                         className="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-indigo-700 transition-colors duration-300 w-full sm:w-[200px]"
                         onClick={() => setIsContactModalOpen(true)}
                       >
-                        Contactar Dealer
+                        Contactar Concesionario
                       </Button>
                     </div>
                   </div>
@@ -419,7 +419,7 @@ const NewAutoDetailPage: React.FC = () => {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold text-gray-900">
-              Contactar Dealer
+              Contactar Concesionario
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit}>
