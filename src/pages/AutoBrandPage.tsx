@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import BrandConcesionaryShowcase from "@/components/BrandConcesionaryShowcase";
 
 const AutoBrandPage: React.FC = () => {
   const [newCars, setNewCars] = useState(mockNewCars);
@@ -133,13 +134,34 @@ const AutoBrandPage: React.FC = () => {
       message: "",
     });
   };
-
+  const brandLogos = [
+    {
+      id: "1",
+      name: "Ford",
+      src: "/assets/concesionaryBrands/ford.png",
+      type: "autolote",
+    },
+    {
+      id: "2",
+      name: "Nissan",
+      src: "/assets/concesionaryBrands/nissan.jpg",
+      type: "autolote",
+    },
+    {
+      id: "3",
+      name: "Chevrolet",
+      src: "/assets/concesionaryBrands/chevrolet.png",
+      type: "autolote",
+    },
+    // Añade más marcas según necesites
+  ];
   return (
     <div className="min-h-screen bg-gray-50">
       <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
       <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
       <div className="pt-[80px]">
         <AutoLotHero autoLot={featuredAutoLot} />
+        <BrandConcesionaryShowcase brandLogos={brandLogos} />
         <main className="mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8">
             <div className="lg:col-span-1 hidden lg:block space-y-6 sm:space-y-8">
