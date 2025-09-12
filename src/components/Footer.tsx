@@ -132,7 +132,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
           <p>
-            &copy; {new Date().getFullYear()} 2024 MUNDOCAR. Todos los derechos
+            &copy; {new Date().getFullYear()} MUNDOCAR. Todos los derechos
             reservados.
           </p>
         </div>

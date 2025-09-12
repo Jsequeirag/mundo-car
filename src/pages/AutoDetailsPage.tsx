@@ -22,6 +22,7 @@ import {
   MapPin,
   Calendar,
   Facebook,
+  Globe,
 } from "lucide-react";
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral";
@@ -29,12 +30,38 @@ import CarGrid from "@/components/CarGrid";
 import { mockUsedCars } from "@/data/mockUsedCars";
 import AutoDetailModal from "@/components/AutoDetailModal";
 import MobileSidebar from "@/components/MobileSidebar";
-import { useParams, Outlet } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+
 const AutoDetailPage: React.FC = () => {
   const [showVideo, setShowVideo] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    subject: "",
+    fullName: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
   const carImages = [
     "/assets/autolotedetalles/ford-1.jpg",
     "/assets/autolotedetalles/ford-2.jpg",
@@ -74,7 +101,7 @@ const AutoDetailPage: React.FC = () => {
     phone: "8303-2535",
     whatsapp: "8303-2535",
     address: "Boulevard Morazán, Tegucigalpa, Honduras",
-    autoLotName: "AutoLote Premium", // Dirección actualizada a Honduras
+    autoLotName: "AutoLote Premium",
     specs: {
       Cilindrada: "2400 cc",
       Estilo: "SUV 2WD",
@@ -149,7 +176,7 @@ const AutoDetailPage: React.FC = () => {
     "Control crucero",
     "Bluetooth",
   ]);
-  const shareUrl = window.location.href; // URL to share (current page)
+  const shareUrl = window.location.href;
   const shareText = `¡Mira este increíble vehículo en ${carDetails.autoLotName}!`;
 
   const handleShareWhatsApp = () => {
@@ -176,6 +203,33 @@ const AutoDetailPage: React.FC = () => {
       "_blank"
     );
   };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, subject: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert(
+      `Formulario enviado:\nTema: ${formData.subject}\nNombre: ${formData.fullName}\nCorreo: ${formData.email}\nTeléfono: ${formData.phone}\nMensaje: ${formData.message}`
+    );
+    setIsContactModalOpen(false);
+    setFormData({
+      subject: "",
+      fullName: "",
+      email: "",
+      phone: "",
+      message: "",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
@@ -252,72 +306,74 @@ const AutoDetailPage: React.FC = () => {
                   )}
                 </AutoDetailModal>
               )}
-              <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex flex-col sm:flex-row gap-6">
-                {/* Contact Info Section */}
-                <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
-                    Información del Contacto
-                  </h2>
-                  <div className="flex flex-col mb-4">
-                    <h3 className="font-semibold text-lg text-gray-900 border-gray-200">
+              <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
+                  Información del Contacto
+                </h2>
+                <div className="flex flex-col sm:flex-row sm:items-start sm:gap-8">
+                  {/* Contact Details */}
+                  <div className="">
+                    <h3 className="font-semibold text-lg text-gray-900 mb-2">
                       Autolote: {carDetails.autoLotName}
                     </h3>
+                    <p className="mb-2">
+                      <LucidePhone className="inline mr-2 h-5 w-5 text-gray-600" />{" "}
+                      Teléfono: {carDetails.phone}
+                    </p>
+                    <p className="mb-2">
+                      <MessageCircle className="inline mr-2 h-5 w-5 text-gray-600" />{" "}
+                      WhatsApp: {carDetails.whatsapp}
+                    </p>
+                    <p className="mb-4">
+                      <MapPin className="inline mr-2 h-5 w-5 text-gray-600" />{" "}
+                      Dirección: {carDetails.address}
+                    </p>
                   </div>
-                  <p className="mb-2">
-                    <LucidePhone className="inline mr-2 h-5 w-5 text-gray-600" />{" "}
-                    Teléfono: {carDetails.phone}
-                  </p>
-                  <p className="mb-2">
-                    <MessageCircle className="inline mr-2 h-5 w-5 text-gray-600" />{" "}
-                    WhatsApp: {carDetails.whatsapp}
-                  </p>
-                  <p className="mb-4">
-                    <MapPin className="inline mr-2 h-5 w-5 text-gray-600" />{" "}
-                    Dirección: {carDetails.address}
-                  </p>
-                  <div className="">
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition-colors duration-300  w-[200px]">
+                  {/* Buttons */}
+                  <div className="flex flex-row sm:flex-col gap-2 sm:gap-4">
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition-colors duration-300 w-full sm:w-[200px]">
                       <LucideMail className="mr-2 h-5 w-5" /> Enviar Email
                     </button>
-                    <button className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition-colors duration-300 mt-2  w-[200px]">
+                    <button className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition-colors duration-300 w-full sm:w-[200px]">
                       <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
                     </button>
                     <button
                       onClick={() => navigate(`/hr/autolote/${3}`)}
-                      className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-700 transition-colors duration-300 mt-2 w-[200px]"
+                      className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-700 transition-colors duration-300 w-full sm:w-[200px]"
                     >
                       <MapPin className="mr-2 h-5 w-5" /> Ver Autolote
                     </button>
                   </div>
                 </div>
-
-                {/* Share Section */}
+              </div>
+              {/* More Info Section */}
+              <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex flex-col lg:flex-row lg:gap-6">
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
-                    Compartir Vehículo
+                    Más Información
                   </h2>
-                  <div className="">
-                    <button
-                      onClick={handleShareWhatsApp}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition-colors duration-300 "
+                  <div className="flex flex-col gap-4">
+                    <a
+                      href="https://www.example.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-indigo-700 transition-colors duration-300 w-full sm:w-[200px]"
                     >
-                      <MessageCircle className="mr-2 h-5 w-5" /> Compartir por
-                      WhatsApp
-                    </button>
-                    <button
-                      onClick={handleShareFacebook}
-                      className="bg-blue-800 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-900 transition-colors duration-300 mt-2"
+                      <Globe className="mr-2 h-5 w-5" /> Visitar Sitio Web
+                    </a>
+                  </div>
+                </div>
+                <div className="flex-1 mt-6 lg:mt-0">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
+                    Obtener Más Información
+                  </h2>
+                  <div className="flex flex-col gap-4">
+                    <Button
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-indigo-700 transition-colors duration-300 w-full sm:w-[200px]"
+                      onClick={() => setIsContactModalOpen(true)}
                     >
-                      <Facebook className="mr-2 h-5 w-5" /> Compartir por
-                      Facebook
-                    </button>
-                    <button
-                      onClick={handleShareEmail}
-                      className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-700 transition-colors duration-300 mt-2"
-                    >
-                      <LucideMail className="mr-2 h-5 w-5" /> Compartir por
-                      Email
-                    </button>
+                      Contactar Dealer
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -337,7 +393,6 @@ const AutoDetailPage: React.FC = () => {
                   ))}
                 </div>
               </div>
-
               {/* Features Section */}
               <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
@@ -362,7 +417,6 @@ const AutoDetailPage: React.FC = () => {
                   ))}
                 </div>
               </div>
-
               {/* Auto Lot Cars Section */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -375,6 +429,110 @@ const AutoDetailPage: React.FC = () => {
         </main>
       </div>
       <Footer />
+
+      {/* Modal for Contact Form */}
+      <Dialog open={isContactModalOpen} onOpenChange={setIsContactModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-semibold text-gray-900">
+              Contactar Dealer
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-1 gap-2">
+                <Label htmlFor="subject" className="text-gray-700 font-medium">
+                  Tema
+                </Label>
+                <Select
+                  onValueChange={handleSelectChange}
+                  value={formData.subject}
+                >
+                  <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                    <SelectValue placeholder="Selecciona un tema" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="disponibilidad">
+                      Disponibilidad del vehículo
+                    </SelectItem>
+                    <SelectItem value="informacion">
+                      Obtener más información
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <Label htmlFor="fullName" className="text-gray-700 font-medium">
+                  Nombre y Apellidos
+                </Label>
+                <Input
+                  id="fullName"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  className="border-gray-300 focus:ring-brand-primary focus:border-brand-primary"
+                  placeholder="Tu nombre completo"
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <Label htmlFor="email" className="text-gray-700 font-medium">
+                  Correo
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="border-gray-300 focus:ring-brand-primary focus:border-brand-primary"
+                  placeholder="tu@email.com"
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <Label htmlFor="phone" className="text-gray-700 font-medium">
+                  Teléfono
+                </Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="border-gray-300 focus:ring-brand-primary focus:border-brand-primary"
+                  placeholder="123-456-7890"
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <Label htmlFor="message" className="text-gray-700 font-medium">
+                  Mensaje
+                </Label>
+                <Textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  className="border-gray-300 focus:ring-brand-primary focus:border-brand-primary min-h-[100px]"
+                  placeholder="Escribe tu mensaje aquí..."
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="submit"
+                className="bg-brand-primary text-white px-4 py-2 rounded-lg hover:bg-brand-primary/90 transition-colors duration-300"
+              >
+                Enviar
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setIsContactModalOpen(false)}
+                className="ml-2 border-gray-300 text-gray-700 hover:bg-gray-100"
+              >
+                Cancelar
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

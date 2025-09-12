@@ -69,9 +69,9 @@ const AppLayout: React.FC = () => {
         {/*  <SecondaryCTA />*/}
         {/* 6. "HOW IT WORKS" / BENEFICIOS (NUEVA SECCIÓN) */}
         {/* Main Content */}
-        <main className=" mx-auto px-6 py-10">
+        {/* <main className=" mx-auto px-6 py-10">
           <div className="mb-8">
-            {/*
+          
             <AdvertisementCarousel
               slides={[
                 {
@@ -89,9 +89,9 @@ const AppLayout: React.FC = () => {
                   badge: "",
                 },
               ]}
-            /> */}
-          </div>
-          {/*
+            /> 
+          </div>*/}
+        {/*
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {  Columna Izquierda: Filtros y Anuncio Lateral 1 }
             <div className="lg:col-span-1 hidden lg:block space-y-8">
@@ -180,8 +180,8 @@ const AppLayout: React.FC = () => {
                 ]}
               />
             </div>
-          }*/}
-        </main>
+          }
+        </main>*/}
       </div>
       {/*<BlogPreview />*/}
       {/* CIERRE DEL DIV CON EL PADDING-TOP */}{" "}

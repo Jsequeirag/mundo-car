@@ -107,11 +107,11 @@ const HeroSlide: React.FC<HeroSlideProps> = ({
             />
           )}
 
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-xl animate-slideInUp">
+          <h1 className="text-4xl md:text-4xl font-extrabold tracking-tight drop-shadow-xl animate-slideInUp text-shadow-md">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-4 text-lg md:text-2xl text-white/90 max-w-2xl drop-shadow-md animate-slideInUp delay-200">
+            <p className="mt-4 text-lg md:text-2xl text-white/90 max-w-2xl drop-shadow-md animate-slideInUp delay-200 text-shadow-md">
               {subtitle}
             </p>
           )}
@@ -119,25 +119,25 @@ const HeroSlide: React.FC<HeroSlideProps> = ({
           {/* Iconos destacados (opcional) */}
           {showIcons && (
             <div className="flex flex-wrap justify-center gap-6 md:gap-8 mt-10 animate-slideInUp delay-400">
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-transform hover:scale-105">
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-transform hover:scale-105 cursor-default">
                 <TrendingUp className="h-5 w-5 text-primary" />
                 <span className="font-medium text-shadow-sm">
                   Mejores Precios
                 </span>
               </div>
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-transform hover:scale-105">
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-transform hover:scale-105 cursor-default">
                 <Award className="h-5 w-5 text-primary" />
                 <span className="font-medium text-shadow-sm">
                   Calidad Asegurada
                 </span>
               </div>
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-transform hover:scale-105">
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-transform hover:scale-105 cursor-default">
                 <Shield className="h-5 w-5 text-primary" />
                 <span className="font-medium text-shadow-sm">
                   Contacto Seguro
                 </span>
               </div>
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-transform hover:scale-105">
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-transform hover:scale-105 cursor-default">
                 <Users className="h-5 w-5 text-primary" />
                 <span className="font-medium text-shadow-sm">
                   Vendedores de Confianza

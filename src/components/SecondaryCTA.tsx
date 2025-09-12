@@ -50,23 +50,18 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
 
       <div className="relative container mx-auto px-4">
         <h2
-          className={`text-3xl md:text-4xl font-bold mb-4 text-shadow-md ${
-            backgroundImage ? "text-gray-900" : sectionTextColor
-          }`}
+          className={`text-3xl md:text-4xl font-bold mb-4 text-shadow-md 
+        text-white/90`}
         >
           ¿Quieres vender tu vehículo?
         </h2>
-        <p
-          className={`text-xl mb-8 opacity-90 text-shadow-md ${
-            backgroundImage ? "text-gray-800" : sectionTextColor
-          }`}
-        >
+        <p className={`text-xl mb-8 opacity-90 text-shadow-md text-white/90`}>
           Publica tu anuncio de forma rápida, sencilla y llega a miles de
           compradores.
         </p>
         <Link to={`${getCountryPath("inicio")}`}>
           <Button
-            className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg`}
+            className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg transition-transform duration-200 ease-in-out hover:scale-105`}
           >
             <PlusCircle className="h-6 w-6 mr-2" /> Publica tu anuncio
           </Button>

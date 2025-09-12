@@ -20,7 +20,11 @@ const Header: React.FC<HeaderProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Lista de países de Centroamérica con códigos ISO 3166-1 alpha-2
-  const centralAmericaCountries = [{ code: "HN", name: "Honduras" }];
+  const centralAmericaCountries = [
+    { code: "HN", name: "Honduras" },
+    { code: "GT", name: "Guatemala" },
+    { code: "CR", name: "Costa Rica" },
+  ];
 
   // Función auxiliar para construir las URLs con el prefijo del país
   const { countryCode } = useParams<{ countryCode?: string }>();
@@ -37,21 +41,15 @@ const Header: React.FC<HeaderProps> = ({
     { type: "link", label: "Inicio", icon: Home, href: getCountryPath("") },
     {
       type: "link",
-      label: "Autos Nuevos",
-      icon: Car,
-      href: getCountryPath("/autos-nuevos"),
-    },
-    {
-      type: "link",
       label: "Autos Usados",
       icon: Car,
       href: getCountryPath("/autos-usados"),
     },
     {
       type: "link",
-      label: "Autorepuestos",
-      icon: Package,
-      href: getCountryPath("/repuestos"),
+      label: "Autos Nuevos",
+      icon: Car,
+      href: getCountryPath("/autos-nuevos"),
     },
     {
       type: "link",
@@ -59,6 +57,13 @@ const Header: React.FC<HeaderProps> = ({
       icon: Car,
       href: getCountryPath("/renta"),
     },
+    {
+      type: "link",
+      label: "Autorepuestos",
+      icon: Package,
+      href: getCountryPath("/repuestos"),
+    },
+
     {
       type: "link",
       label: "Publica tu anuncio",

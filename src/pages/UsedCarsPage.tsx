@@ -56,19 +56,19 @@ const UsedCarsPage: React.FC = () => {
       id: "1",
       name: "AutoLote El Sol",
       src: "/assets/autolotes/logo-elsol.png",
-      type: "autolotes",
+      type: "autolote",
     },
     {
       id: "2",
       name: "AutoLote La Estrella",
       src: "/assets/autolotes/logo-laestrella.png",
-      type: "autolotes",
+      type: "autolote",
     },
     {
       id: "3",
       name: "AutoLote Premium",
       src: "/assets/autolotes/logo-premium.png",
-      type: "autolotes",
+      type: "autolote",
     },
     // Añade más marcas según necesites
   ];

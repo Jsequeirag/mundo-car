@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -19,6 +19,7 @@ import {
   Package,
   Droplets,
   Info,
+  Joystick,
 } from "lucide-react";
 import { hondurasDepartment } from "@/data/hondurasDepartment";
 
@@ -45,6 +46,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   const [service, setService] = React.useState<string>("any");
   const [make, setMake] = React.useState<string>("any");
   const [modelFilter, setModelFilter] = useState<string>("Cualquiera");
+  const [transmission, setTransmission] = useState<string>("any");
+  const [combustion, setCombustion] = useState<string>("any");
 
   // Define las opciones de categoría
   const categoryOptions = [
@@ -71,6 +74,22 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     ],
   };
 
+  // Opciones para Transmisión
+  const transmissionOptions = [
+    { label: "Cualquiera", value: "any" },
+    { label: "Manual", value: "manual" },
+    { label: "Automático", value: "automatic" },
+  ];
+
+  // Opciones para Combustión
+  const combustionOptions = [
+    { label: "Cualquiera", value: "any" },
+    { label: "Gasolina", value: "gasoline" },
+    { label: "Diesel", value: "diesel" },
+    { label: "Eléctrico", value: "electric" },
+    { label: "Híbrido", value: "hybrid" },
+  ];
+
   // Modelos por marca
   const modelsByMake = {
     any: ["Cualquiera"],
@@ -84,9 +103,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   // Filtrar modelos según la marca seleccionada
   const filteredModels = make === "any" ? ["Cualquiera"] : modelsByMake[make];
 
-  // Determinar si mostrar campos de marca/modelo o servicio
+  // Determinar si mostrar campos de marca/modelo/transmisión/combustión o servicio
   const showBrandAndModel =
-    category !== "auto_parts" && category !== "lubricenters";
+    category === "new_cars" ||
+    category === "used_cars" ||
+    category === "car_rental";
   const showService = category === "auto_parts" || category === "lubricenters";
 
   // Mensaje si no hay modelos disponibles para la marca
@@ -113,6 +134,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           : undefined,
       make: make === "any" ? undefined : make,
       model: modelFilter === "Cualquiera" ? undefined : modelFilter,
+      transmission: transmission === "any" ? undefined : transmission,
+      combustion: combustion === "any" ? undefined : combustion,
     });
   };
 
@@ -126,6 +149,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     setService("any");
     setMake("any");
     setModelFilter("Cualquiera");
+    setTransmission("any");
+    setCombustion("any");
   };
 
   // Validación para habilitar/deshabilitar el botón Buscar
@@ -148,59 +173,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
-        {/* Barra de Búsqueda General */}
-        {/* <div className="relative">
-           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <Input
-            placeholder="Buscar autos, marcas, modelos, palabras clave..."
-            className="pl-10 py-2 border-gray-300 focus:border-brand-primary focus:ring-brand-primary focus:ring-2 focus:ring-offset-2"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>*/}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* CAMPO DE SELECCIÓN PARA CATEGORÍA (obligatorio) */}
-          {!disableCategory && (
-            <div>
-              <Label
-                htmlFor="category"
-                className="text-gray-700 font-medium mb-1 block"
-              >
-                Categoría *
-              </Label>
-              <Select
-                onValueChange={setCategory}
-                value={category}
-                required
-                disabled={lockCategory}
-              >
-                <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
-                  <SelectValue placeholder="Selecciona una Categoría" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categoryOptions.map((option) => {
-                    const CategoryIcon = option.icon;
-                    return (
-                      <SelectItem key={option.value} value={option.value}>
-                        <div className="flex items-center gap-2">
-                          {CategoryIcon && (
-                            <CategoryIcon className="h-4 w-4 text-gray-600" />
-                          )}
-                          {option.label}
-                        </div>
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-              {categoryRequiredMessage}
-            </div>
-          )}
-
-          {/* FIN DEL CAMPO DE SELECCIÓN */}
-
-          {/* CAMPO DE SELECCIÓN PARA MARCA (ocultar si Lubricentros o Autorepuestos) */}
+          {/* CAMPO DE SELECCIÓN PARA MARCA */}
           {showBrandAndModel && (
             <div>
               <Label
@@ -225,7 +199,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             </div>
           )}
 
-          {/* CAMPO DE SELECCIÓN PARA MODELO (ocultar si Lubricentros o Autorepuestos) */}
+          {/* CAMPO DE SELECCIÓN PARA MODELO */}
           {showBrandAndModel && (
             <div>
               <Label
@@ -251,7 +225,65 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             </div>
           )}
 
-          {/* CAMPO DE SELECCIÓN PARA SERVICIOS (mostrar si Lubricentros o Autorepuestos con nombres comerciales) */}
+          {/* CAMPO DE SELECCIÓN PARA TRANSMISIÓN */}
+          {showBrandAndModel && (
+            <div>
+              <Label
+                htmlFor="transmission"
+                className="text-gray-700 font-medium mb-1 block"
+              >
+                Transmisión
+              </Label>
+              <Select onValueChange={setTransmission} value={transmission}>
+                <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                  <SelectValue placeholder="Cualquiera" />
+                </SelectTrigger>
+                <SelectContent>
+                  {transmissionOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      <div className="flex items-center gap-2">
+                        {option.value === "any" ? null : (
+                          <Joystick className="h-5 w-5" />
+                        )}
+                        {option.label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* CAMPO DE SELECCIÓN PARA COMBUSTIÓN */}
+          {showBrandAndModel && (
+            <div>
+              <Label
+                htmlFor="combustion"
+                className="text-gray-700 font-medium mb-1 block"
+              >
+                Combustión
+              </Label>
+              <Select onValueChange={setCombustion} value={combustion}>
+                <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                  <SelectValue placeholder="Cualquiera" />
+                </SelectTrigger>
+                <SelectContent>
+                  {combustionOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      <div className="flex items-center gap-2">
+                        {option.value === "any" ? null : (
+                          <Droplets className="h-5 w-5" />
+                        )}
+                        {option.label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* CAMPO DE SELECCIÓN PARA SERVICIOS */}
           {showService && (
             <div>
               <Label
@@ -275,7 +307,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             </div>
           )}
 
-          {/* CAMPO DE SELECCIÓN PARA MUNICIPIO (siempre visible, usando hondurasMunicipalities) */}
+          {/* CAMPO DE SELECCIÓN PARA DEPARTAMENTO */}
           {!disableMunicipality && (
             <div>
               <Label

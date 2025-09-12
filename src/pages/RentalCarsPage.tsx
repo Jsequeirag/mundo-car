@@ -13,12 +13,32 @@ import Hero from "@/components/Hero";
 import SecondaryCTA from "@/components/SecondaryCTA";
 import MobileSidebar from "../components/MobileSidebar";
 import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
-
+import BrandShowCase from "@/components/BrandShowCase";
 import { useParams, Outlet } from "react-router-dom";
 const RentalCarsPage: React.FC = () => {
   const [rentalCars, setRentalCars] = useState<RentalCar[]>([]);
   const [loading, setLoading] = useState(false);
-
+  const brandLogos = [
+    {
+      id: "1",
+      name: "Renta Facil",
+      src: "/assets/rentacar/rentafacil.png",
+      type: "rentacar",
+    },
+    {
+      id: "2",
+      name: "Autorenta Rodriguez",
+      src: "/assets/rentacar/autorenta.png",
+      type: "rentacar",
+    },
+    {
+      id: "3",
+      name: "Menoskilometros",
+      src: "/assets/rentacar/menoskilometros.png",
+      type: "rentacar",
+    },
+    // Añade más marcas según necesites
+  ];
   // Carga inicial de todos los autos de renta
   useEffect(() => {
     setLoading(true);
@@ -108,7 +128,8 @@ const RentalCarsPage: React.FC = () => {
           subtitle="Amplia selección de vehículos para cualquier ocasión, con tarifas flexibles."
           // Si tienes el Hero modificado para aceptar showSearch, puedes pasarlo aquí
           // showSearch={false}
-        />
+        />{" "}
+        <BrandShowCase brandLogos={brandLogos} />
         {/* Sección de CTA para empresas de renta de autos */}
         <main className="mx-auto px-4 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
