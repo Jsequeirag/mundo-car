@@ -161,7 +161,8 @@ const LoginPage: React.FC = () => {
           {/* Texto centrado verticalmente */}
           <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-10">
             <h1 className="text-white text-3xl md:text-5xl font-extrabold drop-shadow text-center">
-              ¡Tu viaje comienza aquí!
+              COMPRA <span className="font-bold">.</span> VENDE
+              <span className="font-bold"> .</span> AVANZA
             </h1>
             <p className="text-white/90 mt-3 max-w-xl text-center">
               Inicia sesión para explorar nuestra amplia selección de vehículos
