@@ -55,17 +55,30 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
         >
           ¿Quieres vender tu vehículo?
         </h2>
-        <p className={`text-xl mb-8 opacity-90 text-shadow-md text-white/90`}>
-          Publica tu anuncio de forma rápida, sencilla y llega a miles de
-          compradores.
-        </p>
-        <Link to={`${getCountryPath("inicio")}`}>
-          <Button
-            className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg transition-transform duration-200 ease-in-out hover:scale-105`}
-          >
-            <PlusCircle className="h-6 w-6 mr-2" /> Publica tu anuncio
-          </Button>
-        </Link>
+        <div className="flex justify-center gap-4  flex-wrap">
+          <Link to={`${getCountryPath("publicar")}`}>
+            <Button
+              className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg transition-transform duration-200 ease-in-out hover:scale-105`}
+            >
+              <PlusCircle className="h-6 w-6 mr-2" /> Independientes
+            </Button>
+          </Link>
+          <Link to={`${getCountryPath("publicar")}`}>
+            <Button
+              className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg transition-transform duration-200 ease-in-out hover:scale-105`}
+            >
+              <PlusCircle className="h-6 w-6 mr-2" /> Autolotes
+            </Button>
+          </Link>
+          <Link to={`${getCountryPath("publicar")}`}>
+            <Button
+              className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg transition-transform duration-200 ease-in-out hover:scale-105`}
+            >
+              <PlusCircle className="h-6 w-6 mr-2" />
+              Concecionarios
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );
