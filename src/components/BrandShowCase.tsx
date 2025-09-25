@@ -28,8 +28,18 @@ const BrandShowcase: React.FC<BrandShowcaseProps> = ({ brandLogos }) => {
   return (
     <section className="py-12 md:py-20 bg-gray-50">
       <div className="container mx-auto px-6">
-        <div className="flex justify-between items-start mb-8">
-          <div className="w-full max-w-xs">
+        <div className="flex justify-between items-start mb-8"></div>
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-10 tracking-tight text-shadow-sm">
+            {brandLogos[0].type === "concesionario"
+              ? "Explorar por Concesionarios"
+              : brandLogos[0].type === "autolote"
+              ? "Explorar por Autolotes"
+              : brandLogos[0].type === "rentacar"
+              ? "Explorar por Rentadoras"
+              : "Explorar por Opciones"}
+          </h2>{" "}
+          <div className="flex flex-col justify-start  items-start  w-full max-w-xs my-8">
             <Label
               htmlFor="department"
               className="text-gray-700 font-medium mb-1 block"
@@ -53,17 +63,6 @@ const BrandShowcase: React.FC<BrandShowcaseProps> = ({ brandLogos }) => {
               </SelectContent>
             </Select>
           </div>
-        </div>
-        <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-10 tracking-tight text-shadow-sm">
-            {brandLogos[0].type === "concesionario"
-              ? "Explorar por Concesionarios"
-              : brandLogos[0].type === "autolote"
-              ? "Explorar por Autolotes"
-              : brandLogos[0].type === "rentacar"
-              ? "Explorar por Rentadoras"
-              : "Explorar por Opciones"}
-          </h2>
           <div className="flex flex-wrap justify-center gap-6">
             {brandLogos.map((brand) => (
               <Link
