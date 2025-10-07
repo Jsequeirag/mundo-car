@@ -5,22 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Heart, Eye, MapPin, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { IVehicle } from "@/interfaces/IVehicle";
+
 interface CarCardProps {
-  car: {
-    id: string;
-    make: string;
-    model: string;
-    year: number;
-    price: number;
-    mileage: number;
-    location: string;
-    image: string;
-    condition: string;
-  };
-  highlighted?: boolean; // Added highlighted prop
+  vehicle: IVehicle;
 }
 
-const CarCard: React.FC<CarCardProps> = ({ car, highlighted = false }) => {
+const CarCard: React.FC<CarCardProps> = ({ vehicle }) => {
   const { countryCode } = useParams<{ countryCode?: string }>();
   const getCountryPath = (path: string) => {
     if (!countryCode || path === "/") {
@@ -31,10 +22,11 @@ const CarCard: React.FC<CarCardProps> = ({ car, highlighted = false }) => {
     }
     return `/${countryCode}/${path}`;
   };
+
   return (
     <Card
       className={`group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50 border-2 ${
-        highlighted
+        vehicle.featured === true
           ? "border-brand-primary bg-yellow-50/50"
           : "hover:border-brand-primary"
       }`}
@@ -42,8 +34,8 @@ const CarCard: React.FC<CarCardProps> = ({ car, highlighted = false }) => {
       <CardHeader className="p-0 relative">
         <div className="relative overflow-hidden rounded-t-lg">
           <img
-            src={car.image}
-            alt={`${car.make} ${car.model}`}
+            src={vehicle.img}
+            alt={`${vehicle.brand} ${vehicle.model}`}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
           />
           <div className="absolute top-3 right-3 flex gap-2">
@@ -55,40 +47,39 @@ const CarCard: React.FC<CarCardProps> = ({ car, highlighted = false }) => {
               <Heart className="h-4 w-4" />
             </Button>
             <Badge className="bg-brand-primary text-white font-semibold rounded-full px-3 py-1 text-xs">
-              {car.condition}
+              {vehicle.condition}
             </Badge>
           </div>
-          {/* Enhanced Premium Sticker for highlighted cars */}
-          {highlighted && (
+          {vehicle.featured === true && (
             <div className="absolute top-3 left-3 bg-brand-primary bg-opacity-90 text-yellow-600 text-sm font-bold py-2 px-4 rounded-full shadow-lg border border-yellow-500 flex items-center gap-1.5">
               <Star className="h-5 w-5" style={{ fill: "currentColor" }} />
-              <span>Super Destacado</span>
+              <span>Destacado</span>
             </div>
           )}
         </div>
       </CardHeader>
       <CardContent className="p-4">
         <CardTitle className="text-xl font-bold text-gray-800 mb-2">
-          {car.year} {car.make} {car.model}
+          {vehicle.year} {vehicle.brand} {vehicle.model}
         </CardTitle>
         <div className="space-y-2 mb-4">
           <p className="text-2xl font-bold text-brand-primary">
-            ${car.price.toLocaleString()}
+            ${vehicle.price.toLocaleString()}
           </p>
           <div className="flex items-center text-gray-600 text-sm">
             <MapPin className="h-4 w-4 mr-1" />
-            {car.location}
+            {vehicle.locate}
           </div>
-          {car.mileage && (
+          {vehicle.condition === "Used" && (
             <p className="text-gray-600 text-sm">
-              {car.mileage.toLocaleString()} miles
+              {vehicle.distance.toLocaleString()} Kilómetros
             </p>
           )}
         </div>
         <div className="flex gap-2">
           <Link
             to={`${getCountryPath(
-              car.condition === "nuevo"
+              vehicle.condition === "new"
                 ? "newAutoDetailsPage"
                 : "autoDetailsPage"
             )}`}

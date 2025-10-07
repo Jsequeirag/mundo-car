@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -11,77 +10,48 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import {
-  Search,
-  Filter,
-  Car,
-  MapPin,
-  Package,
-  Droplets,
-  Info,
-  Joystick,
-} from "lucide-react";
+import { Search, Filter, Droplets, Joystick } from "lucide-react";
 import { hondurasDepartment } from "@/data/hondurasDepartment";
+import { useApiSend } from "../api/config/customHooks";
+import { getVehiclesByFeatures } from "../api/urls/vehicle";
+import useVehicleStore from "@/store/vehicleStore";
 
 interface SearchFiltersProps {
-  onSearch: (filters: any) => void;
-  initialCategory?: string;
-  disableCategory?: boolean;
-  disableMunicipality?: boolean;
-  lockCategory?: boolean;
+  onSearch?: (filters: {
+    priceRange?: [number, number];
+    yearRange?: [number, number];
+    department?: string;
+    brand?: string;
+    model?: string;
+    transmission?: string;
+    fuel?: string;
+    condition?: string;
+  }) => void;
+  condition: "used" | "new" | "rental";
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({
   onSearch,
-  initialCategory = "any",
-  disableCategory = false,
-  disableMunicipality = false,
-  lockCategory = false,
+  condition,
 }) => {
-  const [searchTerm, setSearchTerm] = React.useState<string>("");
-  const [priceRange, setPriceRange] = React.useState([0, 100000]);
-  const [yearRange, setYearRange] = React.useState([2010, 2024]);
-  const [department, setDepartment] = React.useState<string>("any");
-  const [category, setCategory] = React.useState<string>(initialCategory);
-  const [service, setService] = React.useState<string>("any");
-  const [make, setMake] = React.useState<string>("any");
-  const [modelFilter, setModelFilter] = useState<string>("Cualquiera");
-  const [transmission, setTransmission] = useState<string>("any");
-  const [combustion, setCombustion] = useState<string>("any");
+  const { setVehicles } = useVehicleStore();
+  const [filters, setFilters] = React.useState({
+    priceRange: [0, 100000] as [number, number],
+    yearRange: [2010, 2024] as [number, number],
+    department: "any",
+    brand: "any",
+    model: "Cualquiera",
+    transmission: "any",
+    fuel: "any",
+    condition,
+  });
 
-  // Define las opciones de categoría
-  const categoryOptions = [
-    { label: "Seleccionar una opción", value: "any", icon: null },
-    { label: "Autos nuevos", value: "new_cars", icon: Car },
-    { label: "Autos usados", value: "used_cars", icon: Car },
-    { label: "Renta de autos", value: "car_rental", icon: MapPin },
-    { label: "Autorepuestos", value: "auto_parts", icon: Package },
-  ];
-
-  // Opciones de nombres comerciales para Lubricentros y Autorepuestos
-  const serviceOptions = {
-    auto_parts: [
-      { label: "Cualquiera", value: "any" },
-      { label: "AutoZone", value: "autozone" },
-      { label: "NAPA", value: "napa" },
-      { label: "Pep Boys", value: "pep_boys" },
-    ],
-    lubricenters: [
-      { label: "Cualquiera", value: "any" },
-      { label: "Lubri Chávez", value: "lubri_chavez" },
-      { label: "Castrol Service", value: "castrol_service" },
-      { label: "Valvoline Instant Oil Change", value: "valvoline" },
-    ],
-  };
-
-  // Opciones para Transmisión
   const transmissionOptions = [
     { label: "Cualquiera", value: "any" },
     { label: "Manual", value: "manual" },
     { label: "Automático", value: "automatic" },
   ];
 
-  // Opciones para Combustión
   const combustionOptions = [
     { label: "Cualquiera", value: "any" },
     { label: "Gasolina", value: "gasoline" },
@@ -90,260 +60,214 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     { label: "Híbrido", value: "hybrid" },
   ];
 
-  // Modelos por marca
-  const modelsByMake = {
+  const modelsByBrand = {
     any: ["Cualquiera"],
-    toyota: ["Camry", "Corolla", "RAV4", "Prius"],
-    honda: ["Civic", "Accord", "CR-V", "Pilot"],
-    ford: ["Mustang", "F-150", "Escape", "Explorer"],
-    bmw: ["X5", "3 Series", "5 Series", "7 Series"],
-    mercedes: ["C-Class", "E-Class", "S-Class", "GLC"],
+    toyota: ["Corolla", "Yaris"],
+    honda: ["Civic", "Accord"],
+    nissan: ["Sentra"],
   };
 
-  // Filtrar modelos según la marca seleccionada
-  const filteredModels = make === "any" ? ["Cualquiera"] : modelsByMake[make];
+  const filteredModels = modelsByBrand[filters.brand] || ["Cualquiera"];
 
-  // Determinar si mostrar campos de marca/modelo/transmisión/combustión o servicio
-  const showBrandAndModel =
-    category === "new_cars" ||
-    category === "used_cars" ||
-    category === "car_rental";
-  const showService = category === "auto_parts" || category === "lubricenters";
+  const { mutate: fetchVehicles, isPending: loading } = useApiSend(
+    (filters: typeof filters) =>
+      getVehiclesByFeatures({
+        priceRange: filters.priceRange,
+        yearRange: filters.yearRange,
+        department:
+          filters.department === "any" ? undefined : filters.department,
+        brand: filters.brand === "any" ? undefined : filters.brand,
+        model: filters.model === "Cualquiera" ? undefined : filters.model,
+        transmission:
+          filters.transmission === "any" ? undefined : filters.transmission,
+        fuel: filters.fuel === "any" ? undefined : filters.fuel,
+        condition: filters.condition,
+      }),
+    (data: any[]) => {
+      setVehicles(data);
+      onSearch?.(filters);
+    },
+    (error: any) => console.error("Error fetching vehicles:", error),
+    ["getVehiclesByFeatures"]
+  );
 
-  // Mensaje si no hay modelos disponibles para la marca
-  const noModelsMessage =
-    showBrandAndModel && make !== "any" && filteredModels.length === 1 ? (
-      <p className="text-gray-500 text-sm mt-1">
-        No hay modelos disponibles para esta marca.
-      </p>
-    ) : null;
+  const handleFilterChange = (key: keyof typeof filters, value: any) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
 
-  // Función de búsqueda para incluir todos los filtros
   const handleSearchClick = () => {
-    onSearch({
-      searchTerm,
-      priceRange,
-      yearRange,
-      department: department === "any" ? undefined : department,
-      category: category === "any" ? undefined : category,
-      service:
-        category === "auto_parts" || category === "lubricenters"
-          ? service === "any"
-            ? undefined
-            : service
-          : undefined,
-      make: make === "any" ? undefined : make,
-      model: modelFilter === "Cualquiera" ? undefined : modelFilter,
-      transmission: transmission === "any" ? undefined : transmission,
-      combustion: combustion === "any" ? undefined : combustion,
-    });
+    fetchVehicles(filters);
   };
 
-  // Función para limpiar los filtros
   const handleClearFilters = () => {
-    setSearchTerm("");
-    setPriceRange([0, 100000]);
-    setYearRange([2010, 2024]);
-    setDepartment("any");
-    setCategory("any");
-    setService("any");
-    setMake("any");
-    setModelFilter("Cualquiera");
-    setTransmission("any");
-    setCombustion("any");
+    const clearedFilters = {
+      priceRange: [0, 100000] as [number, number],
+      yearRange: [2010, 2024] as [number, number],
+      department: "any",
+      brand: "any",
+      model: "Cualquiera",
+      transmission: "any",
+      fuel: "any",
+      condition,
+    };
+    setFilters(clearedFilters);
+    onSearch?.(clearedFilters);
   };
-
-  // Validación para habilitar/deshabilitar el botón Buscar
-  const isSearchDisabled = category === "any";
-
-  // Mensaje de obligatoriedad con ícono de información
-  const categoryRequiredMessage = isSearchDisabled ? (
-    <p className="text-blue-400 text-sm mt-1 flex items-center">
-      <Info className="h-4 w-4 mr-1" />
-      Por favor, selecciona una categoría.
-    </p>
-  ) : null;
 
   return (
     <Card className="bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-brand-primary to-brand-primary/80 text-white p-4">
         <CardTitle className="flex items-center gap-2 text-xl font-bold">
           <Filter className="h-6 w-6" />
-          <p className="text-white">Filtros de Búsqueda</p>
+          Filtros de Búsqueda
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* CAMPO DE SELECCIÓN PARA MARCA */}
-          {showBrandAndModel && (
-            <div>
-              <Label
-                htmlFor="make"
-                className="text-gray-700 font-medium mb-1 block"
-              >
-                Marca
-              </Label>
-              <Select onValueChange={setMake} value={make}>
-                <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
-                  <SelectValue placeholder="Cualquiera" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="any">Cualquiera</SelectItem>
-                  <SelectItem value="toyota">Toyota</SelectItem>
-                  <SelectItem value="honda">Honda</SelectItem>
-                  <SelectItem value="ford">Ford</SelectItem>
-                  <SelectItem value="bmw">BMW</SelectItem>
-                  <SelectItem value="mercedes">Mercedes</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          <div>
+            <Label
+              htmlFor="brand"
+              className="text-gray-700 font-medium mb-1 block"
+            >
+              Marca
+            </Label>
+            <Select
+              onValueChange={(value) => handleFilterChange("brand", value)}
+              value={filters.brand}
+            >
+              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                <SelectValue placeholder="Cualquiera" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Cualquiera</SelectItem>
+                <SelectItem value="toyota">Toyota</SelectItem>
+                <SelectItem value="honda">Honda</SelectItem>
+                <SelectItem value="nissan">Nissan</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          {/* CAMPO DE SELECCIÓN PARA MODELO */}
-          {showBrandAndModel && (
-            <div>
-              <Label
-                htmlFor="model"
-                className="text-gray-700 font-medium mb-1 block"
-              >
-                Modelo
-              </Label>
-              <Select onValueChange={setModelFilter} value={modelFilter}>
-                <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
-                  <SelectValue placeholder="Cualquiera" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Cualquiera">Cualquiera</SelectItem>
-                  {filteredModels.map((model) => (
-                    <SelectItem key={model} value={model}>
-                      {model}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {noModelsMessage}
-            </div>
-          )}
+          <div>
+            <Label
+              htmlFor="model"
+              className="text-gray-700 font-medium mb-1 block"
+            >
+              Modelo
+            </Label>
+            <Select
+              onValueChange={(value) => handleFilterChange("model", value)}
+              value={filters.model}
+            >
+              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                <SelectValue placeholder="Cualquiera" />
+              </SelectTrigger>
+              <SelectContent>
+                {filteredModels.map((model) => (
+                  <SelectItem key={model} value={model}>
+                    {model}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          {/* CAMPO DE SELECCIÓN PARA TRANSMISIÓN */}
-          {showBrandAndModel && (
-            <div>
-              <Label
-                htmlFor="transmission"
-                className="text-gray-700 font-medium mb-1 block"
-              >
-                Transmisión
-              </Label>
-              <Select onValueChange={setTransmission} value={transmission}>
-                <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
-                  <SelectValue placeholder="Cualquiera" />
-                </SelectTrigger>
-                <SelectContent>
-                  {transmissionOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <div className="flex items-center gap-2">
-                        {option.value === "any" ? null : (
-                          <Joystick className="h-5 w-5" />
-                        )}
-                        {option.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {/* CAMPO DE SELECCIÓN PARA COMBUSTIÓN */}
-          {showBrandAndModel && (
-            <div>
-              <Label
-                htmlFor="combustion"
-                className="text-gray-700 font-medium mb-1 block"
-              >
-                Combustión
-              </Label>
-              <Select onValueChange={setCombustion} value={combustion}>
-                <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
-                  <SelectValue placeholder="Cualquiera" />
-                </SelectTrigger>
-                <SelectContent>
-                  {combustionOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <div className="flex items-center gap-2">
-                        {option.value === "any" ? null : (
-                          <Droplets className="h-5 w-5" />
-                        )}
-                        {option.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {/* CAMPO DE SELECCIÓN PARA SERVICIOS */}
-          {showService && (
-            <div>
-              <Label
-                htmlFor="service"
-                className="text-gray-700 font-medium mb-1 block"
-              >
-                Servicio
-              </Label>
-              <Select onValueChange={setService} value={service}>
-                <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
-                  <SelectValue placeholder="Cualquiera" />
-                </SelectTrigger>
-                <SelectContent>
-                  {serviceOptions[category].map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+          <div>
+            <Label
+              htmlFor="transmission"
+              className="text-gray-700 font-medium mb-1 block"
+            >
+              Transmisión
+            </Label>
+            <Select
+              onValueChange={(value) =>
+                handleFilterChange("transmission", value)
+              }
+              value={filters.transmission}
+            >
+              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                <SelectValue placeholder="Cualquiera" />
+              </SelectTrigger>
+              <SelectContent>
+                {transmissionOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    <div className="flex items-center gap-2">
+                      {option.value === "any" ? null : (
+                        <Joystick className="h-5 w-5" />
+                      )}
                       {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          {/* CAMPO DE SELECCIÓN PARA DEPARTAMENTO */}
-          {!disableMunicipality && (
-            <div>
-              <Label
-                htmlFor="department"
-                className="text-gray-700 font-medium mb-1 block"
-              >
-                Departamento
-              </Label>
-              <Select onValueChange={setDepartment} value={department}>
-                <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
-                  <SelectValue placeholder="Cualquiera" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="any">Cualquiera</SelectItem>
-                  {hondurasDepartment.map((municipality) => (
-                    <SelectItem
-                      key={municipality}
-                      value={municipality.toLowerCase()}
-                    >
-                      {municipality}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          <div>
+            <Label
+              htmlFor="fuel"
+              className="text-gray-700 font-medium mb-1 block"
+            >
+              Combustión
+            </Label>
+            <Select
+              onValueChange={(value) => handleFilterChange("fuel", value)}
+              value={filters.fuel}
+            >
+              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                <SelectValue placeholder="Cualquiera" />
+              </SelectTrigger>
+              <SelectContent>
+                {combustionOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    <div className="flex items-center gap-2">
+                      {option.value === "any" ? null : (
+                        <Droplets className="h-5 w-5" />
+                      )}
+                      {option.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label
+              htmlFor="department"
+              className="text-gray-700 font-medium mb-1 block"
+            >
+              Ubicación
+            </Label>
+            <Select
+              onValueChange={(value) => handleFilterChange("department", value)}
+              value={filters.department}
+            >
+              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+                <SelectValue placeholder="Cualquiera" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Cualquiera</SelectItem>
+                {hondurasDepartment.map((municipality) => (
+                  <SelectItem
+                    key={municipality}
+                    value={municipality.toLowerCase()}
+                  >
+                    {municipality}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div>
           <Label className="text-gray-700 font-medium mb-1 block">
-            Rango de Precio: ${priceRange[0].toLocaleString()} - $
-            {priceRange[1].toLocaleString()}
+            Rango de Precio: ${filters.priceRange[0].toLocaleString()} - $
+            {filters.priceRange[1].toLocaleString()}
           </Label>
           <Slider
-            value={priceRange}
-            onValueChange={setPriceRange}
+            value={filters.priceRange}
+            onValueChange={(value) => handleFilterChange("priceRange", value)}
             max={100000}
             min={0}
             step={1000}
@@ -353,11 +277,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
 
         <div>
           <Label className="text-gray-700 font-medium mb-1 block">
-            Rango de Año: {yearRange[0]} - {yearRange[1]}
+            Rango de Año: {filters.yearRange[0]} - {filters.yearRange[1]}
           </Label>
           <Slider
-            value={yearRange}
-            onValueChange={setYearRange}
+            value={filters.yearRange}
+            onValueChange={(value) => handleFilterChange("yearRange", value)}
             max={2024}
             min={1990}
             step={1}
@@ -368,8 +292,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         <div className="flex gap-4">
           <Button
             onClick={handleSearchClick}
-            className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
-            disabled={disableCategory ? false : isSearchDisabled}
+            disabled={loading}
+            className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-lg disabled:opacity-50"
           >
             <Search className="h-5 w-5 mr-2" />
             Buscar

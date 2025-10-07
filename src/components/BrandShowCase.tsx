@@ -44,7 +44,7 @@ const BrandShowcase: React.FC<BrandShowcaseProps> = ({ brandLogos }) => {
               htmlFor="department"
               className="text-gray-700 font-medium mb-1 block"
             >
-              Departamento
+              Ubicación
             </Label>
             <Select onValueChange={setDepartment} value={department}>
               <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
