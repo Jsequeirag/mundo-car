@@ -17,8 +17,6 @@ import Flag from "react-flagkit";
 import { toast } from "@/components/ui/sonner";
 import ModalContainer from "@/components/ModalContainer";
 
-// Mapeo de códigos de país del enum a códigos ISO 3166-1 alpha-2 para react-flagkit
-
 const RegisterPage: React.FC = () => {
   const { countryCode } = useParams<{ countryCode?: string }>();
   const navigate = useNavigate();
@@ -55,16 +53,26 @@ const RegisterPage: React.FC = () => {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (e.target.name === "email") {
-      setEmailError(null); // Clear email error on change
-    }
-  };
+    const { name, value } = e.target;
 
-  const handleCountrySelect = (country: Country) => {
-    setFormData({ ...formData, country });
-    setIsCountryOpen(false);
-    console.log(`[Register] País seleccionado: ${country}`);
+    // For phone number fields, ensure the value is numeric and doesn't exceed 8 digits
+    if (["workphone1", "workphone2", "mobilephone"].includes(name)) {
+      // Allow empty input or valid numeric input up to 8 digits
+      if (
+        value === "" ||
+        (/^\d{0,8}$/.test(value) && parseInt(value) <= 99999999)
+      ) {
+        setFormData({ ...formData, [name]: value });
+      } else {
+        toast.error("El número telefónico no puede exceder los 8 dígitos.");
+      }
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+
+    if (name === "email") {
+      setEmailError(null);
+    }
   };
 
   const { mutate: verifyExistedUser, isPending: isRegisterPending } =
@@ -102,7 +110,7 @@ const RegisterPage: React.FC = () => {
         return verifyExisted(userData);
       },
       async (data: IUserRegistered) => {
-        console.log("[Register] Registro exitoso:", formData.email);
+        console.log("[Register] Verificación exitosa:", formData.email);
         console.log("[Register] Datos recibidos:", data);
         setUser(data);
         if (data.userExisted) {
@@ -110,24 +118,20 @@ const RegisterPage: React.FC = () => {
           toast.error("El usuario ya existe. Por favor, inicia sesión.");
           return;
         }
-        const generatedCode = Math.floor(100000 + Math.random() * 900000);
         setStoredCode(data.user.validationCode);
         console.log(
           "[Register] Enviando correo de verificación a:",
           formData.email
         );
         try {
-          const response = await sendVerification(
-            generatedCode,
+          await sendVerification(
+            storedCode,
             data.user.email,
-            data.user.name
+            data.user.name || "Usuario"
           );
-          console.log(
-            "[Register] Correo de verificación enviado:",
-            generatedCode
-          );
+          console.log("[Register] Correo de verificación enviado:", storedCode);
           toast.success(
-            "Registro exitoso. Ingresa el código de verificación enviado a tu correo."
+            "Verificación exitosa. Ingresa el código de verificación enviado a tu correo."
           );
           setShowVerificationModal(true);
         } catch (error) {
@@ -136,22 +140,44 @@ const RegisterPage: React.FC = () => {
             error
           );
           toast.error(
-            "Registro exitoso, pero falló el envío del correo de verificación."
+            "Verificación exitosa, pero falló el envío del correo de verificación."
           );
         }
       },
       (error) => {
-        console.error("[Register] Error en registro:", error);
-        toast.error(`Error al registrar: ${error.message}`);
+        console.error("[Register] Error en verificación:", error);
+        toast.error(`Error al verificar: ${error.message}`);
       }
     );
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("[Register] Iniciando registro...");
-    setEmailError(null); // Clear any previous email error
+    console.log("[Register] Iniciando verificación...");
+    setEmailError(null);
     verifyExistedUser();
   };
+
+  const { mutate: registerUser } = useApiSend<IUser>(
+    () => {
+      if (!user?.user) {
+        console.error("[Register] No hay datos de usuario para registrar");
+        toast.error("No hay datos de usuario para registrar.");
+        throw new Error("No hay datos de usuario para registrar");
+      }
+      console.log("USUARIO" + user.user);
+      return register({ ...user.user, password: formData.password });
+    },
+    async (data: IUser) => {
+      console.log("[Register] Registro exitoso:", data.email);
+      toast.success("Código verificado correctamente. ¡Bienvenido a MundoCar!");
+      setShowVerificationModal(false);
+      navigate(`/${formData.country}/dashboard`);
+    },
+    (error) => {
+      console.error("[Register] Error al registrar:", error);
+      toast.error(`Error al registrar: ${error.message}`);
+    }
+  );
 
   const handleValidateCode = () => {
     try {
@@ -174,11 +200,7 @@ const RegisterPage: React.FC = () => {
           "[Register] Código de verificación correcto:",
           verificationCode
         );
-        toast.success(
-          "Código verificado correctamente. Bienvenido a MundoCar!"
-        );
-        setShowVerificationModal(false);
-        navigate(`/${formData.country}/dashboard`);
+        registerUser();
       } else {
         console.error(
           "[Register] Código de verificación incorrecto:",
@@ -192,6 +214,12 @@ const RegisterPage: React.FC = () => {
       console.error("[Register] Error al validar código:", error);
       toast.error("Error al validar el código. Por favor, intenta de nuevo.");
     }
+  };
+
+  const handleCountrySelect = (country: Country) => {
+    setFormData({ ...formData, country });
+    setIsCountryOpen(false);
+    console.log(`[Register] País seleccionado: ${country}`);
   };
 
   if (loading) {
@@ -239,7 +267,6 @@ const RegisterPage: React.FC = () => {
               Regístrate para comprar, vender o rentar vehículos en
               Centroamérica.
             </p>
-            {/* Formulario */}
             <form
               onSubmit={handleRegister}
               className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -252,7 +279,7 @@ const RegisterPage: React.FC = () => {
                   Nombre completo
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
                   <input
                     type="text"
                     id="name"
@@ -261,7 +288,7 @@ const RegisterPage: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     disabled={isRegisterPending}
-                    className="w-full pl-10 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition disabled:opacity-50"
+                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
                     placeholder="Tu nombre completo"
                     aria-label="Nombre completo"
                   />
@@ -275,7 +302,7 @@ const RegisterPage: React.FC = () => {
                   Correo electrónico
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
                   <input
                     type="email"
                     id="email"
@@ -284,9 +311,9 @@ const RegisterPage: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     disabled={isRegisterPending}
-                    className={`w-full pl-10 pr-4 py-3 border ${
+                    className={`w-full pl-12 pr-4 py-3 border ${
                       emailError ? "border-red-500" : "border-[#034651]/20"
-                    } rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition disabled:opacity-50`}
+                    } rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]`}
                     placeholder="tucorreo@ejemplo.com"
                     aria-label="Correo electrónico"
                   />
@@ -300,15 +327,16 @@ const RegisterPage: React.FC = () => {
                   Teléfono de trabajo 1
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
                   <input
                     type="number"
                     id="workphone1"
                     name="workphone1"
                     value={formData.workphone1 || ""}
                     onChange={handleInputChange}
+                    maxLength={8}
                     disabled={isRegisterPending}
-                    className="w-full pl-10 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition disabled:opacity-50"
+                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
                     placeholder="Teléfono de trabajo 1"
                     aria-label="Teléfono de trabajo 1"
                   />
@@ -322,15 +350,16 @@ const RegisterPage: React.FC = () => {
                   Teléfono de trabajo 2 (opcional)
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
                   <input
                     type="number"
                     id="workphone2"
                     name="workphone2"
                     value={formData.workphone2 || ""}
                     onChange={handleInputChange}
+                    maxLength={8}
                     disabled={isRegisterPending}
-                    className="w-full pl-10 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition disabled:opacity-50"
+                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
                     placeholder="Teléfono de trabajo 2"
                     aria-label="Teléfono de trabajo 2"
                   />
@@ -344,16 +373,17 @@ const RegisterPage: React.FC = () => {
                   Teléfono móvil
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
                   <input
                     type="number"
                     id="mobilephone"
                     name="mobilephone"
                     value={formData.mobilephone || ""}
                     onChange={handleInputChange}
+                    maxLength={8}
                     required
                     disabled={isRegisterPending}
-                    className="w-full pl-10 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition disabled:opacity-50"
+                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
                     placeholder="Teléfono móvil"
                     aria-label="Teléfono móvil"
                   />
@@ -367,9 +397,9 @@ const RegisterPage: React.FC = () => {
                   País
                 </label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
                   <div
-                    className="w-full pl-10 pr-4 py-3 border border-[#034651]/20 rounded-xl text-[#034651] shadow-sm hover:shadow-md transition cursor-pointer flex items-center justify-between disabled:opacity-50"
+                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl text-[#034651] shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex items-center justify-between disabled:opacity-50 focus:scale-[1.02]"
                     onClick={() =>
                       !isRegisterPending && setIsCountryOpen(!isCountryOpen)
                     }
@@ -386,7 +416,7 @@ const RegisterPage: React.FC = () => {
                       </span>
                     </div>
                     <ChevronDown
-                      className={`h-4 w-4 text-[#034651]/60 transition-transform ${
+                      className={`h-5 w-5 text-[#034651]/60 transition-transform ${
                         isCountryOpen ? "rotate-180" : ""
                       }`}
                     />
@@ -418,18 +448,20 @@ const RegisterPage: React.FC = () => {
                 >
                   Contraseña
                 </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                  disabled={isRegisterPending}
-                  className="w-full pl-4 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition disabled:opacity-50"
-                  placeholder="••••••••"
-                  aria-label="Contraseña"
-                />
+                <div className="relative">
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isRegisterPending}
+                    className="w-full pl-4 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
+                    placeholder="••••••••"
+                    aria-label="Contraseña"
+                  />
+                </div>
               </div>
               <div>
                 <label
@@ -438,18 +470,20 @@ const RegisterPage: React.FC = () => {
                 >
                   Confirmar contraseña
                 </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  required
-                  disabled={isRegisterPending}
-                  className="w-full pl-4 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition disabled:opacity-50"
-                  placeholder="••••••••"
-                  aria-label="Confirmar contraseña"
-                />
+                <div className="relative">
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isRegisterPending}
+                    className="w-full pl-4 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
+                    placeholder="••••••••"
+                    aria-label="Confirmar contraseña"
+                  />
+                </div>
               </div>
               <div className="md:col-span-2">
                 {emailError && (
@@ -460,11 +494,11 @@ const RegisterPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isRegisterPending}
-                  className="w-full flex items-center justify-center gap-2 bg-[#034651] text-white font-semibold p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-[#05707f] transition-all focus:outline-none focus:ring-2 focus:ring-[#034651] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 bg-[#034651] text-white font-semibold p-3 rounded-xl shadow-md hover:shadow-lg hover:bg-[#05707f] transform hover:scale-[1.02] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#034651] disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label="Crear cuenta"
                 >
                   {isRegisterPending ? "Registrando..." : "Crear cuenta"}
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
             </form>
@@ -482,7 +516,7 @@ const RegisterPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Derecha: Video con overlay y texto */}
+        {/* Right: Video with Overlay and Text */}
         <div className="relative h-[50vh] lg:h-full overflow-hidden">
           <video
             className="absolute inset-0 w-full h-full object-cover"
@@ -496,12 +530,12 @@ const RegisterPage: React.FC = () => {
             <source src="/assets/videos/MundoCar3.webm" type="video/webm" />
             <source src="/assets/videos/MundoCar3.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-[#034651]/55" />
-          <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-10">
-            <h1 className="text-white text-3xl md:text-5xl font-extrabold drop-shadow text-center">
+          <div className="absolute inset-0 bg-[#034651]/60" />
+          <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-12">
+            <h1 className="text-white text-3xl md:text-5xl font-extrabold drop-shadow-lg text-center">
               ¡Únete a MundoCar hoy!
             </h1>
-            <p className="text-white/90 mt-3 max-w-xl text-center">
+            <p className="text-white/90 mt-4 max-w-xl text-center text-lg">
               Crea tu cuenta y descubre la mejor experiencia para comprar,
               vender o rentar vehículos en toda Centroamérica.
             </p>
@@ -537,18 +571,18 @@ const RegisterPage: React.FC = () => {
                 value={verificationCode}
                 onChange={(e) => setVerificationCode(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition"
+                className="w-full px-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 focus:scale-[1.02]"
                 placeholder="Ingresa el código"
                 aria-label="Código de verificación"
               />
             </div>
             <button
               onClick={handleValidateCode}
-              className="w-full flex items-center justify-center gap-2 bg-[#034651] text-white font-semibold p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-[#05707f] transition-all focus:outline-none focus:ring-2 focus:ring-[#034651]"
+              className="w-full flex items-center justify-center gap-2 bg-[#034651] text-white font-semibold p-3 rounded-xl shadow-md hover:shadow-lg hover:bg-[#05707f] transform hover:scale-[1.02] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#034651]"
               aria-label="Validar código"
             >
               Validar código
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </ModalContainer>

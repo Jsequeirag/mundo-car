@@ -19,6 +19,7 @@ import AutoBrandPage from "@/pages/AutoBrandPage";
 import AdminDashboard from "@/pages/AdminDashboard";
 import UserDashboard from "@/pages/UserDashboard";
 import ManageAdsPage from "@/pages/ManageAdsPage";
+import PlanPage from "@/pages/PlanPage";
 import NotFound from "@/pages/NotFound";
 
 export default [
@@ -126,6 +127,11 @@ export default [
     path: "/:countryCode/ManageAdsPage",
     element: <ManageAdsPage />,
     title: "Manage Ads ",
+  },
+  {
+    path: "/:countryCode/planPage",
+    element: <PlanPage />,
+    title: "Plan Page ",
   },
   {
     path: "*",

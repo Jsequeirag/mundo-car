@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useCountryStore from "@/store/countryStore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
 import {
   BarChart3,
   Users,
@@ -14,10 +15,10 @@ import {
   Trash2,
   User,
   Key,
+  Plus,
 } from "lucide-react";
 import ModalContainer from "@/components/ModalContainer";
 
-// Tipos de datos
 interface UserStats {
   country: string;
   totalUsers: number;
@@ -53,6 +54,16 @@ interface AdminUser {
   role: "admin" | "user";
 }
 
+interface Ad {
+  id: string;
+  title: string;
+  description: string;
+  position: "left" | "right" | "top" | "bottom";
+  price: number;
+  country: string;
+  createdAt: string;
+}
+
 interface AdminDashboardProps {
   userStats?: UserStats[];
   adStats?: AdStats[];
@@ -64,25 +75,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   adStats: propAdStats,
   pendingAds: propPendingAds,
 }) => {
+  const { countryCode } = useParams<{ countryCode?: string }>();
   const { countries } = useCountryStore();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
-    "overview" | "users" | "ads" | "pending"
+    "overview" | "users" | "ads" | "pending" | "advertisements"
   >("overview");
   const [selectedAd, setSelectedAd] = useState<PendingAd | null>(null);
   const [showAdModal, setShowAdModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCountry, setFilterCountry] = useState("all");
+  const [filterPosition, setFilterPosition] = useState("all");
 
-  // Datos mock para los seis países (ajustados a cientos)
   const userStats: UserStats[] = propUserStats || [
     { country: "Honduras", totalUsers: 150, activeUsers: 110, newUsers: 5 },
     { country: "Costa Rica", totalUsers: 125, activeUsers: 89, newUsers: 4 },
     { country: "El Salvador", totalUsers: 100, activeUsers: 75, newUsers: 3 },
     { country: "Guatemala", totalUsers: 130, activeUsers: 95, newUsers: 4 },
     { country: "Nicaragua", totalUsers: 90, activeUsers: 65, newUsers: 2 },
-    { country: "Panamá", totalUsers: 80, activeUsers: 60, newUsers: 2 },
+    { country: "Panama", totalUsers: 80, activeUsers: 60, newUsers: 2 },
   ];
 
   const adStats: AdStats[] = propAdStats || [
@@ -122,7 +134,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       rejectedAds: 17,
     },
     {
-      country: "Panamá",
+      country: "Panama",
       totalAds: 250,
       pendingAds: 7,
       approvedAds: 230,
@@ -199,7 +211,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     },
   ];
 
-  // Datos mock para usuarios
   const adminUsers: AdminUser[] = [
     {
       id: "1",
@@ -224,26 +235,66 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     },
   ];
 
-  // Filtrar anuncios pendientes
+  const ads: Ad[] = [
+    {
+      id: "1",
+      title: "Toyota Corolla 2019",
+      description: "Auto en excelente estado, bajo kilometraje.",
+      position: "left",
+      price: 15000,
+      country: "hr",
+      createdAt: "2025-09-28T10:30:00Z",
+    },
+    {
+      id: "2",
+      title: "Honda Civic 2020",
+      description: "Modelo reciente con garantía incluida.",
+      position: "right",
+      price: 18000,
+      country: "cr",
+      createdAt: "2025-09-28T09:15:00Z",
+    },
+    {
+      id: "3",
+      title: "Ford F-150 2018",
+      description: "4x4 robusto para todo terreno.",
+      position: "top",
+      price: 25000,
+      country: "sv",
+      createdAt: "2025-09-28T08:45:00Z",
+    },
+    {
+      id: "4",
+      title: "Nissan Sentra 2021",
+      description: "Como nuevo, ideal para ciudad.",
+      position: "bottom",
+      price: 20000,
+      country: "gt",
+      createdAt: "2025-09-28T08:00:00Z",
+    },
+  ];
+
   const filteredPendingAds = pendingAds
     .filter((ad) => ad.title.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((ad) => filterCountry === "all" || ad.country === filterCountry);
 
-  // Función para aprobar anuncio (visual)
+  const filteredAds = ads
+    .filter((ad) => ad.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((ad) => filterCountry === "all" || ad.country === filterCountry)
+    .filter((ad) => filterPosition === "all" || ad.position === filterPosition);
+
   const approveAd = (adId: string) => {
     console.log(`[Admin] Aprobando anuncio ID: ${adId}`);
     setSelectedAd(null);
     setShowAdModal(false);
   };
 
-  // Función para rechazar anuncio (visual)
   const rejectAd = (adId: string, reason: string) => {
     console.log(`[Admin] Rechazando anuncio ID: ${adId} - Razón: ${reason}`);
     setSelectedAd(null);
     setShowAdModal(false);
   };
 
-  // Formatear fecha
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("es-CR", {
       year: "numeric",
@@ -253,17 +304,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       minute: "2-digit",
     });
   };
-
-  // Log del país actual al cargar el componente
-  /* useEffect(() => {
-    console.log(
-      `[AdminDashboard] País actual: ${country?.name} (${country?.code})`
-    );
-  }, [country]);*/
-
+  const getCountryPath = (path: string) => {
+    if (!countryCode || path === "/") {
+      return path;
+    }
+    if (path.startsWith("/")) {
+      return `/${countryCode}${path}`;
+    }
+    return `/${countryCode}/${path}`;
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#034651]/10 to-[#034651]/5 dark:from-[#034651]/20 dark:to-[#034651]/10">
-      {/* Header del Dashboard */}
       <header className="bg-white/80 backdrop-blur-xl border-b border-[#034651]/20 shadow-lg sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -281,9 +332,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="text-sm text-[#034651]/80 dark:text-[#034651]/60">
-                {}
-              </div>
               <button
                 onClick={() => {
                   console.log("[AdminDashboard] Abriendo modal de perfil");
@@ -293,7 +341,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               >
                 <User className="h-5 w-5 text-[#034651]" />
               </button>
-              <button className="px-4 py-2 bg-[#034651] text-white rounded-xl hover:bg-[#05707f] transition-colors">
+              <button
+                onClick={() => {
+                  console.log("[AdminDashboard] Cerrando sesión");
+                  navigate("/hr/inicio");
+                }}
+                className="px-4 py-2 bg-[#034651] text-white rounded-xl hover:bg-[#05707f] transition-colors"
+              >
                 Salir
               </button>
             </div>
@@ -302,7 +356,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </header>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Tabs de navegación */}
         <div className="flex border-b border-[#034651]/20 mb-8">
           <nav className="-mb-px flex space-x-8">
             {[
@@ -310,6 +363,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               { key: "users" as const, label: "Usuarios" },
               { key: "ads" as const, label: "Publicaciones" },
               { key: "pending" as const, label: "Pendientes" },
+              { key: "advertisements" as const, label: "Anuncios" },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -331,11 +385,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </nav>
         </div>
 
-        {/* Contenido de tabs */}
         {activeTab === "overview" && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {/* Card Total Usuarios */}
               <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 group">
                 <div className="flex items-center justify-between">
                   <div className="p-3 bg-[#034651]/10 rounded-2xl group-hover:bg-[#034651]/20 transition-colors">
@@ -359,8 +411,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                 </div>
               </div>
-
-              {/* Card Publicaciones Totales */}
               <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 group">
                 <div className="flex items-center justify-between">
                   <div className="p-3 bg-[#034651]/10 rounded-2xl group-hover:bg-[#034651]/20 transition-colors">
@@ -384,8 +434,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                 </div>
               </div>
-
-              {/* Card Pendientes */}
               <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 group">
                 <div className="flex items-center justify-between">
                   <div className="p-3 bg-[#034651]/10 rounded-2xl group-hover:bg-[#034651]/20 transition-colors">
@@ -407,8 +455,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <div className="text-xs text-[#034651]/60">Última hora</div>
                 </div>
               </div>
-
-              {/* Card Usuarios Activos */}
               <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 group">
                 <div className="flex items-center justify-between">
                   <div className="p-3 bg-[#034651]/10 rounded-2xl group-hover:bg-[#034651]/20 transition-colors">
@@ -433,10 +479,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               </div>
             </div>
-
-            {/* Gráficos de estadísticas */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Gráfico de usuarios por país */}
               <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl">
                 <h3 className="text-lg font-semibold text-[#034651] mb-4 flex items-center gap-2">
                   <Users className="h-5 w-5" />
@@ -474,8 +517,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   ))}
                 </div>
               </div>
-
-              {/* Gráfico de publicaciones por país */}
               <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl">
                 <h3 className="text-lg font-semibold text-[#034651] mb-4 flex items-center gap-2">
                   <FileText className="h-5 w-5" />
@@ -816,7 +857,148 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
 
-        {/* Modal de previsualización de anuncio */}
+        {activeTab === "advertisements" && (
+          <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+              <h3 className="text-lg font-semibold text-[#034651] flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Anuncios Publicitarios
+              </h3>
+              <div className="flex items-center gap-3 flex-1 justify-end">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                  <input
+                    type="text"
+                    placeholder="Buscar anuncios..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-64"
+                  />
+                </div>
+                <select
+                  value={filterCountry}
+                  onChange={(e) => {
+                    console.log(
+                      `[AdminDashboard] Filtrando anuncios por país: ${e.target.value}`
+                    );
+                    setFilterCountry(e.target.value);
+                  }}
+                  className="px-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent"
+                >
+                  <option value="all">Todos los países</option>
+                  {countries.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={filterPosition}
+                  onChange={(e) => {
+                    console.log(
+                      `[AdminDashboard] Filtrando anuncios por posición: ${e.target.value}`
+                    );
+                    setFilterPosition(e.target.value);
+                  }}
+                  className="px-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent"
+                >
+                  <option value="all">Todas las posiciones</option>
+                  <option value="left">Izquierdo</option>
+                  <option value="right">Derecho</option>
+                  <option value="top">Superior</option>
+                  <option value="bottom">Inferior</option>
+                </select>
+                <button
+                  onClick={() => {
+                    console.log(
+                      "[AdminDashboard] Navegando a publicar anuncio"
+                    );
+                    navigate(getCountryPath("/ManageAdsPage"));
+                  }}
+                  className="px-4 py-2 bg-[#034651] text-white rounded-xl hover:bg-[#05707f] transition-colors shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300 flex items-center gap-2"
+                >
+                  <Plus className="h-5 w-5" />
+                  Publicar Anuncio
+                </button>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-[#034651]/20">
+                <thead className="bg-[#034651]/5">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
+                      Título
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
+                      Publicidad
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
+                      Posición
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
+                      Fecha
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-[#034651]/20">
+                  {filteredAds.map((ad) => (
+                    <tr key={ad.id} className="hover:bg-[#034651]/5">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-[#034651] truncate max-w-xs">
+                          {ad.title}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-[#034651]/80 truncate max-w-xs">
+                          {ad.description}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-[#034651]/10 text-[#034651]">
+                          {ad.position === "left"
+                            ? "Izquierdo"
+                            : ad.position === "right"
+                            ? "Derecho"
+                            : ad.position === "top"
+                            ? "Superior"
+                            : "Inferior"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#034651]/80">
+                        {formatDate(ad.createdAt)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center gap-2 justify-end">
+                          <button className="p-2 text-[#034651] hover:text-[#05707f] hover:bg-[#034651]/10 rounded-lg transition-colors">
+                            <Edit3 className="h-4 w-4" />
+                          </button>
+                          <button className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {filteredAds.length === 0 && (
+              <div className="text-center py-12">
+                <FileText className="mx-auto h-12 w-12 text-[#034651]/60 mb-4" />
+                <h3 className="text-lg font-medium text-[#034651] mb-2">
+                  No hay anuncios
+                </h3>
+                <p className="text-[#034651]/80">
+                  No se encontraron anuncios publicitarios
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
         {selectedAd && (
           <ModalContainer
             isOpen={showAdModal}
@@ -900,7 +1082,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </ModalContainer>
         )}
 
-        {/* Modal de perfil */}
         {showProfileModal && (
           <ModalContainer
             isOpen={showProfileModal}

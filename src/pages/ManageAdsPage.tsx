@@ -314,13 +314,6 @@ const ManageAdsPage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <div className="bg-[#034651] text-white py-5 text-center">
-        <p className="text-xs opacity-90">
-          © {new Date().getFullYear()} MundoCar. Todos los derechos reservados.
-        </p>
-      </div>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   FileText,
   Search,
@@ -13,11 +12,14 @@ import {
   Car,
   Building,
   AlertCircle,
+  Plus,
+  Calendar,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import ModalContainer from "@/components/ModalContainer";
 import { Country } from "../interfaces/IUser";
+import { useParams } from "react-router-dom";
 
-// Tipos de datos
 interface UserAd {
   id: string;
   title: string;
@@ -50,7 +52,6 @@ interface UserDashboardProps {
   isSubscribed?: boolean;
 }
 
-// Lista de países para el filtro
 const COUNTRIES = [
   { code: Country.Honduras, name: "Honduras", currency: "HNL" },
   { code: Country.CostaRica, name: "Costa Rica", currency: "CRC" },
@@ -66,15 +67,58 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   concessionaires: propConcessionaires,
   isSubscribed = false,
 }) => {
+  const { countryCode } = useParams<{ countryCode?: string }>();
+  const getCountryPath = (path: string) => {
+    if (!countryCode || path === "/") return path;
+    if (path.startsWith("/")) return `/${countryCode}${path}`;
+    return `/${countryCode}/${path}`;
+  };
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterCountry, setFilterCountry] = useState("all");
+
+  const [searchTermAds, setSearchTermAds] = useState("");
+  const [filterCountryAds, setFilterCountryAds] = useState("all");
+  const [filterStatusAds, setFilterStatusAds] = useState("all");
+  const [filterStartDateAds, setFilterStartDateAds] = useState("");
+  const [filterEndDateAds, setFilterEndDateAds] = useState("");
+  const [sortByAds, setSortByAds] = useState<"createdAt" | "price" | "status">(
+    "createdAt"
+  );
+  const [sortOrderAds, setSortOrderAds] = useState<"asc" | "desc">("desc");
+
+  const [searchTermAutolotes, setSearchTermAutolotes] = useState("");
+  const [filterCountryAutolotes, setFilterCountryAutolotes] = useState("all");
+  const [filterStatusAutolotes, setFilterStatusAutolotes] = useState("all");
+  const [filterStartDateAutolotes, setFilterStartDateAutolotes] = useState("");
+  const [filterEndDateAutolotes, setFilterEndDateAutolotes] = useState("");
+  const [sortByAutolotes, setSortByAutolotes] = useState<
+    "createdAt" | "price" | "status"
+  >("createdAt");
+  const [sortOrderAutolotes, setSortOrderAutolotes] = useState<"asc" | "desc">(
+    "desc"
+  );
+
+  const [searchTermConcessionaires, setSearchTermConcessionaires] =
+    useState("");
+  const [filterCountryConcessionaires, setFilterCountryConcessionaires] =
+    useState("all");
+  const [filterStatusConcessionaires, setFilterStatusConcessionaires] =
+    useState("all");
+  const [filterStartDateConcessionaires, setFilterStartDateConcessionaires] =
+    useState("");
+  const [filterEndDateConcessionaires, setFilterEndDateConcessionaires] =
+    useState("");
+  const [sortByConcessionaires, setSortByConcessionaires] = useState<
+    "createdAt" | "price" | "status"
+  >("createdAt");
+  const [sortOrderConcessionaires, setSortOrderConcessionaires] = useState<
+    "asc" | "desc"
+  >("desc");
+
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(
     !isSubscribed
   );
 
-  // Datos mock
   const userAds: UserAd[] = propUserAds || [
     {
       id: "1",
@@ -222,26 +266,147 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     },
   ];
 
-  // Filtrar publicaciones
   const filteredAds = userAds
-    .filter((ad) => ad.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter((ad) => filterCountry === "all" || ad.country === filterCountry);
-
-  // Filtrar autolotes
-  const filteredAutolotes = autolotes
-    .filter((lot) => lot.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter((lot) => filterCountry === "all" || lot.country === filterCountry);
-
-  // Filtrar concesionarios
-  const filteredConcessionaires = concessionaires
-    .filter((deal) =>
-      deal.name.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter((ad) =>
+      ad.title.toLowerCase().includes(searchTermAds.toLowerCase())
     )
     .filter(
-      (deal) => filterCountry === "all" || deal.country === filterCountry
-    );
+      (ad) => filterCountryAds === "all" || ad.country === filterCountryAds
+    )
+    .filter((ad) => filterStatusAds === "all" || ad.status === filterStatusAds)
+    .filter((ad) => {
+      if (!filterStartDateAds && !filterEndDateAds) return true;
+      const adDate = new Date(ad.createdAt).getTime();
+      const startDate = filterStartDateAds
+        ? new Date(filterStartDateAds).getTime()
+        : -Infinity;
+      const endDate = filterEndDateAds
+        ? new Date(filterEndDateAds).getTime()
+        : Infinity;
+      return adDate >= startDate && adDate <= endDate;
+    })
+    .sort((a, b) => {
+      const multiplier = sortOrderAds === "asc" ? 1 : -1;
+      if (sortByAds === "createdAt") {
+        return (
+          multiplier *
+          (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        );
+      } else if (sortByAds === "price") {
+        return multiplier * (a.price - b.price);
+      } else if (sortByAds === "status") {
+        return multiplier * a.status.localeCompare(b.status);
+      }
+      return 0;
+    });
 
-  // Formatear fecha
+  const filterAndSortAutoloteCars = (cars: UserAd[]) =>
+    cars
+      .filter((ad) =>
+        ad.title.toLowerCase().includes(searchTermAutolotes.toLowerCase())
+      )
+      .filter(
+        (ad) =>
+          filterCountryAutolotes === "all" ||
+          ad.country === filterCountryAutolotes
+      )
+      .filter(
+        (ad) =>
+          filterStatusAutolotes === "all" || ad.status === filterStatusAutolotes
+      )
+      .filter((ad) => {
+        if (!filterStartDateAutolotes && !filterEndDateAutolotes) return true;
+        const adDate = new Date(ad.createdAt).getTime();
+        const startDate = filterStartDateAutolotes
+          ? new Date(filterStartDateAutolotes).getTime()
+          : -Infinity;
+        const endDate = filterEndDateAutolotes
+          ? new Date(filterEndDateAutolotes).getTime()
+          : Infinity;
+        return adDate >= startDate && adDate <= endDate;
+      })
+      .sort((a, b) => {
+        const multiplier = sortOrderAutolotes === "asc" ? 1 : -1;
+        if (sortByAutolotes === "createdAt") {
+          return (
+            multiplier *
+            (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+          );
+        } else if (sortByAutolotes === "price") {
+          return multiplier * (a.price - b.price);
+        } else if (sortByAutolotes === "status") {
+          return multiplier * a.status.localeCompare(b.status);
+        }
+        return 0;
+      });
+
+  const filterAndSortConcessionaireCars = (cars: UserAd[]) =>
+    cars
+      .filter((ad) =>
+        ad.title.toLowerCase().includes(searchTermConcessionaires.toLowerCase())
+      )
+      .filter(
+        (ad) =>
+          filterCountryConcessionaires === "all" ||
+          ad.country === filterCountryConcessionaires
+      )
+      .filter(
+        (ad) =>
+          filterStatusConcessionaires === "all" ||
+          ad.status === filterStatusConcessionaires
+      )
+      .filter((ad) => {
+        if (!filterStartDateConcessionaires && !filterEndDateConcessionaires)
+          return true;
+        const adDate = new Date(ad.createdAt).getTime();
+        const startDate = filterStartDateConcessionaires
+          ? new Date(filterStartDateConcessionaires).getTime()
+          : -Infinity;
+        const endDate = filterEndDateConcessionaires
+          ? new Date(filterEndDateConcessionaires).getTime()
+          : Infinity;
+        return adDate >= startDate && adDate <= endDate;
+      })
+      .sort((a, b) => {
+        const multiplier = sortOrderConcessionaires === "asc" ? 1 : -1;
+        if (sortByConcessionaires === "createdAt") {
+          return (
+            multiplier *
+            (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+          );
+        } else if (sortByConcessionaires === "price") {
+          return multiplier * (a.price - b.price);
+        } else if (sortByConcessionaires === "status") {
+          return multiplier * a.status.localeCompare(b.status);
+        }
+        return 0;
+      });
+
+  const filteredAutolotes = autolotes
+    .filter((lot) =>
+      lot.name.toLowerCase().includes(searchTermAutolotes.toLowerCase())
+    )
+    .filter(
+      (lot) =>
+        filterCountryAutolotes === "all" ||
+        lot.country === filterCountryAutolotes
+    )
+    .map((lot) => ({ ...lot, cars: filterAndSortAutoloteCars(lot.cars) }));
+
+  const filteredConcessionaires = concessionaires
+    .filter((deal) =>
+      deal.name.toLowerCase().includes(searchTermConcessionaires.toLowerCase())
+    )
+    .filter(
+      (deal) =>
+        filterCountryConcessionaires === "all" ||
+        deal.country === filterCountryConcessionaires
+    )
+    .map((deal) => ({
+      ...deal,
+      cars: filterAndSortConcessionaireCars(deal.cars),
+    }));
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("es-CR", {
       year: "numeric",
@@ -252,7 +417,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     });
   };
 
-  // Componente para renderizar tabla de autos
   const CarTable = ({
     cars,
     parentId,
@@ -274,15 +438,144 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
               Precio
+              <button
+                onClick={() => {
+                  if (parentType === "ad") {
+                    setSortByAds("price");
+                    setSortOrderAds(
+                      sortByAds === "price" && sortOrderAds === "asc"
+                        ? "desc"
+                        : "asc"
+                    );
+                  } else if (parentType === "autolote") {
+                    setSortByAutolotes("price");
+                    setSortOrderAutolotes(
+                      sortByAutolotes === "price" &&
+                        sortOrderAutolotes === "asc"
+                        ? "desc"
+                        : "asc"
+                    );
+                  } else if (parentType === "concessionaire") {
+                    setSortByConcessionaires("price");
+                    setSortOrderConcessionaires(
+                      sortByConcessionaires === "price" &&
+                        sortOrderConcessionaires === "asc"
+                        ? "desc"
+                        : "asc"
+                    );
+                  }
+                }}
+                className="ml-2 text-[#034651]/60 hover:text-[#034651]"
+              >
+                {parentType === "ad" &&
+                sortByAds === "price" &&
+                sortOrderAds === "asc"
+                  ? "↑"
+                  : parentType === "autolote" &&
+                    sortByAutolotes === "price" &&
+                    sortOrderAutolotes === "asc"
+                  ? "↑"
+                  : parentType === "concessionaire" &&
+                    sortByConcessionaires === "price" &&
+                    sortOrderConcessionaires === "asc"
+                  ? "↑"
+                  : "↓"}
+              </button>
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
               Fecha
+              <button
+                onClick={() => {
+                  if (parentType === "ad") {
+                    setSortByAds("createdAt");
+                    setSortOrderAds(
+                      sortByAds === "createdAt" && sortOrderAds === "asc"
+                        ? "desc"
+                        : "asc"
+                    );
+                  } else if (parentType === "autolote") {
+                    setSortByAutolotes("createdAt");
+                    setSortOrderAutolotes(
+                      sortByAutolotes === "createdAt" &&
+                        sortOrderAutolotes === "asc"
+                        ? "desc"
+                        : "asc"
+                    );
+                  } else if (parentType === "concessionaire") {
+                    setSortByConcessionaires("createdAt");
+                    setSortOrderConcessionaires(
+                      sortByConcessionaires === "createdAt" &&
+                        sortOrderConcessionaires === "asc"
+                        ? "desc"
+                        : "asc"
+                    );
+                  }
+                }}
+                className="ml-2 text-[#034651]/60 hover:text-[#034651]"
+              >
+                {parentType === "ad" &&
+                sortByAds === "createdAt" &&
+                sortOrderAds === "asc"
+                  ? "↑"
+                  : parentType === "autolote" &&
+                    sortByAutolotes === "createdAt" &&
+                    sortOrderAutolotes === "asc"
+                  ? "↑"
+                  : parentType === "concessionaire" &&
+                    sortByConcessionaires === "createdAt" &&
+                    sortOrderConcessionaires === "asc"
+                  ? "↑"
+                  : "↓"}
+              </button>
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
               Vistas
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
               Estado
+              <button
+                onClick={() => {
+                  if (parentType === "ad") {
+                    setSortByAds("status");
+                    setSortOrderAds(
+                      sortByAds === "status" && sortOrderAds === "asc"
+                        ? "desc"
+                        : "asc"
+                    );
+                  } else if (parentType === "autolote") {
+                    setSortByAutolotes("status");
+                    setSortOrderAutolotes(
+                      sortByAutolotes === "status" &&
+                        sortOrderAutolotes === "asc"
+                        ? "desc"
+                        : "asc"
+                    );
+                  } else if (parentType === "concessionaire") {
+                    setSortByConcessionaires("status");
+                    setSortOrderConcessionaires(
+                      sortByConcessionaires === "status" &&
+                        sortOrderConcessionaires === "asc"
+                        ? "desc"
+                        : "asc"
+                    );
+                  }
+                }}
+                className="ml-2 text-[#034651]/60 hover:text-[#034651]"
+              >
+                {parentType === "ad" &&
+                sortByAds === "status" &&
+                sortOrderAds === "asc"
+                  ? "↑"
+                  : parentType === "autolote" &&
+                    sortByAutolotes === "status" &&
+                    sortOrderAutolotes === "asc"
+                  ? "↑"
+                  : parentType === "concessionaire" &&
+                    sortByConcessionaires === "status" &&
+                    sortOrderConcessionaires === "asc"
+                  ? "↑"
+                  : "↓"}
+              </button>
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-[#034651]/80 uppercase tracking-wider">
               Acciones
@@ -372,9 +665,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#034651]/10 to-[#034651]/5 dark:from-[#034651]/20 dark:to-[#034651]/10">
-      {/* Banner de suscripción */}
       {!isSubscribed && (
-        <div className="bg-[#034651] text-white py-4 px-6 text-center">
+        <div className="bg-[#034651] text-white py-4 px-6 text-center flex items-center justify-center gap-2">
+          <AlertCircle className="h-5 w-5" />
           <p className="text-sm font-medium">
             ¡Suscríbete a un plan para desbloquear todas las funcionalidades de
             MundoCar!
@@ -383,17 +676,16 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                 console.log(
                   "[UserDashboard] Abriendo modal de suscripción desde banner"
                 );
+                navigate(getCountryPath("/planPage"));
                 setShowSubscriptionModal(true);
               }}
-              className="ml-4 inline-flex items-center px-4 py-2 bg-[#05707f] rounded-xl hover:bg-[#034651] transition-colors"
+              className="ml-4 inline-flex items-center px-4 py-2 bg-[#05707f] rounded-xl hover:bg-[#034651] transition-colors shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300"
             >
               Suscribirse ahora
             </button>
           </p>
         </div>
       )}
-
-      {/* Header del Dashboard */}
       <header className="bg-white/80 backdrop-blur-xl border-b border-[#034651]/20 shadow-lg sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -425,7 +717,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                   console.log("[UserDashboard] Cerrando sesión");
                   navigate("/hr/inicio");
                 }}
-                className="px-4 py-2 bg-[#034651] text-white rounded-xl hover:bg-[#05707f] transition-colors"
+                className="px-4 py-2 bg-[#034651] text-white rounded-xl hover:bg-[#05707f] transition-colors shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300"
               >
                 Salir
               </button>
@@ -433,35 +725,45 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
           </div>
         </div>
       </header>
-
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <button
+          onClick={() => {
+            console.log("[UserDashboard] Navegando a publicar anuncio");
+            navigate(getCountryPath("/publicar"));
+          }}
+          className="px-4 py-2 bg-[#034651] text-white rounded-xl hover:bg-[#05707f] transition-colors shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300 flex items-center gap-2"
+        >
+          <Plus className="h-5 w-5" />
+          Publicar Anuncio
+        </button>
+      </div>
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Sección de publicaciones personales */}
         <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <h3 className="text-lg font-semibold text-[#034651] flex items-center gap-2">
               <FileText className="h-5 w-5" />
               Tus Publicaciones
             </h3>
-            <div className="flex items-center gap-3 flex-1 justify-end">
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
                 <input
                   type="text"
                   placeholder="Buscar anuncios..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-64"
+                  value={searchTermAds}
+                  onChange={(e) => setSearchTermAds(e.target.value)}
+                  className="pl-12 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-64 transition-all duration-300 focus:scale-[1.02]"
                 />
               </div>
               <select
-                value={filterCountry}
+                value={filterCountryAds}
                 onChange={(e) => {
                   console.log(
                     `[UserDashboard] Filtrando por país: ${e.target.value}`
                   );
-                  setFilterCountry(e.target.value);
+                  setFilterCountryAds(e.target.value);
                 }}
-                className="px-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent"
+                className="px-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-auto transition-all duration-300 focus:scale-[1.02]"
               >
                 <option value="all">Todos los países</option>
                 {COUNTRIES.map((c) => (
@@ -470,6 +772,41 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                   </option>
                 ))}
               </select>
+              <select
+                value={filterStatusAds}
+                onChange={(e) => {
+                  console.log(
+                    `[UserDashboard] Filtrando por estado: ${e.target.value}`
+                  );
+                  setFilterStatusAds(e.target.value);
+                }}
+                className="px-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-auto transition-all duration-300 focus:scale-[1.02]"
+              >
+                <option value="all">Todos los estados</option>
+                <option value="pending">Pendiente</option>
+                <option value="approved">Aprobado</option>
+                <option value="rejected">Rechazado</option>
+              </select>
+              <div className="flex gap-3">
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
+                  <input
+                    type="date"
+                    value={filterStartDateAds}
+                    onChange={(e) => setFilterStartDateAds(e.target.value)}
+                    className="pl-12 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-44 transition-all duration-300 focus:scale-[1.02]"
+                  />
+                </div>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
+                  <input
+                    type="date"
+                    value={filterEndDateAds}
+                    onChange={(e) => setFilterEndDateAds(e.target.value)}
+                    className="pl-12 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-44 transition-all duration-300 focus:scale-[1.02]"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           {filteredAds.length > 0 ? (
@@ -484,13 +821,79 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             </div>
           )}
         </div>
-
-        {/* Sección de autolotes */}
         <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl mb-8">
-          <h3 className="text-lg font-semibold text-[#034651] flex items-center gap-2 mb-6">
-            <Car className="h-5 w-5" />
-            Tus Autolotes
-          </h3>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <h3 className="text-lg font-semibold text-[#034651] flex items-center gap-2">
+              <Car className="h-5 w-5" />
+              Tus Autolotes
+            </h3>
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
+                <input
+                  type="text"
+                  placeholder="Buscar autolotes..."
+                  value={searchTermAutolotes}
+                  onChange={(e) => setSearchTermAutolotes(e.target.value)}
+                  className="pl-12 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-64 transition-all duration-300 focus:scale-[1.02]"
+                />
+              </div>
+              <select
+                value={filterCountryAutolotes}
+                onChange={(e) => {
+                  console.log(
+                    `[UserDashboard] Filtrando autolotes por país: ${e.target.value}`
+                  );
+                  setFilterCountryAutolotes(e.target.value);
+                }}
+                className="px-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-auto transition-all duration-300 focus:scale-[1.02]"
+              >
+                <option value="all">Todos los países</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={filterStatusAutolotes}
+                onChange={(e) => {
+                  console.log(
+                    `[UserDashboard] Filtrando autolotes por estado: ${e.target.value}`
+                  );
+                  setFilterStatusAutolotes(e.target.value);
+                }}
+                className="px-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-auto transition-all duration-300 focus:scale-[1.02]"
+              >
+                <option value="all">Todos los estados</option>
+                <option value="pending">Pendiente</option>
+                <option value="approved">Aprobado</option>
+                <option value="rejected">Rechazado</option>
+              </select>
+              <div className="flex gap-3">
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
+                  <input
+                    type="date"
+                    value={filterStartDateAutolotes}
+                    onChange={(e) =>
+                      setFilterStartDateAutolotes(e.target.value)
+                    }
+                    className="pl-12 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-44 transition-all duration-300 focus:scale-[1.02]"
+                  />
+                </div>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
+                  <input
+                    type="date"
+                    value={filterEndDateAutolotes}
+                    onChange={(e) => setFilterEndDateAutolotes(e.target.value)}
+                    className="pl-12 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-44 transition-all duration-300 focus:scale-[1.02]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
           {filteredAutolotes.length > 0 ? (
             filteredAutolotes.map((lot) => (
               <div key={lot.id} className="mb-6">
@@ -549,13 +952,81 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             </div>
           )}
         </div>
-
-        {/* Sección de concesionarios */}
         <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-3xl p-6 shadow-xl">
-          <h3 className="text-lg font-semibold text-[#034651] flex items-center gap-2 mb-6">
-            <Building className="h-5 w-5" />
-            Tus Concesionarios
-          </h3>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <h3 className="text-lg font-semibold text-[#034651] flex items-center gap-2">
+              <Building className="h-5 w-5" />
+              Tus Concesionarios
+            </h3>
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
+                <input
+                  type="text"
+                  placeholder="Buscar concesionarios..."
+                  value={searchTermConcessionaires}
+                  onChange={(e) => setSearchTermConcessionaires(e.target.value)}
+                  className="pl-12 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-64 transition-all duration-300 focus:scale-[1.02]"
+                />
+              </div>
+              <select
+                value={filterCountryConcessionaires}
+                onChange={(e) => {
+                  console.log(
+                    `[UserDashboard] Filtrando concesionarios por país: ${e.target.value}`
+                  );
+                  setFilterCountryConcessionaires(e.target.value);
+                }}
+                className="px-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-auto transition-all duration-300 focus:scale-[1.02]"
+              >
+                <option value="all">Todos los países</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={filterStatusConcessionaires}
+                onChange={(e) => {
+                  console.log(
+                    `[UserDashboard] Filtrando concesionarios por estado: ${e.target.value}`
+                  );
+                  setFilterStatusConcessionaires(e.target.value);
+                }}
+                className="px-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-auto transition-all duration-300 focus:scale-[1.02]"
+              >
+                <option value="all">Todos los estados</option>
+                <option value="pending">Pendiente</option>
+                <option value="approved">Aprobado</option>
+                <option value="rejected">Rechazado</option>
+              </select>
+              <div className="flex gap-3">
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
+                  <input
+                    type="date"
+                    value={filterStartDateConcessionaires}
+                    onChange={(e) =>
+                      setFilterStartDateConcessionaires(e.target.value)
+                    }
+                    className="pl-12 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-44 transition-all duration-300 focus:scale-[1.02]"
+                  />
+                </div>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
+                  <input
+                    type="date"
+                    value={filterEndDateConcessionaires}
+                    onChange={(e) =>
+                      setFilterEndDateConcessionaires(e.target.value)
+                    }
+                    className="pl-12 pr-4 py-2 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent w-full sm:w-44 transition-all duration-300 focus:scale-[1.02]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
           {filteredConcessionaires.length > 0 ? (
             filteredConcessionaires.map((deal) => (
               <div key={deal.id} className="mb-6">
@@ -614,8 +1085,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             </div>
           )}
         </div>
-
-        {/* Modal de perfil */}
         {showProfileModal && (
           <ModalContainer
             isOpen={showProfileModal}
@@ -644,7 +1113,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                 onClick={() =>
                   console.log("[UserDashboard] Restableciendo contraseña")
                 }
-                className="w-full bg-[#034651] text-white py-3 px-6 rounded-xl font-semibold hover:bg-[#05707f] transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#034651] text-white py-3 px-6 rounded-xl font-semibold hover:bg-[#05707f] transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300"
               >
                 <Key className="h-5 w-5" />
                 Restablecer Contraseña
@@ -652,8 +1121,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             </div>
           </ModalContainer>
         )}
-
-        {/* Modal de suscripción */}
         {showSubscriptionModal && (
           <ModalContainer
             isOpen={showSubscriptionModal}
@@ -665,7 +1132,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             width="32rem"
           >
             <div className="space-y-6">
-              <p className="text-[#034651]/80">
+              <p className="text-[#034651]/80 flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-[#034651]/80" />
                 Para disfrutar de todas las funcionalidades, como gestionar
                 autolotes y concesionarios, suscríbete a uno de nuestros planes.
               </p>
@@ -674,9 +1142,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                   console.log(
                     "[UserDashboard] Navegando a planes de suscripción"
                   );
-                  navigate("/hr/plans"); // Ruta de ejemplo para planes
+                  navigate(getCountryPath("/planPage"));
                 }}
-                className="w-full bg-[#034651] text-white py-3 px-6 rounded-xl font-semibold hover:bg-[#05707f] transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#034651] text-white py-3 px-6 rounded-xl font-semibold hover:bg-[#05707f] transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300"
               >
                 Ver Planes
                 <ChevronRight className="h-5 w-5" />

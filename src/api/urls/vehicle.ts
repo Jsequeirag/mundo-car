@@ -1,5 +1,25 @@
 import { request } from "../config/network";
 import { IVehicle } from "@/interfaces/IVehicle";
+interface VehicleDTO {
+  id?: number;
+  brand: string;
+  model: string;
+  fuel: string;
+  locate: string;
+  img: string;
+  condition: string;
+  featured: boolean;
+  year: number;
+  price: number;
+  distance: number;
+  transmission: string;
+}
+// Define the request body interface
+interface RegisterVehicleRequest {
+  vehicleDTO: VehicleDTO;
+  images: string[]; // Array of base64 image strings
+}
+
 export const getVehiclesByFeatures = async (filters: {
   priceRange?: [number, number];
   yearRange?: [number, number];
@@ -53,5 +73,29 @@ export const getVehiclesByFeatures = async (filters: {
             featured: filters.featured,
             fuel: filters.fuel,
           },
+  });
+};
+export const registerVehicle = async (
+  vehicleData: RegisterVehicleRequest
+): Promise<VehicleDTO> => {
+  return request({
+    url: "/api/vehicle/createVehicle",
+    method: "POST",
+    data: {
+      vehicleDTO: {
+        brand: vehicleData.vehicleDTO.brand,
+        model: vehicleData.vehicleDTO.model,
+        fuel: vehicleData.vehicleDTO.fuel,
+        locate: vehicleData.vehicleDTO.locate,
+        img: vehicleData.vehicleDTO.img,
+        condition: vehicleData.vehicleDTO.condition,
+        featured: vehicleData.vehicleDTO.featured,
+        year: vehicleData.vehicleDTO.year,
+        price: vehicleData.vehicleDTO.price,
+        distance: vehicleData.vehicleDTO.distance,
+        transmission: vehicleData.vehicleDTO.transmission,
+      },
+      images: vehicleData.images,
+    },
   });
 };

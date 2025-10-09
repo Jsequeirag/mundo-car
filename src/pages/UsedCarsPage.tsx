@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import SearchFilters from "@/components/SearchFilters";
 import CarGrid from "@/components/CarGrid";
@@ -52,40 +52,52 @@ const UsedCarsPage: React.FC = () => {
       type: "autolote",
     },
   ];
-
-  const { data, isSuccess, isPending } = useApiGet(
+  const location = useLocation();
+  const { data, isSuccess, isPending, refetch } = useApiGet(
     ["getVehiclesByFeatures"],
     () => getVehiclesByFeatures({ condition: "used", featured: true }),
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
+      // Disable auto-fetch; we'll control it manually
+      enabled: false,
     }
   );
+
+  // Initial fetch when component mounts
   useEffect(() => {
-    if (isSuccess && data) {
-      setVehicles(data);
-      setLoading(false);
+    // Trigger initial fetch
+    refetch();
+  }, [refetch]); // Run once on mount
+
+  // Refetch data when the location changes, specific to this page
+  useEffect(() => {
+    // Refetch only if the current page is /used-cars
+    if (location.pathname.includes("/used-cars")) {
+      console.log("Refetching data for UsedCarsPage:", location.pathname); // Debug
+      refetch();
     }
+  }, [location, refetch]);
+
+  // Update state based on API response
+  useEffect(() => {
+    console.log(
+      "API Response - isPending:",
+      isPending,
+      "isSuccess:",
+      isSuccess,
+      "data:",
+      data
+    ); // Debug
     if (isPending) {
       setLoading(true);
+    } else if (isSuccess && data) {
+      setVehicles(data);
+      setLoading(false);
+    } else {
+      setLoading(false); // Reset loading on error or no data
     }
-  }, [isSuccess, isPending]);
-
-  const handleSearch = (filters: {
-    searchTerm?: string;
-    priceRange?: [number, number];
-    yearRange?: [number, number];
-    department?: string;
-    service?: string;
-    make?: string;
-    model?: string;
-    transmission?: string;
-    condition?: string;
-  }) => {
-    getVehiclesByFeatures({ ...filters, condition: "used" }).then((data) => {
-      setVehicles(data); // Update Zustand store
-    });
-  };
+  }, [isPending, isSuccess, data]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -129,13 +141,13 @@ const UsedCarsPage: React.FC = () => {
             <div className="lg:col-span-3 xl:col-span-4">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                  Vehículos Usados Destacados
+                  Vehículos Usado
                 </h2>
                 <p className="text-gray-600">
                   {vehicles.length} autos usados disponibles
                 </p>
               </div>
-              <CarGrid />
+              <CarGrid /> {/* Pass vehicles as prop */}
             </div>
           </div>
           <div className="mt-8">

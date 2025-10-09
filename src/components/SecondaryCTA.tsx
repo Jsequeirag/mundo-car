@@ -86,7 +86,7 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
         `}
                 style={{
                   backgroundImage:
-                    "url('https://example.com/independent-bg.jpg')",
+                    "url('/assets/mundo/suscripcion-independiente.png')",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
@@ -106,13 +106,13 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
                   </div>
 
                   {/* Nombre del plan */}
-                  <h3 className="text-2xl font-bold text-center text-gray-800 mb-2">
+                  <h3 className="text-2xl font-bold text-center  mb-2 text-white text-shadow-md">
                     Independiente
                   </h3>
 
                   {/* Descripción */}
-                  <div className="text-center mb-6 flex-1 flex flex-col justify-center">
-                    <p className="text-sm text-gray-500 mt-1">
+                  <div className="text-center mb-6 flex-1 flex flex-col justify-center ">
+                    <p className="   mt-1 text-white text-shadow-md font-bold">
                       Perfecto para vendedores individuales
                     </p>
                   </div>
@@ -177,7 +177,8 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
           before:transition-opacity before:duration-500
         `}
                 style={{
-                  backgroundImage: "url('https://example.com/autolote-bg.jpg')",
+                  backgroundImage:
+                    "url('/assets/mundo/suscripcion-autolote.png')",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
@@ -197,13 +198,13 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
                   </div>
 
                   {/* Nombre del plan */}
-                  <h3 className="text-2xl font-bold text-center text-gray-800 mb-2">
+                  <h3 className="text-2xl font-bold text-center  mb-2 text-white text-shadow-md">
                     Autolote
                   </h3>
 
                   {/* Descripción */}
                   <div className="text-center mb-6 flex-1 flex flex-col justify-center">
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="  mt-1 text-white text-shadow-md font-bold">
                       Ideal para pequeños negocios de autos
                     </p>
                   </div>
@@ -268,7 +269,7 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
         `}
                 style={{
                   backgroundImage:
-                    "url('https://example.com/concesionario-bg.jpg')",
+                    "url('/assets/mundo/suscripcion-concesionario.png')",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
@@ -288,13 +289,13 @@ const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
                   </div>
 
                   {/* Nombre del plan */}
-                  <h3 className="text-2xl font-bold text-center text-gray-800 mb-2">
+                  <h3 className="text-2xl font-bold text-center  mb-2 text-white text-shadow-md">
                     Concesionario
                   </h3>
 
                   {/* Descripción */}
                   <div className="text-center mb-6 flex-1 flex flex-col justify-center">
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="  mt-1 text-white text-shadow-md font-bold">
                       Para concesionarios profesionales
                     </p>
                   </div>

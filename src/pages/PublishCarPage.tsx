@@ -12,11 +12,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -26,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Dialog,
@@ -35,84 +33,56 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { X, ChevronRight, Camera, Send } from "lucide-react";
-import Header from "@/components/Header"; // Añadido desde AppLayout
-import AdvertisementCarousel from "@/components/AdvertisementCarousel"; // Publicidad inicial y final
-import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral"; // Publicidad lateral
-import MobileSidebar from "@/components/MobileSidebar"; // Añadido desde AppLayout
-import Footer from "@/components/Footer"; // Añadido desde AppLayout
+import Header from "@/components/Header";
+import AdvertisementCarousel from "@/components/AdvertisementCarousel";
+import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral";
+import MobileSidebar from "@/components/MobileSidebar";
+import Footer from "@/components/Footer";
 import { hondurasDepartment } from "@/data/hondurasDepartment";
-const EQUIPAMIENTO_GROUPS: {
-  title?: string;
-  items: { value: string; label: string }[];
-}[] = [
-  {
-    items: [
-      {
-        value: "direccion_hidraulica",
-        label: "Dirección Hidráulica/Electroasistida",
-      },
-      { value: "cierre_central", label: "Cierre Central" },
-      { value: "asientos_electricos", label: "Asientos Eléctricos" },
-      { value: "vidrios_tintados", label: "Vidrios Tintados" },
-      { value: "bolsas_aire", label: "Bolsa(s) de Aire" },
-      { value: "vidrios_electricos", label: "Vidrios Eléctricos" },
-      { value: "espejos_electricos", label: "Espejos Eléctricos" },
-      { value: "alarma", label: "Alarma" },
-      { value: "frenos_abs", label: "Frenos ABS" },
-      { value: "aire_acondicionado", label: "Aire Acondicionado" },
-      { value: "desempannador_trasero", label: "Desempañador Trasero" },
-      { value: "sunroof_panorama", label: "Sunroof/techo panorámico" },
-      { value: "aros_lujo", label: "Aros de Lujo" },
-    ],
-  },
-  {
-    items: [
-      { value: "turbo", label: "Turbo" },
-      { value: "tapiceria_cuero", label: "Tapicería de Cuero" },
-      { value: "halogenos", label: "Halógenos" },
-      { value: "camara_360", label: "Cámara 360" },
-      { value: "android_auto", label: "Android Auto" },
-      { value: "cruise_control", label: "Cruise Control" },
-      { value: "radio_usb_aux", label: "Radio con USB/AUX" },
-      { value: "revision_tecnica", label: "Revisión Técnica al día" },
-      {
-        value: "control_estabilidad",
-        label: "Control Electrónico de Estabilidad",
-      },
-      { value: "control_descenso", label: "Control de Descenso" },
-      { value: "caja_cambios_dual", label: "Caja de Cambios Dual" },
-      { value: "camara_retroceso", label: "Cámara de Retroceso" },
-      { value: "sensores_retroceso", label: "Sensores de Retroceso" },
-    ],
-  },
-  {
-    items: [
-      { value: "sensores_frontales", label: "Sensores Frontales" },
-      { value: "radio_en_volante", label: "Control de Radio en el Volante" },
-      { value: "volante_multifuncional", label: "Volante Multifuncional" },
-      { value: "ac_climatizado", label: "Aire Acondicionado Climatizado" },
-      { value: "asientos_memoria", label: "Asiento(s) con Memoria" },
-      {
-        value: "retrovisores_autoretractiles",
-        label: "Retrovisores Auto-Retractibles",
-      },
-      { value: "luces_xenon_bixenon", label: "Luces de Xenón/Bixenón" },
-      { value: "sensor_lluvia", label: "Sensor de Lluvia" },
-      {
-        value: "llave_inteligente",
-        label: "Llave Inteligente/Botón de Arranque",
-      },
-      { value: "apple_carplay", label: "Apple CarPlay" },
-      { value: "computadora_viaje", label: "Computadora de Viaje" },
-      { value: "volante_ajustable", label: "Volante Ajustable" },
-      { value: "bluetooth", label: "Bluetooth" },
-    ],
-  },
-];
+import { useApiSend } from "../api/config/customHooks"; // Provided import
+import { registerVehicle } from "../api/urls/vehicle"; // Provided import
 
-// Mock API data
+// Define VehicleDTO interface
+interface VehicleDTO {
+  id: number;
+  brand: string;
+  model: string;
+  fuel: string;
+  locate: string;
+  img: string;
+  condition: string;
+  featured: boolean;
+  year: number;
+  price: number;
+  distance: number;
+  transmission: string;
+}
+
+interface RegisterVehicleRequest {
+  vehicleDTO: VehicleDTO;
+  images: string[];
+}
+
+// Schema with only relevant fields
+const schema = z
+  .object({
+    brand: z.string().min(1, "Selecciona una marca"),
+    model: z.string().min(1, "Selecciona un modelo"),
+    fuel: z.string().min(1, "Selecciona el combustible"),
+    locate: z.string().min(1, "Indica la ubicación"),
+    condition: z.enum(["New", "Used"]),
+    featured: z.boolean(),
+    year: z.number().min(1900, "Año inválido").max(2025, "Año inválido"),
+    price: z.number().min(0, "Precio requerido"),
+    distance: z.number().min(0, "Kilometraje requerido"),
+    transmission: z.string().min(1, "Selecciona la transmisión"),
+  })
+  .refine((data) => data.condition === "Used" || !data.featured, {
+    message: "Featured only applies to used cars",
+    path: ["featured"],
+  });
+
 const mockBrands = [
   { id: "toyota", name: "Toyota" },
   { id: "nissan", name: "Nissan" },
@@ -125,46 +95,11 @@ const mockModels = {
   honda: ["Civic", "Accord", "CR-V"],
 };
 
-const mockSpecs = [
-  { id: "cilindrada", label: "Cilindrada" },
-  { id: "pasajeros", label: "Pasajeros" },
-  { id: "combustible", label: "Combustible" },
-  { id: "transmision", label: "Transmisión" },
-  { id: "traccion", label: "Tracción" },
-  { id: "colorExterior", label: "Color Exterior" },
-  { id: "puertas", label: "Puertas" },
-];
-
-const schema = z
-  .object({
-    titulo: z.string().min(5, "El título es obligatorio"),
-    descripcion: z.string().min(10, "Agrega una descripción"),
-    precio: z.string().min(1, "Precio requerido"),
-    marca: z.string().min(1, "Selecciona una marca"),
-    modelo: z.string().min(1, "Selecciona un modelo"),
-    modeloPersonalizado: z.string().optional(),
-    tipo: z.enum(["nuevo", "usado"]),
-    estado: z.enum(["excelente", "bueno", "regular"]).optional(),
-    ubicacion: z.string().min(1, "Indica la ubicación"),
-    publicarInmediatamente: z.boolean(),
-    precioNegociable: z.boolean(),
-    specs: z.record(z.string()).optional(),
-  })
-  .refine((data) => data.tipo === "nuevo" || data.estado, {
-    message: "El estado es requerido para autos usados",
-    path: ["estado"],
-  })
-  .refine((data) => data.modelo !== "other" || data.modeloPersonalizado, {
-    message: "El modelo personalizado es requerido si seleccionas 'Otro'",
-    path: ["modeloPersonalizado"],
-  });
-
 export default function PublishCarPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
-
+  const { countryCode } = useParams<{ countryCode?: string }>();
   const getCountryPath = (path: string) => {
-    const { countryCode } = useParams<{ countryCode?: string }>();
     if (!countryCode || path === "/") return path;
     if (path.startsWith("/")) return `/${countryCode}${path}`;
     return `/${countryCode}/${path}`;
@@ -175,62 +110,91 @@ export default function PublishCarPage() {
   const [images, setImages] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
-  const [photoType, setPhotoType] = useState<"normal" | "personalizada" | null>(
-    null
-  );
+  const [photoType, setPhotoType] = useState<"normal" | null>(null);
   const [isViewAllOpen, setIsViewAllOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Añadido desde AppLayout
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      titulo: "",
-      descripcion: "",
-      precio: "",
-      marca: "",
-      modelo: "",
-      modeloPersonalizado: "",
-      tipo: "nuevo",
-      estado: undefined,
-      ubicacion: "",
-      publicarInmediatamente: true,
-      precioNegociable: false,
-      specs: {},
+      brand: "",
+      model: "",
+      fuel: "",
+      locate: "",
+      condition: "New",
+      featured: false,
+      year: 2020,
+      price: 0,
+      distance: 0,
+      transmission: "",
     },
   });
 
-  const tipo = form.watch("tipo");
-  const marca = form.watch("marca");
-  const modelo = form.watch("modelo");
+  const brand = form.watch("brand");
+  const condition = form.watch("condition");
 
   useEffect(() => {
     setBrands(mockBrands);
   }, []);
 
   useEffect(() => {
-    if (marca) {
+    if (brand) {
       setModels([
-        ...(mockModels[marca as keyof typeof mockModels] || []),
+        ...(mockModels[brand as keyof typeof mockModels] || []),
         "other",
       ]);
-      form.setValue("modelo", "");
-      form.setValue("modeloPersonalizado", "");
+      form.setValue("model", "");
     } else {
       setModels([]);
     }
-  }, [marca, form]);
+  }, [brand, form]);
+
+  // Convert images to base64
+  const convertImagesToBase64 = (files: File[]): Promise<string[]> => {
+    return Promise.all(
+      files.map((file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      })
+    );
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newImages = Array.from(e.target.files).map((file) =>
-        URL.createObjectURL(file)
-      );
-      setImages((prev) => [...prev, ...newImages]);
+      const files = Array.from(e.target.files);
+      convertImagesToBase64(files)
+        .then((base64Images) => {
+          if (!isPremium) {
+            const allowed = Math.max(0, 3 - images.length);
+            const nextImages = base64Images.slice(0, allowed);
+            if (base64Images.length > allowed) {
+              toast({
+                title: "Límite alcanzado",
+                description:
+                  "Plan Gratis permite máximo 3 imágenes. Mejora a Premium para subir más.",
+                variant: "destructive",
+              });
+            }
+            setImages((prev) => [...prev, ...nextImages]);
+          } else {
+            setImages((prev) => [...prev, ...base64Images]);
+          }
+        })
+        .catch((error) => {
+          toast({
+            title: "❌ Error",
+            description: "Hubo un problema al subir las imágenes.",
+            variant: "destructive",
+          });
+          console.error("Image conversion error:", error);
+        });
       setIsModalOpen(false);
       setPhotoType(null);
     }
@@ -240,33 +204,64 @@ export default function PublishCarPage() {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleNext = (e) => {
-    e.preventDefault();
-    if (photoType === "personalizada") {
-      navigate(getCountryPath("/CarImageUploadAndDrag"));
+  const { mutate: registerVehicleMutation } = useApiSend(
+    (data: RegisterVehicleRequest, isPending, isSuccess) =>
+      registerVehicle(data),
+    (response) => {
+      toast({
+        title: "✅ Publicación creada",
+        description: "Tu auto ha sido publicado correctamente.",
+      });
+      navigate(getCountryPath("/dashboard"));
+    },
+    (error) => {
+      toast({
+        title: "❌ Error",
+        description: "Hubo un problema al publicar tu vehículo.",
+        variant: "destructive",
+      });
+      console.error("API error:", error);
     }
-  };
+  );
 
-  const onSubmit = (values: z.infer<typeof schema>) => {
-    console.log(values, images);
-    toast({
-      title: "✅ Publicación creada",
-      description: "Tu auto ha sido publicado correctamente.",
-    });
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    try {
+      const vehicleDTO: VehicleDTO = {
+        id: 0, // Will be generated by the backend
+        brand: values.brand,
+        model: values.model,
+        fuel: values.fuel,
+        locate: values.locate,
+        img: images.length > 0 ? images[0] : "",
+        condition: values.condition,
+        featured: values.featured,
+        year: values.year,
+        price: values.price,
+        distance: values.distance,
+        transmission: values.transmission,
+      };
+
+      const requestBody: RegisterVehicleRequest = {
+        vehicleDTO,
+        images,
+      };
+
+      registerVehicleMutation(requestBody);
+    } catch (error) {
+      toast({
+        title: "❌ Error",
+        description: "Hubo un problema al publicar tu vehículo.",
+        variant: "destructive",
+      });
+      console.error("Submit error:", error);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header
-        onMenuClick={toggleMobileMenu}
-        currentCountryCode={useParams<{ countryCode?: string }>().countryCode}
-      />{" "}
-      {/* Añadido Header con props */}
+      <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
       <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
       <div className="pt-[80px]">
-        {" "}
-        {/* Ajuste para evitar solapamiento con el Header */}
-        {/* Encabezado visual */}
         <div className="relative bg-gradient-to-r from-[#034651] to-[#045166] text-white py-12 md:py-16 flex flex-col items-center text-center overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center opacity-20 bg-white/20"
@@ -286,7 +281,6 @@ export default function PublishCarPage() {
             </p>
           </div>
         </div>
-        {/* Publicidad al inicio */}{" "}
         <main className="mx-auto px-6 py-10">
           <div className="mb-8">
             <AdvertisementCarousel
@@ -306,7 +300,6 @@ export default function PublishCarPage() {
               ]}
             />
           </div>
-
           <Link to={`${getCountryPath("inicio")}`}>
             <button className="mb-6 px-4 py-2 bg-[#034651] text-white rounded-md hover:bg-[#045166] transition-colors duration-300 flex items-center gap-2">
               <svg
@@ -331,62 +324,53 @@ export default function PublishCarPage() {
               <CardTitle className="text-2xl font-bold text-[#034651]">
                 Publica tu vehículo
               </CardTitle>
-            </CardHeader>{" "}
+            </CardHeader>
           </Card>
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             <div className="lg:col-span-1 space-y-8">
-              {" "}
               <div className="lg:col-span-1 hidden lg:block space-y-8">
                 <AdvertisementCarouselLateral
                   ads={[
                     {
                       src: "/assets/meguiarSpray.jpg",
-
                       ctaHref: "https://www.bridgestone.co.cr/",
                     },
                     {
                       src: "/assets/meguiar.jpg",
-
                       ctaHref: "https://meguiarsdirect.com/",
                     },
                   ]}
-                />{" "}
+                />
                 <AdvertisementCarouselLateral
                   ads={[
                     {
                       src: "/assets/castrolOil.png",
-
                       ctaHref: "https://www.bridgestone.co.cr/",
                     },
                     {
                       src: "/assets/castrol.png",
-
                       ctaHref: "https://www.toyota.com/",
                     },
                   ]}
                 />
               </div>
-            </div>{" "}
-            {/* Columna Central: Grid de Carros (ocupa más espacio) */}
+            </div>
             <div className="lg:col-span-2 xl:col-span-3">
               <CardContent>
-                {" "}
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-8"
                   >
-                    {/* Datos Generales */}
+                    {/* Relevant VehicleDTO Fields */}
                     <div className="bg-white p-6 rounded-lg shadow-md">
                       <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">
-                        Datos Generales
+                        Datos del Vehículo
                       </h3>
-
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Marca */}
                         <FormField
                           control={form.control}
-                          name="marca"
+                          name="brand"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Marca</FormLabel>
@@ -400,32 +384,194 @@ export default function PublishCarPage() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="toyota">Toyota</SelectItem>
-                                  <SelectItem value="honda">Honda</SelectItem>
-                                  <SelectItem value="hyundai">
-                                    Hyundai
-                                  </SelectItem>
-                                  <SelectItem value="nissan">Nissan</SelectItem>
-                                  <SelectItem value="kia">Kia</SelectItem>
-                                  <SelectItem value="otra">Otra</SelectItem>
+                                  {mockBrands.map((brand) => (
+                                    <SelectItem key={brand.id} value={brand.id}>
+                                      {brand.name}
+                                    </SelectItem>
+                                  ))}
                                 </SelectContent>
                               </Select>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-
-                        {/* Modelo */}
                         <FormField
                           control={form.control}
-                          name="modelo"
+                          name="model"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Modelo</FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Seleccione el Modelo" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {models.map((model) => (
+                                    <SelectItem key={model} value={model}>
+                                      {model}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="fuel"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Combustible</FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Seleccione" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="gasolina">
+                                    Gasolina
+                                  </SelectItem>
+                                  <SelectItem value="diesel">Diésel</SelectItem>
+                                  <SelectItem value="hibrido">
+                                    Híbrido
+                                  </SelectItem>
+                                  <SelectItem value="electrico">
+                                    Eléctrico
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="locate"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Ubicación</FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Seleccione" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {hondurasDepartment.map((dept) => (
+                                    <SelectItem
+                                      key={dept}
+                                      value={dept.toLowerCase()}
+                                    >
+                                      {dept}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="condition"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Condición</FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Seleccione" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="New">Nuevo</SelectItem>
+                                  <SelectItem value="Used">Usado</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        {/* <FormField
+                          control={form.control}
+                          name="featured"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Destacado</FormLabel>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />*/}
+                        <FormField
+                          control={form.control}
+                          name="year"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Año</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Ej. Corolla, Sentra, Elantra"
-                                  {...field}
+                                  type="number"
+                                  placeholder="Ej. 2020"
+                                  value={
+                                    field.value === null ||
+                                    field.value === undefined
+                                      ? ""
+                                      : field.value
+                                  }
+                                  onChange={(e) =>
+                                    field.onChange(
+                                      parseFloat(e.target.value) || 0
+                                    )
+                                  }
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="price"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Precio (L)</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  placeholder="L (total del vehículo)"
+                                  value={
+                                    field.value === null ||
+                                    field.value === undefined
+                                      ? ""
+                                      : field.value
+                                  }
+                                  onChange={(e) =>
+                                    field.onChange(
+                                      parseFloat(e.target.value) || 0
+                                    )
+                                  }
                                 />
                               </FormControl>
                               <FormMessage />
@@ -433,7 +579,399 @@ export default function PublishCarPage() {
                           )}
                         />
 
-                        {/* Cilindrada (c.c.) */}
+                        <FormField
+                          control={form.control}
+                          name="distance"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Kilometraje</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  placeholder="Ej. 85000"
+                                  value={
+                                    field.value === null ||
+                                    field.value === undefined
+                                      ? ""
+                                      : field.value
+                                  }
+                                  onChange={(e) =>
+                                    field.onChange(
+                                      parseInt(e.target.value) || 0
+                                    )
+                                  }
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="transmission"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Transmisión</FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Seleccione" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="manual">Manual</SelectItem>
+                                  <SelectItem value="automatica">
+                                    Automática
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Disabled Unused Fields */}
+                    <div className="bg-white p-6 rounded-lg shadow-md opacity-50 pointer-events-none">
+                      <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">
+                        Campos No Utilizados
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        Estos campos no se envían al servidor.
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <FormField
+                          control={form.control}
+                          name="titulo"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Título</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Ej. Toyota Corolla 2020"
+                                  {...field}
+                                  disabled
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="descripcion"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Descripción</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Descripción del vehículo"
+                                  {...field}
+                                  disabled
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="estado"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Estado</FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                disabled
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Seleccione el estado" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="excelente">
+                                    Excelente
+                                  </SelectItem>
+                                  <SelectItem value="bueno">Bueno</SelectItem>
+                                  <SelectItem value="regular">
+                                    Regular
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="publicarInmediatamente"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Publicar Inmediatamente</FormLabel>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                  disabled
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="precioNegociable"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Precio Negociable</FormLabel>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                  disabled
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="specs"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Especificaciones</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Especificaciones"
+                                  {...field}
+                                  disabled
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="equipamiento"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Equipamiento</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Equipamiento"
+                                  {...field}
+                                  disabled
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="servicios.opcion1"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Opción 1</FormLabel>
+                              <FormControl>
+                                <RadioGroup
+                                  value={field.value ?? "no"}
+                                  onValueChange={field.onChange}
+                                  disabled
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <RadioGroupItem value="no" id="op1-no" />
+                                    <label htmlFor="op1-no" className="text-sm">
+                                      NO
+                                    </label>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <RadioGroupItem value="si" id="op1-si" />
+                                    <label htmlFor="op1-si" className="text-sm">
+                                      SÍ
+                                    </label>
+                                  </div>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="servicios.opcion2"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Opción 2</FormLabel>
+                              <FormControl>
+                                <RadioGroup
+                                  value={field.value ?? "no"}
+                                  onValueChange={field.onChange}
+                                  disabled
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <RadioGroupItem value="no" id="op2-no" />
+                                    <label htmlFor="op2-no" className="text-sm">
+                                      NO
+                                    </label>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <RadioGroupItem
+                                      value="destacado"
+                                      id="op2-dest"
+                                    />
+                                    <label
+                                      htmlFor="op2-dest"
+                                      className="text-sm"
+                                    >
+                                      Destacado
+                                    </label>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <RadioGroupItem
+                                      value="super"
+                                      id="op2-super"
+                                    />
+                                    <label
+                                      htmlFor="op2-super"
+                                      className="text-sm"
+                                    >
+                                      Súper Destacado
+                                    </label>
+                                  </div>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="servicios.opcion3"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Opción 3</FormLabel>
+                              <FormControl>
+                                <RadioGroup
+                                  value={field.value ?? "no"}
+                                  onValueChange={field.onChange}
+                                  disabled
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <RadioGroupItem value="no" id="op3-no" />
+                                    <label htmlFor="op3-no" className="text-sm">
+                                      NO
+                                    </label>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <RadioGroupItem value="si" id="op3-si" />
+                                    <label htmlFor="op3-si" className="text-sm">
+                                      SÍ
+                                    </label>
+                                  </div>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="servicios.opcion4"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Opción 4</FormLabel>
+                              <FormControl>
+                                <RadioGroup
+                                  value={field.value ?? "no"}
+                                  onValueChange={field.onChange}
+                                  disabled
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <RadioGroupItem value="no" id="op4-no" />
+                                    <label htmlFor="op4-no" className="text-sm">
+                                      NO
+                                    </label>
+                                  </div>
+                                  {[
+                                    "ganga",
+                                    "full",
+                                    "financ",
+                                    "urge",
+                                    "km",
+                                    "unico",
+                                    "parainsc",
+                                    "ofertas",
+                                    "economico",
+                                    "recibo",
+                                    "us",
+                                    "record",
+                                    "impecable",
+                                    "garantia",
+                                    "edicion",
+                                    "vendo",
+                                    "llame",
+                                    "perfecto",
+                                    "tras",
+                                    "negociable",
+                                  ].map((opt) => (
+                                    <div
+                                      key={opt}
+                                      className="flex items-center gap-2"
+                                    >
+                                      <RadioGroupItem
+                                        value={opt}
+                                        id={`op4-${opt}`}
+                                      />
+                                      <label
+                                        htmlFor={`op4-${opt}`}
+                                        className="text-sm"
+                                      >
+                                        {opt}
+                                      </label>
+                                    </div>
+                                  ))}
+                                  {[
+                                    "ganga-fin-recibo",
+                                    "ganga-full",
+                                    "ganga-par-impec",
+                                    "escucho-muyeco",
+                                    "par-econo-recibo",
+                                    "recibo-escucho-impec",
+                                    "km-impec-econo",
+                                    "urge-escucho-ganga",
+                                  ].map((opt) => (
+                                    <div
+                                      key={opt}
+                                      className="flex items-center gap-2 col-span-2"
+                                    >
+                                      <RadioGroupItem
+                                        value={opt}
+                                        id={`op4-${opt}`}
+                                      />
+                                      <label
+                                        htmlFor={`op4-${opt}`}
+                                        className="text-sm"
+                                      >
+                                        {opt}
+                                      </label>
+                                    </div>
+                                  ))}
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                         <FormField
                           control={form.control}
                           name="cilindradaCc"
@@ -445,14 +983,13 @@ export default function PublishCarPage() {
                                   type="number"
                                   placeholder="c.c. (0 para eléctricos)"
                                   {...field}
+                                  disabled
                                 />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-
-                        {/* Estilo */}
                         <FormField
                           control={form.control}
                           name="estilo"
@@ -462,6 +999,7 @@ export default function PublishCarPage() {
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
+                                disabled
                               >
                                 <FormControl>
                                   <SelectTrigger>
@@ -487,8 +1025,6 @@ export default function PublishCarPage() {
                             </FormItem>
                           )}
                         />
-
-                        {/* Número de pasajeros */}
                         <FormField
                           control={form.control}
                           name="numPasajeros"
@@ -498,6 +1034,7 @@ export default function PublishCarPage() {
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
+                                disabled
                               >
                                 <FormControl>
                                   <SelectTrigger>
@@ -516,103 +1053,6 @@ export default function PublishCarPage() {
                             </FormItem>
                           )}
                         />
-
-                        {/* Año */}
-                        <FormField
-                          control={form.control}
-                          name="anio"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Año</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder="Ej. 2020"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Estado */}
-                        <FormField
-                          control={form.control}
-                          name="estado"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Estado</FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Seleccione el estado" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="excelente">
-                                    Excelente
-                                  </SelectItem>
-                                  <SelectItem value="bueno">Bueno</SelectItem>
-                                  <SelectItem value="regular">
-                                    Regular
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Precio (Lempiras) */}
-                        <FormField
-                          control={form.control}
-                          name="precio"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Precio (L)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder="L (total del vehículo en lempiras)"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Precio es Negociable */}
-                        <FormField
-                          control={form.control}
-                          name="negociable"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Precio es Negociable</FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="NO / SÍ" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="no">NO</SelectItem>
-                                  <SelectItem value="si">SÍ</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Color Exterior */}
                         <FormField
                           control={form.control}
                           name="colorExterior"
@@ -620,14 +1060,16 @@ export default function PublishCarPage() {
                             <FormItem>
                               <FormLabel>Color Exterior</FormLabel>
                               <FormControl>
-                                <Input placeholder="Ej. Blanco" {...field} />
+                                <Input
+                                  placeholder="Ej. Blanco"
+                                  {...field}
+                                  disabled
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-
-                        {/* Color Interior */}
                         <FormField
                           control={form.control}
                           name="colorInterior"
@@ -635,128 +1077,16 @@ export default function PublishCarPage() {
                             <FormItem>
                               <FormLabel>Color Interior</FormLabel>
                               <FormControl>
-                                <Input placeholder="Ej. Negro" {...field} />
+                                <Input
+                                  placeholder="Ej. Negro"
+                                  {...field}
+                                  disabled
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-
-                        {/* Combustible */}
-                        <FormField
-                          control={form.control}
-                          name="combustible"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Combustible</FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Seleccione" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="gasolina">
-                                    Gasolina
-                                  </SelectItem>
-                                  <SelectItem value="diesel">Diésel</SelectItem>
-                                  <SelectItem value="hibrido">
-                                    Híbrido
-                                  </SelectItem>
-                                  <SelectItem value="electrico">
-                                    Eléctrico
-                                  </SelectItem>
-                                  <SelectItem value="otro">Otro</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Transmisión */}
-                        <FormField
-                          control={form.control}
-                          name="transmision"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Transmisión</FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Seleccione" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="manual">Manual</SelectItem>
-                                  <SelectItem value="automatica">
-                                    Automática
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Kilometraje + unidad */}
-                        <FormField
-                          control={form.control}
-                          name="kilometraje"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Kilometraje</FormLabel>
-                              <FormControl>
-                                <div className="flex items-center gap-4">
-                                  <Input
-                                    type="number"
-                                    placeholder="Ej. 85000"
-                                    {...field}
-                                  />
-                                  <FormField
-                                    control={form.control}
-                                    name="kilometrajeUnidad"
-                                    render={({ field: unidadField }) => (
-                                      <RadioGroup
-                                        className="flex gap-6"
-                                        onValueChange={unidadField.onChange}
-                                        defaultValue={
-                                          unidadField.value || "kms"
-                                        }
-                                      >
-                                        <FormItem className="flex items-center space-x-2">
-                                          <FormControl>
-                                            <RadioGroupItem value="kms" />
-                                          </FormControl>
-                                          <FormLabel className="font-normal">
-                                            Kms
-                                          </FormLabel>
-                                        </FormItem>
-                                        <FormItem className="flex items-center space-x-2">
-                                          <FormControl>
-                                            <RadioGroupItem value="millas" />
-                                          </FormControl>
-                                          <FormLabel className="font-normal">
-                                            Millas
-                                          </FormLabel>
-                                        </FormItem>
-                                      </RadioGroup>
-                                    )}
-                                  />
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Ya pagó impuestos */}
                         <FormField
                           control={form.control}
                           name="pagoImpuestos"
@@ -766,6 +1096,7 @@ export default function PublishCarPage() {
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
+                                disabled
                               >
                                 <FormControl>
                                   <SelectTrigger>
@@ -781,8 +1112,6 @@ export default function PublishCarPage() {
                             </FormItem>
                           )}
                         />
-
-                        {/* Se recibe vehículo */}
                         <FormField
                           control={form.control}
                           name="recibeVehiculo"
@@ -792,6 +1121,7 @@ export default function PublishCarPage() {
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
+                                disabled
                               >
                                 <FormControl>
                                   <SelectTrigger>
@@ -807,8 +1137,6 @@ export default function PublishCarPage() {
                             </FormItem>
                           )}
                         />
-
-                        {/* Placa */}
                         <FormField
                           control={form.control}
                           name="placa"
@@ -819,14 +1147,13 @@ export default function PublishCarPage() {
                                 <Input
                                   placeholder="Número de placa (uso interno)"
                                   {...field}
+                                  disabled
                                 />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-
-                        {/* Número de puertas */}
                         <FormField
                           control={form.control}
                           name="numPuertas"
@@ -836,6 +1163,7 @@ export default function PublishCarPage() {
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
+                                disabled
                               >
                                 <FormControl>
                                   <SelectTrigger>
@@ -854,8 +1182,6 @@ export default function PublishCarPage() {
                             </FormItem>
                           )}
                         />
-
-                        {/* Provincia */}
                         <FormField
                           control={form.control}
                           name="provincia"
@@ -865,6 +1191,7 @@ export default function PublishCarPage() {
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
+                                disabled
                               >
                                 <FormControl>
                                   <SelectTrigger>
@@ -886,8 +1213,6 @@ export default function PublishCarPage() {
                             </FormItem>
                           )}
                         />
-
-                        {/* Comentario adicional */}
                         <FormField
                           control={form.control}
                           name="comentario"
@@ -898,6 +1223,7 @@ export default function PublishCarPage() {
                                 <Textarea
                                   placeholder="(no poner números de teléfono en el comentario)"
                                   {...field}
+                                  disabled
                                 />
                               </FormControl>
                               <FormMessage />
@@ -907,715 +1233,182 @@ export default function PublishCarPage() {
                       </div>
                     </div>
 
-                    {/* Equipamiento (Características del Auto) */}
+                    {/* Image Upload */}
                     <div className="bg-white p-6 rounded-lg shadow-md">
                       <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">
-                        Equipamiento
+                        Imágenes del Vehículo
                       </h3>
-
-                      {/* Campo del formulario: equipamiento -> string[] */}
-                      <FormField
-                        control={form.control}
-                        name="equipamiento"
-                        render={({ field }) => {
-                          const value: string[] = field.value ?? [];
-
-                          const toggle = (val: string, checked: boolean) => {
-                            const next = checked
-                              ? Array.from(new Set([...(value || []), val]))
-                              : (value || []).filter((v) => v !== val);
-                            field.onChange(next);
-                          };
-
-                          return (
-                            <FormItem>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                {EQUIPAMIENTO_GROUPS.map((grp, i) => (
-                                  <div key={i} className="space-y-2">
-                                    {grp.title ? (
-                                      <h4 className="text-sm font-semibold text-gray-700">
-                                        {grp.title}
-                                      </h4>
-                                    ) : null}
-
-                                    <div className="divide-y rounded-md border">
-                                      {grp.items.map((opt, j) => (
-                                        <label
-                                          key={opt.value}
-                                          className="flex items-center gap-3 py-2 px-3 hover:bg-gray-50"
-                                        >
-                                          <Checkbox
-                                            checked={value.includes(opt.value)}
-                                            onCheckedChange={(ck) =>
-                                              toggle(opt.value, Boolean(ck))
-                                            }
-                                          />
-                                          <span className="text-sm text-gray-800">
-                                            {opt.label}
-                                          </span>
-                                        </label>
-                                      ))}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                              <FormMessage />
-                            </FormItem>
-                          );
-                        }}
-                      />
-                    </div>
-
-                    {/* Servicios */}
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                      <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">
-                        Servicios
-                      </h3>
-
-                      {/* Barra informativa como en la imagen */}
-                      <div className="rounded-md bg-blue-50 border border-blue-200 p-3 text-sm text-blue-900 mb-4">
-                        Los siguientes servicios son <strong>opcionales</strong>{" "}
-                        y tienen el costo indicado.{" "}
-                        <strong>PRECIOS INCLUYEN IVA</strong>.
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* OPCIÓN 1: Confirmación automática */}
-                        <FormField
-                          control={form.control}
-                          name="servicios.opcion1"
-                          render={({ field }) => (
-                            <FormItem className="rounded-lg border p-4 shadow-sm bg-gray-50">
-                              <div className="flex items-start gap-3 mb-2">
-                                <div className="shrink-0 mt-1 w-2 h-2 rounded-full bg-blue-500" />
-                                <div>
-                                  <FormLabel className="text-base">
-                                    Opción 1
-                                  </FormLabel>
-                                  <p className="text-sm text-gray-700">
-                                    <strong>
-                                      Confirmación automática de anuncio
-                                    </strong>
-                                    . Precio: <strong>L 2,260</strong>.
-                                  </p>
-                                  <p className="text-xs text-gray-500 mt-1">
-                                    Seleccione esta opción si desea que su
-                                    anuncio aparezca de inmediato sin esperar
-                                    confirmación telefónica. No es necesaria si
-                                    elige la Opción 2 o 3.
-                                  </p>
-                                </div>
-                              </div>
-
-                              <FormControl>
-                                <RadioGroup
-                                  className="space-y-2"
-                                  value={field.value ?? "no"}
-                                  onValueChange={field.onChange}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <RadioGroupItem value="no" id="op1-no" />
-                                    <label htmlFor="op1-no" className="text-sm">
-                                      NO deseo esta opción — L 0
-                                    </label>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <RadioGroupItem value="si" id="op1-si" />
-                                    <label htmlFor="op1-si" className="text-sm">
-                                      SÍ deseo esta opción — L 2,260
-                                    </label>
-                                  </div>
-                                </RadioGroup>
-                              </FormControl>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* OPCIÓN 2: Destacado / Súper Destacado */}
-                        <FormField
-                          control={form.control}
-                          name="servicios.opcion2" // valores: "no" | "destacado" | "super"
-                          render={({ field }) => (
-                            <FormItem className="rounded-lg border p-4 shadow-sm bg-yellow-50">
-                              <div className="flex items-start gap-3 mb-2">
-                                <div className="shrink-0 mt-1 w-2 h-2 rounded-full bg-yellow-500" />
-                                <div>
-                                  <FormLabel className="text-base">
-                                    Opción 2
-                                  </FormLabel>
-                                  <p className="text-sm text-gray-800">
-                                    <strong>Destacado / Súper Destacado</strong>{" "}
-                                    y <strong>confirmación automática</strong>.
-                                  </p>
-                                  <ul className="text-sm text-gray-700 list-disc pl-5 mt-1 space-y-1">
-                                    <li>
-                                      Destacado en la página del resultado según
-                                      criterios de búsqueda.
-                                    </li>
-                                    <li>
-                                      Aparece temporalmente en la página
-                                      principal dependiendo de la cantidad de
-                                      destacados.
-                                    </li>
-                                    <li>
-                                      La opción{" "}
-                                      <strong>“Súper Destacado”</strong> incluye
-                                      un <em>post</em> en nuestro muro de
-                                      Facebook (≈ 110,000 seguidores) con costo
-                                      adicional de{" "}
-                                      <strong>L 2,500 + IVA</strong>.
-                                    </li>
-                                    <li>
-                                      Ambas permiten subir{" "}
-                                      <strong>8 fotografías</strong> de su
-                                      anuncio (en vez de 5).
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-
-                              <FormControl>
-                                <RadioGroup
-                                  className="space-y-2"
-                                  value={field.value ?? "no"}
-                                  onValueChange={field.onChange}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <RadioGroupItem value="no" id="op2-no" />
-                                    <label htmlFor="op2-no" className="text-sm">
-                                      NO deseo esta opción — L 0
-                                    </label>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <RadioGroupItem
-                                      value="destacado"
-                                      id="op2-dest"
-                                    />
-                                    <label
-                                      htmlFor="op2-dest"
-                                      className="text-sm"
-                                    >
-                                      SÍ, deseo la opción de{" "}
-                                      <strong>DESTACADO</strong> — L 9,605
-                                    </label>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <RadioGroupItem
-                                      value="super"
-                                      id="op2-super"
-                                    />
-                                    <label
-                                      htmlFor="op2-super"
-                                      className="text-sm"
-                                    >
-                                      SÍ, deseo la opción de{" "}
-                                      <strong>SÚPER DESTACADO</strong> — L
-                                      12,430
-                                    </label>
-                                  </div>
-                                </RadioGroup>
-                              </FormControl>
-
-                              <div className="mt-2 inline-flex items-center gap-2 text-green-700 text-xs font-semibold">
-                                <span className="inline-block rounded-full bg-green-600 w-2 h-2" />
-                                RECOMENDADO
-                              </div>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* OPCIÓN 3: Mensaje de "nuevo" + confirmación automática */}
-                        <FormField
-                          control={form.control}
-                          name="servicios.opcion3"
-                          render={({ field }) => (
-                            <FormItem className="rounded-lg border p-4 shadow-sm bg-amber-50 md:col-span-2">
-                              <div className="flex items-start gap-3 mb-2">
-                                <div className="shrink-0 mt-1 w-2 h-2 rounded-full bg-amber-500" />
-                                <div>
-                                  <FormLabel className="text-base">
-                                    Opción 3
-                                  </FormLabel>
-                                  <p className="text-sm text-gray-800">
-                                    <strong>Mensaje de “nuevo”</strong> y
-                                    confirmación automática. Precio:{" "}
-                                    <strong>L 2,825</strong>.
-                                  </p>
-                                  <p className="text-xs text-gray-600 mt-1">
-                                    El anuncio mostrará la etiqueta “Nuevo”
-                                    durante los primeros 4 días. No aparecerá
-                                    entre los destacados más recientes en la
-                                    página principal.
-                                  </p>
-                                </div>
-                              </div>
-
-                              <FormControl>
-                                <RadioGroup
-                                  className="space-y-2"
-                                  value={field.value ?? "no"}
-                                  onValueChange={field.onChange}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <RadioGroupItem value="no" id="op3-no" />
-                                    <label htmlFor="op3-no" className="text-sm">
-                                      NO deseo esta opción — L 0
-                                    </label>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <RadioGroupItem value="si" id="op3-si" />
-                                    <label htmlFor="op3-si" className="text-sm">
-                                      SÍ deseo esta opción — L 2,825
-                                    </label>
-                                  </div>
-                                </RadioGroup>
-                              </FormControl>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* OPCIÓN 4: Mensaje ESPECIAL */}
-                        <FormField
-                          control={form.control}
-                          name="servicios.opcion4"
-                          render={({ field }) => (
-                            <FormItem className="rounded-lg border p-4 shadow-sm bg-yellow-50 md:col-span-2">
-                              <div className="flex items-start gap-3 mb-2">
-                                <div className="shrink-0 mt-1 w-2 h-2 rounded-full bg-yellow-500" />
-                                <div>
-                                  <FormLabel className="text-base">
-                                    Opción 4
-                                  </FormLabel>
-                                  <p className="text-sm text-gray-800">
-                                    <strong>Mensaje ESPECIAL</strong> y
-                                    confirmación automática de anuncio.
-                                    <br />
-                                    Precio: <strong>L 5,085</strong> o{" "}
-                                    <strong>L 6,215</strong> dependiendo de la
-                                    opción seleccionada.
-                                  </p>
-                                  <p className="text-xs text-gray-600 mt-1">
-                                    Con esta opción, su anuncio aparecerá con el
-                                    mensaje ESPECIAL que escoja durante todo el
-                                    tiempo que esté publicado.
-                                  </p>
-                                </div>
-                              </div>
-
-                              <FormControl>
-                                <RadioGroup
-                                  className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2"
-                                  value={field.value ?? "no"}
-                                  onValueChange={field.onChange}
-                                >
-                                  {/* NO */}
-                                  <div className="flex items-center gap-2 col-span-2">
-                                    <RadioGroupItem value="no" id="op4-no" />
-                                    <label htmlFor="op4-no" className="text-sm">
-                                      NO deseo esta opción — L 0
-                                    </label>
-                                  </div>
-
-                                  {/* Opciones individuales (L 5,085) */}
-                                  {[
-                                    { v: "ganga", l: "GAN (GANGA)" },
-                                    { v: "full", l: "Full extras" },
-                                    { v: "financ", l: "Financiamiento" },
-                                    { v: "urge", l: "Urge vender" },
-                                    { v: "km", l: "Poco kilometraje" },
-                                    { v: "unico", l: "Un solo dueño" },
-                                    { v: "parainsc", l: "Para inscribir" },
-                                    { v: "ofertas", l: "Escucho ofertas" },
-                                    { v: "economico", l: "Muy económico" },
-                                    { v: "recibo", l: "Recibo" },
-                                    { v: "us", l: "Versión USA" },
-                                    { v: "record", l: "Record de agencia" },
-                                    { v: "impecable", l: "Impecable" },
-                                    { v: "garantia", l: "Con garantía" },
-                                    { v: "edicion", l: "Edición limitada" },
-                                    { v: "vendo", l: "Vendo por viaje" },
-                                    { v: "llame", l: "Llámeme ya!" },
-                                    { v: "perfecto", l: "Perfecto estado" },
-                                    { v: "tras", l: "Traspaso incluido" },
-                                    { v: "negociable", l: "Negociable" },
-                                  ].map((opt) => (
-                                    <div
-                                      key={opt.v}
-                                      className="flex items-center gap-2"
-                                    >
-                                      <RadioGroupItem
-                                        value={opt.v}
-                                        id={`op4-${opt.v}`}
-                                      />
-                                      <label
-                                        htmlFor={`op4-${opt.v}`}
-                                        className="text-sm"
-                                      >
-                                        SÍ deseo esta opción ({opt.l}) — L 5,085
-                                      </label>
-                                    </div>
-                                  ))}
-
-                                  {/* Combinaciones (L 6,215) */}
-                                  {[
-                                    {
-                                      v: "ganga-fin-recibo",
-                                      l: "GANGA + Financ + Recibo",
-                                    },
-                                    {
-                                      v: "ganga-full",
-                                      l: "GANGA + Full extras",
-                                    },
-                                    {
-                                      v: "ganga-par-impec",
-                                      l: "GANGA + Para inscribir + Impecable",
-                                    },
-                                    {
-                                      v: "escucho-muyeco",
-                                      l: "Escucho ofertas + Muy económico",
-                                    },
-                                    {
-                                      v: "par-econo-recibo",
-                                      l: "Para inscribir + Muy económico + Recibo",
-                                    },
-                                    {
-                                      v: "recibo-escucho-impec",
-                                      l: "Recibo + Escucho ofertas + Impecable",
-                                    },
-                                    {
-                                      v: "km-impec-econo",
-                                      l: "Poco km + Impecable + Muy económico",
-                                    },
-                                    {
-                                      v: "urge-escucho-ganga",
-                                      l: "Urge vender + Escucho ofertas + GANGA",
-                                    },
-                                  ].map((opt) => (
-                                    <div
-                                      key={opt.v}
-                                      className="flex items-center gap-2 col-span-2"
-                                    >
-                                      <RadioGroupItem
-                                        value={opt.v}
-                                        id={`op4-${opt.v}`}
-                                      />
-                                      <label
-                                        htmlFor={`op4-${opt.v}`}
-                                        className="text-sm"
-                                      >
-                                        SÍ deseo esta opción ({opt.l}) — L 6,215
-                                      </label>
-                                    </div>
-                                  ))}
-                                </RadioGroup>
-                              </FormControl>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        {/* BLOQUE DE IMÁGENES con límite Gratis=3; Premium desbloquea + imágenes y video */}
-                        <FormItem className="md:col-span-2">
-                          <FormLabel>Imágenes del vehículo</FormLabel>
-                          <div className="space-y-4">
-                            {images.length === 0 ? (
-                              <p className="text-sm text-gray-500">
-                                No hay imágenes subidas aún.
-                              </p>
-                            ) : (
-                              <div className="relative">
-                                <img
-                                  src={images[0]}
-                                  alt="Principal"
-                                  className="w-full h-48 object-cover rounded-lg"
-                                />
-                                {images.length > 1 && (
-                                  <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded">
-                                    +{images.length - 1}
-                                  </div>
-                                )}
+                      <div className="space-y-4">
+                        {images.length === 0 ? (
+                          <p className="text-sm text-gray-500">
+                            No hay imágenes subidas aún.
+                          </p>
+                        ) : (
+                          <div className="relative">
+                            <img
+                              src={images[0]}
+                              alt="Principal"
+                              className="w-full h-48 object-cover rounded-lg"
+                            />
+                            {images.length > 1 && (
+                              <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded">
+                                +{images.length - 1}
                               </div>
                             )}
-
-                            {/* Límite y CTA Premium */}
-                            {!isPremium && (
-                              <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-                                Plan Gratis: puedes subir hasta{" "}
-                                <strong>5 imágenes</strong>. Para subir{" "}
-                                <strong>más imágenes y video</strong>, mejora a{" "}
-                                <strong>Premium</strong>.
-                                <div className="mt-2">
-                                  <Button
-                                    onClick={() => {}}
-                                    size="sm"
-                                    className="bg-[#034651] hover:bg-[#045166] text-white"
-                                  >
-                                    Mejorar a Premium
-                                  </Button>
-                                </div>
-                              </div>
-                            )}
-
-                            <div className="flex flex-wrap gap-3">
-                              <Dialog
-                                open={isModalOpen}
-                                onOpenChange={setIsModalOpen}
+                          </div>
+                        )}
+                        {!isPremium && (
+                          <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                            Plan Gratis: puedes subir hasta{" "}
+                            <strong>5 imágenes</strong>. Para subir{" "}
+                            <strong>más imágenes y video</strong>, mejora a{" "}
+                            <strong>Premium</strong>.
+                            <div className="mt-2">
+                              <Button
+                                onClick={() => {}}
+                                size="sm"
+                                className="bg-[#034651] hover:bg-[#045166] text-white"
                               >
-                                <DialogTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    className="flex items-center gap-2"
-                                  >
-                                    <Camera className="w-4 h-4" /> Subir
-                                    Imágenes
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>
-                                      Seleccionar tipo de archivo
-                                    </DialogTitle>
-                                  </DialogHeader>
-
-                                  {/* Radio: Normal (imágenes) / Personalizada (tu flujo) / Video (sólo Premium) */}
-                                  <RadioGroup
-                                    value={photoType || undefined}
-                                    onValueChange={(v) =>
-                                      setPhotoType(v as "normal" | "video")
-                                    }
-                                    className="space-y-2"
-                                  >
-                                    <div className="flex items-center space-x-2">
-                                      <RadioGroupItem
-                                        value="normal"
-                                        id="normal"
-                                      />
-                                      <label htmlFor="normal">Imágenes</label>
-                                    </div>
-
-                                    <div className="flex items-center space-x-2 opacity-100">
-                                      <RadioGroupItem
-                                        value="video"
-                                        id="video"
-                                        disabled={!isPremium}
-                                      />
-                                      <label
-                                        htmlFor="video"
-                                        className={
-                                          !isPremium ? "text-gray-400" : ""
-                                        }
-                                      >
-                                        Video{" "}
-                                        {!isPremium && (
-                                          <span className="ml-1 text-xs text-amber-600">
-                                            (Premium)
-                                          </span>
-                                        )}
-                                      </label>
-                                    </div>
-                                  </RadioGroup>
-
-                                  {/* Inputs según selección */}
-                                  {photoType === "normal" && (
-                                    <div className="mt-4">
-                                      <Input
-                                        type="file"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={(e) => {
-                                          const files = Array.from(
-                                            e.target.files || []
-                                          );
-                                          if (!isPremium) {
-                                            const allowed = Math.max(
-                                              0,
-                                              3 - images.length
-                                            );
-                                            const next = files.slice(
-                                              0,
-                                              allowed
-                                            );
-                                            if (files.length > allowed) {
-                                              // muestra aviso si intenta pasar el límite
-                                              toast({
-                                                title: "Límite alcanzado",
-                                                description:
-                                                  "Plan Gratis permite máximo 3 imágenes. Mejora a Premium para subir más.",
-                                                variant: "destructive",
-                                              });
-                                            }
-                                            if (next.length)
-                                              handleImageUploadFromFiles(next);
-                                            return;
-                                          }
-                                          handleImageUploadFromFiles(files);
-                                        }}
-                                      />
-                                    </div>
-                                  )}
-
-                                  {photoType === "video" && (
-                                    <div className="mt-4">
-                                      <Input
-                                        type="file"
-                                        accept="video/*"
-                                        disabled={!isPremium}
-                                        onChange={(e) => handleVideoUpload(e)}
-                                      />
-                                    </div>
-                                  )}
-
-                                  <DialogFooter>
-                                    <Button
-                                      onClick={() => setIsModalOpen(false)}
-                                    >
-                                      Cerrar
-                                    </Button>
-                                    {photoType === "personalizada" && (
-                                      <Link
-                                        to={`${getCountryPath(
-                                          "/CarImageUploadAndDrag"
-                                        )}`}
-                                      >
-                                        <Button className="bg-[#034651] hover:bg-[#045166] text-white flex items-center gap-2">
-                                          Siguiente{" "}
-                                          <ChevronRight className="w-5 h-5" />
-                                        </Button>
-                                      </Link>
-                                    )}
-                                  </DialogFooter>
-                                </DialogContent>
-                              </Dialog>
-
-                              {images.length > 0 && (
-                                <>
-                                  <Dialog
-                                    open={isViewAllOpen}
-                                    onOpenChange={setIsViewAllOpen}
-                                  >
-                                    <DialogTrigger asChild>
-                                      <Button variant="outline">
-                                        Ver Todas
-                                      </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="max-w-3xl">
-                                      <DialogHeader>
-                                        <DialogTitle>
-                                          Todas las Imágenes
-                                        </DialogTitle>
-                                      </DialogHeader>
-                                      <div className="grid grid-cols-3 gap-4">
-                                        {images.map((img, i) => (
-                                          <img
-                                            key={i}
-                                            src={img}
-                                            alt={`Imagen ${i + 1}`}
-                                            className="w-full h-32 object-cover rounded"
-                                          />
-                                        ))}
-                                      </div>
-                                    </DialogContent>
-                                  </Dialog>
-
-                                  <Dialog
-                                    open={isEditOpen}
-                                    onOpenChange={setIsEditOpen}
-                                  >
-                                    <DialogTrigger asChild>
-                                      <Button variant="outline">Editar</Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="max-w-3xl">
-                                      <DialogHeader>
-                                        <DialogTitle>
-                                          Editar Imágenes
-                                        </DialogTitle>
-                                      </DialogHeader>
-                                      <div className="grid grid-cols-3 gap-4">
-                                        {images.map((img, index) => (
-                                          <div key={index} className="relative">
-                                            <img
-                                              src={img}
-                                              alt={`Imagen ${index + 1}`}
-                                              className="w-full h-32 object-cover rounded"
-                                            />
-                                            <Button
-                                              variant="destructive"
-                                              size="icon"
-                                              className="absolute top-0 right-0"
-                                              onClick={() =>
-                                                handleDeleteImage(index)
-                                              }
-                                            >
-                                              <X className="h-4 w-4" />
-                                            </Button>
-                                          </div>
-                                        ))}
-                                      </div>
-                                      <div className="mt-4">
-                                        <Input
-                                          type="file"
-                                          accept="image/*"
-                                          multiple
-                                          onChange={(e) => {
-                                            const files = Array.from(
-                                              e.target.files || []
-                                            );
-                                            if (!isPremium) {
-                                              const allowed = Math.max(
-                                                0,
-                                                3 - images.length
-                                              );
-                                              const next = files.slice(
-                                                0,
-                                                allowed
-                                              );
-                                              if (files.length > allowed) {
-                                                toast({
-                                                  title: "Límite alcanzado",
-                                                  description:
-                                                    "Plan Gratis permite máximo 3 imágenes. Mejora a Premium para subir más.",
-                                                  variant: "destructive",
-                                                });
-                                              }
-                                              if (next.length)
-                                                handleImageUploadFromFiles(
-                                                  next
-                                                );
-                                              return;
-                                            }
-                                            handleImageUploadFromFiles(files);
-                                          }}
-                                        />
-                                      </div>
-                                    </DialogContent>
-                                  </Dialog>
-                                </>
-                              )}
+                                Mejorar a Premium
+                              </Button>
                             </div>
                           </div>
-
-                          <div className="flex justify-end mt-4">
-                            <Button
-                              type="submit"
-                              className="bg-[#034651] hover:bg-[#045166] text-white flex items-center gap-2"
-                            >
-                              <Send className="w-4 h-4" /> Publicar
-                            </Button>
-                          </div>
-                        </FormItem>
+                        )}
+                        <div className="flex flex-wrap gap-3">
+                          <Dialog
+                            open={isModalOpen}
+                            onOpenChange={setIsModalOpen}
+                          >
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="flex items-center gap-2"
+                              >
+                                <Camera className="w-4 h-4" /> Subir Imágenes
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>
+                                  Seleccionar tipo de archivo
+                                </DialogTitle>
+                              </DialogHeader>
+                              <RadioGroup
+                                value={photoType || undefined}
+                                onValueChange={(v) =>
+                                  setPhotoType(v as "normal")
+                                }
+                                className="space-y-2"
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="normal" id="normal" />
+                                  <label htmlFor="normal">Imágenes</label>
+                                </div>
+                              </RadioGroup>
+                              {photoType === "normal" && (
+                                <div className="mt-4">
+                                  <Input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleImageUpload}
+                                  />
+                                </div>
+                              )}
+                              <DialogFooter>
+                                <Button onClick={() => setIsModalOpen(false)}>
+                                  Cerrar
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                          {images.length > 0 && (
+                            <>
+                              <Dialog
+                                open={isViewAllOpen}
+                                onOpenChange={setIsViewAllOpen}
+                              >
+                                <DialogTrigger asChild>
+                                  <Button variant="outline">Ver Todas</Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-3xl">
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Todas las Imágenes
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  <div className="grid grid-cols-3 gap-4">
+                                    {images.map((img, i) => (
+                                      <img
+                                        key={i}
+                                        src={img}
+                                        alt={`Imagen ${i + 1}`}
+                                        className="w-full h-32 object-cover rounded"
+                                      />
+                                    ))}
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                              <Dialog
+                                open={isEditOpen}
+                                onOpenChange={setIsEditOpen}
+                              >
+                                <DialogTrigger asChild>
+                                  <Button variant="outline">Editar</Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-3xl">
+                                  <DialogHeader>
+                                    <DialogTitle>Editar Imágenes</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="grid grid-cols-3 gap-4">
+                                    {images.map((img, index) => (
+                                      <div key={index} className="relative">
+                                        <img
+                                          src={img}
+                                          alt={`Imagen ${index + 1}`}
+                                          className="w-full h-32 object-cover rounded"
+                                        />
+                                        <Button
+                                          variant="destructive"
+                                          size="icon"
+                                          className="absolute top-0 right-0"
+                                          onClick={() =>
+                                            handleDeleteImage(index)
+                                          }
+                                        >
+                                          <X className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div className="mt-4">
+                                    <Input
+                                      type="file"
+                                      accept="image/*"
+                                      multiple
+                                      onChange={handleImageUpload}
+                                    />
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </>
+                          )}
+                        </div>
                       </div>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <Button
+                        type="submit"
+                        className="bg-[#034651] hover:bg-[#045166] text-white flex items-center gap-2"
+                      >
+                        <Send className="w-4 h-4" /> Publicar
+                      </Button>
                     </div>
                   </form>
                 </Form>
-              </CardContent>{" "}
+              </CardContent>
             </div>
-            {/* Columna Derecha: Anuncio Lateral 2 */}
             <div className="lg:col-span-1 hidden lg:block space-y-8">
               <AdvertisementCarouselLateral
                 ads={[
@@ -1628,7 +1421,7 @@ export default function PublishCarPage() {
                     ctaHref: "https://www.toyota.com/",
                   },
                 ]}
-              />{" "}
+              />
               <AdvertisementCarouselLateral
                 ads={[
                   {
@@ -1640,28 +1433,25 @@ export default function PublishCarPage() {
                     ctaHref: "https://meguiarsdirect.com/",
                   },
                 ]}
-              />{" "}
-            </div>
-          </div>
-
-          {
-            <div className="mt-8">
-              <AdvertisementCarousel
-                slides={[
-                  {
-                    src: "/assets/tesla.svg",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                    badge: "",
-                  },
-                  {
-                    src: "/assets/toyotaxl.png",
-                    ctaHref: "https://www.toyota.com/",
-                    badge: "",
-                  },
-                ]}
               />
             </div>
-          }
+          </div>
+          <div className="mt-8">
+            <AdvertisementCarousel
+              slides={[
+                {
+                  src: "/assets/tesla.svg",
+                  ctaHref: "https://www.bridgestone.co.cr/",
+                  badge: "",
+                },
+                {
+                  src: "/assets/toyotaxl.png",
+                  ctaHref: "https://www.toyota.com/",
+                  badge: "",
+                },
+              ]}
+            />
+          </div>
         </main>
       </div>
       <Footer />

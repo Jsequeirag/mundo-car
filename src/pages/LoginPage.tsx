@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronRight, Mail, Key } from "lucide-react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { IUserRegistered } from "../interfaces/IUser";
-import { login, sendVerification } from "../api/urls/User";
+import { login } from "../api/urls/User";
 import { useApiSend } from "../api/config/customHooks";
 import { toast } from "@/components/ui/sonner";
-import ModalContainer from "@/components/ModalContainer";
 
 const LoginPage: React.FC = () => {
   const { countryCode } = useParams<{ countryCode?: string }>();
@@ -18,9 +17,6 @@ const LoginPage: React.FC = () => {
     password: "",
   });
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
-  const [storedCode, setStoredCode] = useState<number | null>(null);
   const [user, setUser] = useState<IUserRegistered | null>(null);
 
   const getCountryPath = (path: string) => {
@@ -40,105 +36,47 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const { mutate: loginUser, isPending: isLoginPending } =
-    useApiSend<IUserRegistered>(
-      () => {
-        const { email, password } = formData;
-        if (!email || !password) {
-          console.error("[Login] Correo o contraseña vacíos");
-          toast.error("Por favor, completa todos los campos.");
-          throw new Error("Correo o contraseña vacíos");
-        }
-        return login({ email, password });
-      },
-      async (data: IUserRegistered) => {
-        console.log("[Login] Inicio de sesión exitoso:", formData.email);
-        console.log("[Login] Datos recibidos:", data);
-        setUser(data);
-        if (!data.userExisted) {
-          toast.error("El usuario no existe. Por favor, regístrate.");
-          setEmailError("El usuario no existe. Por favor, regístrate.");
-          return;
-        }
-        const generatedCode = Math.floor(100000 + Math.random() * 900000);
-        setStoredCode(generatedCode);
-        console.log(
-          "[Login] Enviando correo de verificación a:",
-          formData.email
-        );
-        try {
-          await sendVerification(
-            generatedCode,
-            data.user.email,
-            data.user.name || "Usuario"
-          );
-          console.log("[Login] Correo de verificación enviado:", generatedCode);
-          toast.success(
-            "Inicio de sesión exitoso. Ingresa el código de verificación enviado a tu correo."
-          );
-          setShowVerificationModal(true);
-        } catch (error) {
-          console.error(
-            "[Login] Error al enviar correo de verificación:",
-            error
-          );
-          toast.error(
-            "Inicio de sesión exitoso, pero falló el envío del correo de verificación."
-          );
-        }
-      },
-      (error) => {
-        console.error("[Login] Error en inicio de sesión:", error);
-        toast.error(`Error al iniciar sesión: ${error.message}`);
+  const {
+    mutate: loginUser,
+    isPending: isLoginPending,
+    data,
+    isSuccess,
+  } = useApiSend<IUser>(
+    () => {
+      const { email, password } = formData;
+      if (!email || !password) {
+        console.error("[Login] Correo o contraseña vacíos");
+        toast.error("Por favor, completa todos los campos.");
+        throw new Error("Correo o contraseña vacíos");
       }
-    );
+      return login(email, password);
+    },
+    async (data: IUserRegistered) => {
+      console.log("[Login] Inicio de sesión exitoso:", formData.email);
+      console.log("[Login] Datos recibidos:", data);
+      setUser(data);
+      toast.success("Inicio de sesión exitoso. Bienvenido a MundoCar!");
+    },
+    (error) => {
+      toast.error("El usuario no existe. Por favor, regístrate.");
+      setEmailError("El usuario no existe. Por favor, regístrate.");
+      console.log(error);
+    }
+  );
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      const redirectPath = data.role === "user" ? "/dashboard" : "/admin";
+      console.log("Redirecting to:", getCountryPath(redirectPath)); // Debug log
+      navigate(getCountryPath(redirectPath));
+    }
+  }, [isSuccess, data, navigate]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("[Login] Iniciando login...");
     setEmailError(null);
     loginUser();
-  };
-
-  const handleValidateCode = () => {
-    try {
-      console.log(
-        "[Login] Validando código de verificación:",
-        verificationCode
-      );
-      const enteredCode = parseInt(verificationCode);
-
-      if (storedCode === null) {
-        console.error("[Login] No se ha generado un código de verificación");
-        toast.error(
-          "No se ha generado un código de verificación. Por favor, intenta de nuevo."
-        );
-        return;
-      }
-
-      if (enteredCode === storedCode) {
-        console.log(
-          "[Login] Código de verificación correcto:",
-          verificationCode
-        );
-        toast.success(
-          "Código verificado correctamente. Bienvenido a MundoCar!"
-        );
-        setShowVerificationModal(false);
-        navigate(getCountryPath("/dashboard"));
-      } else {
-        console.error(
-          "[Login] Código de verificación incorrecto:",
-          verificationCode
-        );
-        toast.error(
-          "Código de verificación incorrecto. Por favor, intenta de nuevo."
-        );
-      }
-    } catch (error) {
-      console.error("[Login] Error al validar código:", error);
-      toast.error("Error al validar el código. Por favor, intenta de nuevo.");
-    }
   };
 
   return (
@@ -281,51 +219,6 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal de verificación */}
-      {showVerificationModal && (
-        <ModalContainer
-          isOpen={showVerificationModal}
-          onClose={() => {
-            console.log("[Login] Cerrando modal de verificación");
-            setShowVerificationModal(false);
-          }}
-          title="Verifica tu cuenta"
-          width="32rem"
-        >
-          <div className="space-y-6">
-            <p className="text-[#034651]/80">
-              Ingresa el código de verificación enviado a {formData.email}.
-            </p>
-            <div>
-              <label
-                htmlFor="verificationCode"
-                className="block text-sm font-medium text-[#034651]"
-              >
-                Código de verificación
-              </label>
-              <input
-                type="text"
-                id="verificationCode"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition"
-                placeholder="Ingresa el código"
-                aria-label="Código de verificación"
-              />
-            </div>
-            <button
-              onClick={handleValidateCode}
-              className="w-full flex items-center justify-center gap-2 bg-[#034651] text-white font-semibold p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-[#05707f] transition-all focus:outline-none focus:ring-2 focus:ring-[#034651]"
-              aria-label="Validar código"
-            >
-              Validar código
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </ModalContainer>
-      )}
 
       <div className="bg-[#034651] text-white py-5 text-center">
         <p className="text-xs opacity-90">

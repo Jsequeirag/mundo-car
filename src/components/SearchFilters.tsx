@@ -34,7 +34,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   onSearch,
   condition,
 }) => {
-  const { setVehicles } = useVehicleStore();
+  const { setVehicles, setLoading } = useVehicleStore();
   const [filters, setFilters] = React.useState({
     priceRange: [0, 100000] as [number, number],
     yearRange: [2010, 2024] as [number, number],
@@ -69,7 +69,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
 
   const filteredModels = modelsByBrand[filters.brand] || ["Cualquiera"];
 
-  const { mutate: fetchVehicles, isPending: loading } = useApiSend(
+  const { mutate: fetchVehicles, isPending } = useApiSend(
     (filters: typeof filters) =>
       getVehiclesByFeatures({
         priceRange: filters.priceRange,
@@ -85,7 +85,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       }),
     (data: any[]) => {
       setVehicles(data);
-      onSearch?.(filters);
+      onSearch?.(filters); // Notify parent component of new filters
     },
     (error: any) => console.error("Error fetching vehicles:", error),
     ["getVehiclesByFeatures"]
@@ -96,6 +96,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
 
   const handleSearchClick = () => {
+    setLoading(true); // Set loading before fetch
     fetchVehicles(filters);
   };
 
@@ -111,8 +112,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       condition,
     };
     setFilters(clearedFilters);
+    setLoading(true); // Set loading before fetch
+    fetchVehicles(clearedFilters);
     onSearch?.(clearedFilters);
   };
+
+  // Sync loading state with isPending
+  React.useEffect(() => {
+    setLoading(isPending); // Update global loading state based on mutation status
+  }, [isPending, setLoading]);
 
   return (
     <Card className="bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden">
@@ -292,7 +300,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         <div className="flex gap-4">
           <Button
             onClick={handleSearchClick}
-            disabled={loading}
+            disabled={isPending} // Use isPending from useApiSend
             className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-lg disabled:opacity-50"
           >
             <Search className="h-5 w-5 mr-2" />
