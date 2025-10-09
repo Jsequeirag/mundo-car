@@ -6,7 +6,8 @@ import axios, {
 } from "axios";
 
 const client: AxiosInstance = axios.create({
-  baseURL: "https://localhost:7040",
+  baseURL:
+    "https://mundocarbe-f6fjarhdecg5hzhh.canadacentral-01.azurewebsites.net",
   headers: {
     "Content-Type": "application/json",
   },
