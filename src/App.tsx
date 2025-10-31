@@ -1,20 +1,29 @@
-import { useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import ScrollToTop from "@/components/ScrollToTop";
-import Loading from "@/components/Modals/LoadingModalLockScreen";
-import routes from "./routes/Routes";
+import LoadingModalLockScreen from "@/components/Modals/LoadingModalLockScreen";
+import routes from "@/routes/Routes";
+
 import useCountryStore from "@/store/countryStore";
-import loadingScreenStore from "@/store/loadingScreenStore";
-import { useApiGet } from "./api/config/customHooks";
+import loadingStore from "@/store/loadingScreenStore";
+import { useApiGet } from "@/api/config/customHooks";
 import { getCountries } from "@/api/urls/Country";
+import CountrySelectorModal from "@/components/modals/CountrySelectorModal";
 
 const App = () => {
   const { setCountries } = useCountryStore();
-  const { setLoading, setMessage } = loadingScreenStore();
+  const {
+    setLoading,
+    setMessage,
+    setCountryModalOpen,
+    initialCheckDone,
+    setInitialCheckDone,
+  } = loadingStore();
+
   const { data, isSuccess, isPending, isError } = useApiGet(
     ["getCountries", true],
     () => getCountries(true),
@@ -24,29 +33,58 @@ const App = () => {
     }
   );
 
+  // 🚀 Cargar países desde el backend
   useEffect(() => {
-    console.log("[App] Iniciando carga de países...");
     setLoading(isPending);
-    setMessage("Cargando");
+    setMessage("Cargando países...");
+
     if (isSuccess && data) {
       setCountries(data);
-      console.log("[App] Países cargados en el store:", data);
+      setLoading(false);
     }
 
     if (isError) {
-      console.error("[App] Error al cargar países");
       setLoading(false);
     }
   }, [data, isSuccess, isPending, isError, setCountries, setLoading]);
+
+  // 🧠 Validar si hay país seleccionado en localStorage
+  useEffect(() => {
+    if (isSuccess && data && !initialCheckDone) {
+      const savedCountry = localStorage.getItem("selectedCountry");
+      if (!savedCountry) {
+        console.log("[App] No hay país seleccionado → abrir modal.");
+        setCountryModalOpen(true);
+      } else {
+        console.log("[App] País detectado en localStorage:", savedCountry);
+      }
+      setInitialCheckDone(true);
+    }
+  }, [
+    isSuccess,
+    data,
+    initialCheckDone,
+    setCountryModalOpen,
+    setInitialCheckDone,
+  ]);
+
+  // ⏳ Mientras carga o valida
+  if (isPending || !initialCheckDone) {
+    return <LoadingModalLockScreen message="Cargando países..." />;
+  }
 
   return (
     <ThemeProvider defaultTheme="light">
       <TooltipProvider>
         <Toaster />
         <Sonner />
+
+        {/* 🪟 Modal translúcido minimalista */}
+        <CountrySelectorModal countries={data || []} />
+
         <BrowserRouter>
           <ScrollToTop />
-          <Loading />
+          <LoadingModalLockScreen />
           <Routes>
             {routes.map((route) => (
               <Route

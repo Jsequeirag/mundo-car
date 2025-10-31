@@ -126,9 +126,9 @@ const CarCard: React.FC<CarCardProps> = ({ vehicle }) => {
 
   return (
     <Card
-      className={`group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50 border-2 ${
+      className={`bg-[#F7FAFA] group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 b  border-2 ${
         vehicle.featured === true
-          ? "border-brand-primary bg-yellow-50/50"
+          ? "border-brand-primary"
           : "hover:border-brand-primary"
       }`}
     >

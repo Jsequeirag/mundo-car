@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Country, IUser, IUserRegistered } from "../interfaces/IUser";
-import { CountryCode } from "../enums/CountryEnum";
 import useCountryStore from "@/store/countryStore";
 import { verifyExisted, register, sendVerification } from "../api/urls/User";
 import { useApiSend } from "../api/config/customHooks";
@@ -21,6 +20,7 @@ const RegisterPage: React.FC = () => {
   const { countryCode } = useParams<{ countryCode?: string }>();
   const navigate = useNavigate();
   const { countries, loading } = useCountryStore();
+
   const [formData, setFormData] = useState<
     IUser & { password: string; confirmPassword: string }
   >({
@@ -29,10 +29,11 @@ const RegisterPage: React.FC = () => {
     workphone1: 0,
     workphone2: 0,
     mobilephone: 0,
-    country: (countryCode as Country) || Country.Honduras,
+    country: (countryCode as Country) || "HN",
     password: "",
     confirmPassword: "",
   });
+
   const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
@@ -41,12 +42,8 @@ const RegisterPage: React.FC = () => {
   const [emailError, setEmailError] = useState<string | null>(null);
 
   const getCountryPath = (path: string) => {
-    if (!countryCode || path === "/") {
-      return path;
-    }
-    if (path.startsWith("/")) {
-      return `/${countryCode}${path}`;
-    }
+    if (!countryCode || path === "/") return path;
+    if (path.startsWith("/")) return `/${countryCode}${path}`;
     return `/${countryCode}/${path}`;
   };
 
@@ -55,9 +52,8 @@ const RegisterPage: React.FC = () => {
   ) => {
     const { name, value } = e.target;
 
-    // For phone number fields, ensure the value is numeric and doesn't exceed 8 digits
+    // Validación para campos numéricos
     if (["workphone1", "workphone2", "mobilephone"].includes(name)) {
-      // Allow empty input or valid numeric input up to 8 digits
       if (
         value === "" ||
         (/^\d{0,8}$/.test(value) && parseInt(value) <= 99999999)
@@ -70,11 +66,10 @@ const RegisterPage: React.FC = () => {
       setFormData({ ...formData, [name]: value });
     }
 
-    if (name === "email") {
-      setEmailError(null);
-    }
+    if (name === "email") setEmailError(null);
   };
 
+  // 🚀 Verificación de existencia del usuario
   const { mutate: verifyExistedUser, isPending: isRegisterPending } =
     useApiSend<IUserRegistered>(
       () => {
@@ -90,158 +85,94 @@ const RegisterPage: React.FC = () => {
         } = formData;
 
         if (password !== confirmPassword) {
-          console.error("[Register] Las contraseñas no coinciden");
-          toast.error("Las contraseñas no coinciden");
-          throw new Error("Las contraseñas no coinciden");
+          toast.error("Las contraseñas no coinciden.");
+          throw new Error("Contraseñas no coinciden");
         }
 
-        const userData = {
+        return verifyExisted({
           name,
           email,
-          workphone1: workphone1 ? parseInt(workphone1.toString()) : null,
-          workphone2: workphone2 ? parseInt(workphone2.toString()) : null,
-          mobilephone: mobilephone ? parseInt(mobilephone.toString()) : null,
+          workphone1: Number(workphone1),
+          workphone2: Number(workphone2),
+          mobilephone: Number(mobilephone),
           country,
           role: "user",
           createdDate: new Date().toISOString(),
           password,
-        };
-
-        return verifyExisted(userData);
+        });
       },
-      async (data: IUserRegistered) => {
-        console.log("[Register] Verificación exitosa:", formData.email);
-        console.log("[Register] Datos recibidos:", data);
-        setUser(data);
+      async (data) => {
         if (data.userExisted) {
           setEmailError("El usuario ya existe. Por favor, inicia sesión.");
           toast.error("El usuario ya existe. Por favor, inicia sesión.");
           return;
         }
+        setUser(data);
         setStoredCode(data.user.validationCode);
-        console.log(
-          "[Register] Enviando correo de verificación a:",
-          formData.email
+        await sendVerification(
+          data.user.validationCode,
+          data.user.email,
+          data.user.name
         );
-        try {
-          await sendVerification(
-            storedCode,
-            data.user.email,
-            data.user.name || "Usuario"
-          );
-          console.log("[Register] Correo de verificación enviado:", storedCode);
-          toast.success(
-            "Verificación exitosa. Ingresa el código de verificación enviado a tu correo."
-          );
-          setShowVerificationModal(true);
-        } catch (error) {
-          console.error(
-            "[Register] Error al enviar correo de verificación:",
-            error
-          );
-          toast.error(
-            "Verificación exitosa, pero falló el envío del correo de verificación."
-          );
-        }
+        toast.success("Se envió un código de verificación a tu correo.");
+        setShowVerificationModal(true);
       },
-      (error) => {
-        console.error("[Register] Error en verificación:", error);
-        toast.error(`Error al verificar: ${error.message}`);
-      }
+      (error) => toast.error(`Error al verificar: ${error.message}`)
     );
 
-  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+  const { mutate: registerUser } = useApiSend<IUser>(
+    () => {
+      if (!user?.user)
+        throw new Error("No hay datos de usuario para registrar.");
+      return register({ ...user.user, password: formData.password });
+    },
+    async (data: IUser) => {
+      toast.success("Registro exitoso. ¡Bienvenido a MundoCar!");
+      setShowVerificationModal(false);
+      navigate(`/${formData.country}/dashboard`);
+    },
+    (error) => toast.error(`Error al registrar: ${error.message}`)
+  );
+
+  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("[Register] Iniciando verificación...");
     setEmailError(null);
     verifyExistedUser();
   };
 
-  const { mutate: registerUser } = useApiSend<IUser>(
-    () => {
-      if (!user?.user) {
-        console.error("[Register] No hay datos de usuario para registrar");
-        toast.error("No hay datos de usuario para registrar.");
-        throw new Error("No hay datos de usuario para registrar");
-      }
-      console.log("USUARIO" + user.user);
-      return register({ ...user.user, password: formData.password });
-    },
-    async (data: IUser) => {
-      console.log("[Register] Registro exitoso:", data.email);
-      toast.success("Código verificado correctamente. ¡Bienvenido a MundoCar!");
-      setShowVerificationModal(false);
-      navigate(`/${formData.country}/dashboard`);
-    },
-    (error) => {
-      console.error("[Register] Error al registrar:", error);
-      toast.error(`Error al registrar: ${error.message}`);
-    }
-  );
-
   const handleValidateCode = () => {
-    try {
-      console.log(
-        "[Register] Validando código de verificación:",
-        verificationCode
-      );
-      const enteredCode = parseInt(verificationCode);
-
-      if (storedCode === null) {
-        console.error("[Register] No se ha generado un código de verificación");
-        toast.error(
-          "No se ha generado un código de verificación. Por favor, intenta registrarte de nuevo."
-        );
-        return;
-      }
-
-      if (enteredCode === storedCode) {
-        console.log(
-          "[Register] Código de verificación correcto:",
-          verificationCode
-        );
-        registerUser();
-      } else {
-        console.error(
-          "[Register] Código de verificación incorrecto:",
-          verificationCode
-        );
-        toast.error(
-          "Código de verificación incorrecto. Por favor, intenta de nuevo."
-        );
-      }
-    } catch (error) {
-      console.error("[Register] Error al validar código:", error);
-      toast.error("Error al validar el código. Por favor, intenta de nuevo.");
+    const enteredCode = parseInt(verificationCode);
+    if (storedCode === null) {
+      toast.error("No se ha generado un código. Intenta registrarte de nuevo.");
+      return;
+    }
+    if (enteredCode === storedCode) {
+      registerUser();
+    } else {
+      toast.error("Código de verificación incorrecto. Intenta de nuevo.");
     }
   };
 
-  const handleCountrySelect = (country: Country) => {
-    setFormData({ ...formData, country });
-    setIsCountryOpen(false);
-    console.log(`[Register] País seleccionado: ${country}`);
-  };
-
-  if (loading) {
+  if (loading)
     return (
-      <div className="text-[#034651] text-center py-10">Cargando países...</div>
+      <div className="text-brand-primary text-center py-10">
+        Cargando países...
+      </div>
     );
-  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#034651]/10 to-[#034651]/5 flex flex-col">
+    <div className="min-h-screen bg-brand-bg flex flex-col">
       <div className="flex flex-col lg:grid lg:grid-cols-2 flex-1">
-        {/* Izquierda: Formulario de registro */}
-        <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 flex items-center justify-center px-6 md:px-10 py-10">
+        {/* 🧊 Izquierda: Formulario */}
+        <div className="bg-brand-card/80 backdrop-blur-lg border border-brand-primary/10 flex items-center justify-center px-6 md:px-10 py-12 shadow-inner">
           <div className="w-full max-w-2xl text-center">
-            <Link to={`${getCountryPath("inicio")}`}>
-              <button className="mb-6 px-4 py-2 bg-[#034651] text-white rounded-xl hover:bg-[#05707f] transition-colors duration-300 flex items-center gap-2 mx-auto">
+            <Link to={getCountryPath("inicio")}>
+              <button className="mb-6 px-4 py-2 bg-brand-primary text-white rounded-xl hover:bg-brand-hover transition-all flex items-center gap-2 mx-auto shadow-sm hover:shadow-md">
                 <svg
                   className="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     strokeLinecap="round"
@@ -253,275 +184,160 @@ const RegisterPage: React.FC = () => {
                 Regresar
               </button>
             </Link>
+
             <img
               src="/assets/mundocar-logo.png"
               alt="MundoCar"
-              className="mx-auto"
-              width={250}
+              className="mx-auto drop-shadow-md"
+              width={230}
               loading="lazy"
             />
-            <h2 className="text-2xl md:text-3xl font-extrabold text-[#034651] mt-4">
+
+            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-primary mt-4">
               Crea tu cuenta en MundoCar
             </h2>
-            <p className="text-[#034651]/80 mt-2">
-              Regístrate para comprar, vender o rentar vehículos en
+            <p className="text-text-secondary mt-2">
+              Regístrate para comprar, vender o rentar vehículos en toda
               Centroamérica.
             </p>
+
             <form
               onSubmit={handleRegister}
               className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4"
             >
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-[#034651]"
-                >
-                  Nombre completo
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isRegisterPending}
-                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
-                    placeholder="Tu nombre completo"
-                    aria-label="Nombre completo"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-[#034651]"
-                >
-                  Correo electrónico
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isRegisterPending}
-                    className={`w-full pl-12 pr-4 py-3 border ${
-                      emailError ? "border-red-500" : "border-[#034651]/20"
-                    } rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]`}
-                    placeholder="tucorreo@ejemplo.com"
-                    aria-label="Correo electrónico"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="workphone1"
-                  className="block text-sm font-medium text-[#034651]"
-                >
-                  Teléfono de trabajo 1
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
-                  <input
-                    type="number"
-                    id="workphone1"
-                    name="workphone1"
-                    value={formData.workphone1 || ""}
-                    onChange={handleInputChange}
-                    maxLength={8}
-                    disabled={isRegisterPending}
-                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
-                    placeholder="Teléfono de trabajo 1"
-                    aria-label="Teléfono de trabajo 1"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="workphone2"
-                  className="block text-sm font-medium text-[#034651]"
-                >
-                  Teléfono de trabajo 2 (opcional)
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
-                  <input
-                    type="number"
-                    id="workphone2"
-                    name="workphone2"
-                    value={formData.workphone2 || ""}
-                    onChange={handleInputChange}
-                    maxLength={8}
-                    disabled={isRegisterPending}
-                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
-                    placeholder="Teléfono de trabajo 2"
-                    aria-label="Teléfono de trabajo 2"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="mobilephone"
-                  className="block text-sm font-medium text-[#034651]"
-                >
-                  Teléfono móvil
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
-                  <input
-                    type="number"
-                    id="mobilephone"
-                    name="mobilephone"
-                    value={formData.mobilephone || ""}
-                    onChange={handleInputChange}
-                    maxLength={8}
-                    required
-                    disabled={isRegisterPending}
-                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
-                    placeholder="Teléfono móvil"
-                    aria-label="Teléfono móvil"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium text-[#034651]"
-                >
+              {/* Nombre */}
+              <InputField
+                icon={<User />}
+                name="name"
+                value={formData.name}
+                label="Nombre completo"
+                placeholder="Tu nombre completo"
+                onChange={handleInputChange}
+                disabled={isRegisterPending}
+              />
+
+              {/* Correo */}
+              <InputField
+                icon={<Mail />}
+                name="email"
+                value={formData.email}
+                label="Correo electrónico"
+                placeholder="tucorreo@ejemplo.com"
+                onChange={handleInputChange}
+                disabled={isRegisterPending}
+                error={emailError}
+              />
+
+              {/* Teléfonos */}
+              <InputField
+                icon={<Phone />}
+                name="workphone1"
+                value={formData.workphone1}
+                label="Teléfono de trabajo 1"
+                onChange={handleInputChange}
+                type="number"
+              />
+
+              <InputField
+                icon={<Phone />}
+                name="mobilephone"
+                value={formData.mobilephone}
+                label="Teléfono móvil"
+                onChange={handleInputChange}
+                type="number"
+              />
+
+              {/* País */}
+              <div className="md:col-span-2 text-left">
+                <label className="block text-sm font-semibold text-text-main mb-1">
                   País
                 </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#034651]/60" />
-                  <div
-                    className="w-full pl-12 pr-4 py-3 border border-[#034651]/20 rounded-xl text-[#034651] shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex items-center justify-between disabled:opacity-50 focus:scale-[1.02]"
-                    onClick={() =>
-                      !isRegisterPending && setIsCountryOpen(!isCountryOpen)
-                    }
-                  >
-                    <div className="flex items-center gap-2">
-                      <Flag
-                        country={formData.country.toUpperCase()}
-                        size={20}
-                        className="inline-block"
-                      />
-                      <span>
-                        {countries.find((c) => c.code === formData.country)
-                          ?.name || "Selecciona un país"}
-                      </span>
-                    </div>
-                    <ChevronDown
-                      className={`h-5 w-5 text-[#034651]/60 transition-transform ${
-                        isCountryOpen ? "rotate-180" : ""
-                      }`}
+                <div
+                  className="relative w-full border border-brand-primary/20 rounded-xl px-4 py-3 flex justify-between items-center bg-white/70 cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => setIsCountryOpen(!isCountryOpen)}
+                >
+                  <div className="flex items-center gap-2">
+                    <Flag
+                      country={formData.country.toUpperCase()}
+                      size={20}
+                      className="rounded-sm"
                     />
+                    <span className="text-text-main">
+                      {countries.find((c) => c.code === formData.country)
+                        ?.name || "Selecciona un país"}
+                    </span>
                   </div>
+                  <ChevronDown
+                    className={`h-5 w-5 text-brand-primary transition-transform ${
+                      isCountryOpen ? "rotate-180" : ""
+                    }`}
+                  />
                   {isCountryOpen && (
-                    <ul className="absolute z-10 w-full mt-1 bg-white/80 backdrop-blur-xl border border-[#034651]/20 rounded-xl shadow-lg max-h-60 overflow-auto">
+                    <ul className="absolute top-full left-0 w-full mt-1 bg-white/80 backdrop-blur-xl border border-brand-primary/20 rounded-xl shadow-lg max-h-60 overflow-auto z-20">
                       {countries.map((c) => (
                         <li
                           key={c.code}
-                          className="px-4 py-2 flex items-center gap-2 text-[#034651] hover:bg-[#034651]/10 cursor-pointer"
-                          onClick={() => handleCountrySelect(c.code)}
+                          onClick={() => {
+                            setFormData({ ...formData, country: c.code });
+                            setIsCountryOpen(false);
+                          }}
+                          className="px-4 py-2 flex items-center gap-2 text-text-main hover:bg-brand-primary/10 cursor-pointer"
                         >
-                          <Flag
-                            country={c.code}
-                            size={20}
-                            className="inline-block"
-                          />
-                          <span>{c.name}</span>
+                          <Flag country={c.code} size={20} />
+                          {c.name}
                         </li>
                       ))}
                     </ul>
                   )}
                 </div>
               </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-[#034651]"
-                >
-                  Contraseña
-                </label>
-                <div className="relative">
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isRegisterPending}
-                    className="w-full pl-4 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
-                    placeholder="••••••••"
-                    aria-label="Contraseña"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-[#034651]"
-                >
-                  Confirmar contraseña
-                </label>
-                <div className="relative">
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isRegisterPending}
-                    className="w-full pl-4 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 focus:scale-[1.02]"
-                    placeholder="••••••••"
-                    aria-label="Confirmar contraseña"
-                  />
-                </div>
-              </div>
-              <div className="md:col-span-2">
-                {emailError && (
-                  <p className="text-red-500 text-sm mb-4">{emailError}</p>
-                )}
-              </div>
+
+              {/* Contraseñas */}
+              <InputField
+                name="password"
+                value={formData.password}
+                label="Contraseña"
+                placeholder="••••••••"
+                onChange={handleInputChange}
+                type="password"
+              />
+              <InputField
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                label="Confirmar contraseña"
+                placeholder="••••••••"
+                onChange={handleInputChange}
+                type="password"
+              />
+
               <div className="md:col-span-2">
                 <button
                   type="submit"
                   disabled={isRegisterPending}
-                  className="w-full flex items-center justify-center gap-2 bg-[#034651] text-white font-semibold p-3 rounded-xl shadow-md hover:shadow-lg hover:bg-[#05707f] transform hover:scale-[1.02] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#034651] disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label="Crear cuenta"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand-primary to-brand-hover text-white font-semibold p-3 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all focus:ring-2 focus:ring-brand-primary disabled:opacity-50"
                 >
                   {isRegisterPending ? "Registrando..." : "Crear cuenta"}
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
             </form>
-            <p className="mt-4 text-center text-sm text-[#034651]/80 md:col-span-2">
+
+            <p className="mt-5 text-sm text-text-secondary">
               ¿Ya tienes una cuenta?{" "}
-              <Link to={`${getCountryPath("inicio")}`}>
-                <button
-                  className="text-[#034651] hover:underline font-medium"
-                  aria-label="Iniciar sesión"
-                >
-                  Inicia sesión
-                </button>
+              <Link
+                to={getCountryPath("inicio")}
+                className="text-brand-primary hover:underline font-semibold"
+              >
+                Inicia sesión
               </Link>
             </p>
           </div>
         </div>
 
-        {/* Right: Video with Overlay and Text */}
+        {/* 🎥 Derecha: Video */}
         <div className="relative h-[50vh] lg:h-full overflow-hidden">
           <video
             className="absolute inset-0 w-full h-full object-cover"
-            poster="/assets/videos/MundoCar3.mp4"
-            preload="metadata"
             autoPlay
             muted
             loop
@@ -530,14 +346,14 @@ const RegisterPage: React.FC = () => {
             <source src="/assets/videos/MundoCar3.webm" type="video/webm" />
             <source src="/assets/videos/MundoCar3.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-[#034651]/60" />
-          <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-12">
-            <h1 className="text-white text-3xl md:text-5xl font-extrabold drop-shadow-lg text-center">
+          <div className="absolute inset-0 bg-brand-primary/60 backdrop-blur-[2px]" />
+          <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-10 text-center text-white">
+            <h1 className="text-3xl md:text-5xl font-extrabold drop-shadow-lg">
               ¡Únete a MundoCar hoy!
             </h1>
-            <p className="text-white/90 mt-4 max-w-xl text-center text-lg">
+            <p className="text-white/90 mt-3 max-w-xl mx-auto leading-relaxed">
               Crea tu cuenta y descubre la mejor experiencia para comprar,
-              vender o rentar vehículos en toda Centroamérica.
+              vender o rentar vehículos.
             </p>
           </div>
         </div>
@@ -547,39 +363,24 @@ const RegisterPage: React.FC = () => {
       {showVerificationModal && (
         <ModalContainer
           isOpen={showVerificationModal}
-          onClose={() => {
-            console.log("[Register] Cerrando modal de verificación");
-            setShowVerificationModal(false);
-          }}
+          onClose={() => setShowVerificationModal(false)}
           title="Verifica tu cuenta"
-          width="32rem"
+          width="30rem"
         >
           <div className="space-y-6">
-            <p className="text-[#034651]/80">
+            <p className="text-text-secondary">
               Ingresa el código de verificación enviado a {formData.email}.
             </p>
-            <div>
-              <label
-                htmlFor="verificationCode"
-                className="block text-sm font-medium text-[#034651]"
-              >
-                Código de verificación
-              </label>
-              <input
-                type="text"
-                id="verificationCode"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition-all duration-300 focus:scale-[1.02]"
-                placeholder="Ingresa el código"
-                aria-label="Código de verificación"
-              />
-            </div>
+            <input
+              type="text"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+              className="w-full px-4 py-3 border border-brand-primary/20 rounded-xl focus:ring-2 focus:ring-brand-primary text-text-main placeholder-text-secondary/40 shadow-sm"
+              placeholder="Código de verificación"
+            />
             <button
               onClick={handleValidateCode}
-              className="w-full flex items-center justify-center gap-2 bg-[#034651] text-white font-semibold p-3 rounded-xl shadow-md hover:shadow-lg hover:bg-[#05707f] transform hover:scale-[1.02] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#034651]"
-              aria-label="Validar código"
+              className="w-full flex items-center justify-center gap-2 bg-brand-primary text-white font-semibold p-3 rounded-xl shadow-md hover:bg-brand-hover transition-all"
             >
               Validar código
               <ChevronRight className="w-5 h-5" />
@@ -588,13 +389,66 @@ const RegisterPage: React.FC = () => {
         </ModalContainer>
       )}
 
-      <div className="bg-[#034651] text-white py-5 text-center">
-        <p className="text-xs opacity-90">
+      <footer className="bg-brand-primary text-white py-5 text-center">
+        <p className="text-xs opacity-80">
           © {new Date().getFullYear()} MundoCar. Todos los derechos reservados.
         </p>
-      </div>
+      </footer>
     </div>
   );
 };
+
+// 🔹 Componente reutilizable para inputs
+interface InputProps {
+  label: string;
+  name: string;
+  value: any;
+  onChange: (e: any) => void;
+  icon?: React.ReactNode;
+  placeholder?: string;
+  type?: string;
+  disabled?: boolean;
+  error?: string | null;
+}
+
+const InputField: React.FC<InputProps> = ({
+  label,
+  name,
+  value,
+  onChange,
+  icon,
+  placeholder,
+  type = "text",
+  disabled,
+  error,
+}) => (
+  <div className="text-left">
+    <label className="block text-sm font-semibold text-text-main mb-1">
+      {label}
+    </label>
+    <div className="relative">
+      {icon && (
+        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-brand-primary/60">
+          {icon}
+        </span>
+      )}
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        className={`w-full ${icon ? "pl-10" : "pl-4"} pr-4 py-3 border ${
+          error ? "border-red-500" : "border-brand-primary/20"
+        } rounded-xl 
+        focus:ring-2 focus:ring-brand-primary focus:border-transparent text-text-main 
+        placeholder-text-secondary/40 shadow-sm hover:shadow-md transition-all duration-300 
+        disabled:opacity-50 focus:scale-[1.02]`}
+        placeholder={placeholder}
+      />
+    </div>
+    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+  </div>
+);
 
 export default RegisterPage;

@@ -1,60 +1,60 @@
-// pages/RentalCarsPage.tsx
-// O en Next.js App Router: app/renta/page.tsx
-
 import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import SearchFilters from "@/components/SearchFilters"; // Reutilizaremos este componente
-import RentalCarGrid from "@/components/RentalCarGrid"; // Nuevo componente
+import SearchFilters from "@/components/SearchFilters";
+import RentalCarGrid from "@/components/RentalCarGrid";
 import Footer from "@/components/Footer";
-import { mockRentalCars, RentalCar } from "@/data/mockRentalCars"; // Importa los datos y la interfaz
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
-import BlogPreview from "@/components/BlogPreview";
+import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral";
+import BrandShowCase from "@/components/UsedCarGrid";
 import Hero from "@/components/Hero";
 import SecondaryCTA from "@/components/SecondaryCTA";
-import MobileSidebar from "../components/MobileSidebar";
-import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
-import BrandShowCase from "@/components/BrandShowCase";
-import { useParams, Outlet } from "react-router-dom";
+import BusinessCTA from "@/components/BusinessCTA";
+import MobileSidebar from "@/components/MobileSidebar";
+import { mockRentalCars, RentalCar } from "@/data/mockRentalCars";
+import { useParams } from "react-router-dom";
+
 const RentalCarsPage: React.FC = () => {
   const [rentalCars, setRentalCars] = useState<RentalCar[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { countryCode } = useParams<{ countryCode?: string }>();
+
   const brandLogos = [
     {
       id: "1",
-      name: "Renta Facil",
+      name: "Renta Fácil",
       src: "/assets/rentacar/rentafacil.png",
       type: "rentacar",
     },
     {
       id: "2",
-      name: "Autorenta Rodriguez",
+      name: "Autorenta Rodríguez",
       src: "/assets/rentacar/autorenta.png",
       type: "rentacar",
     },
     {
       id: "3",
-      name: "Menoskilometros",
+      name: "Menoskilómetros",
       src: "/assets/rentacar/menoskilometros.png",
       type: "rentacar",
     },
-    // Añade más marcas según necesites
   ];
-  // Carga inicial de todos los autos de renta
+
+  // 🔹 Carga inicial (simulación API)
   useEffect(() => {
     setLoading(true);
-    // Simula una llamada API
     setTimeout(() => {
       setRentalCars(mockRentalCars);
       setLoading(false);
     }, 500);
   }, []);
 
+  // 🔹 Filtros de búsqueda
   const handleSearch = (filters: any) => {
     setLoading(true);
     setTimeout(() => {
       let results = mockRentalCars;
 
-      // Aplicar filtros de búsqueda para autos de renta
       if (filters.searchTerm) {
         const searchTermLower = filters.searchTerm.toLowerCase();
         results = results.filter(
@@ -68,180 +68,137 @@ const RentalCarsPage: React.FC = () => {
       }
 
       if (filters.location) {
-        // Ejemplo si tu filtro lo permite
         results = results.filter(
           (car) => car.location.toLowerCase() === filters.location.toLowerCase()
         );
       }
+
       if (filters.carType) {
-        // Ejemplo si tu filtro lo permite
         results = results.filter(
           (car) => car.type.toLowerCase() === filters.carType.toLowerCase()
         );
       }
+
       if (filters.minDailyRate) {
         results = results.filter(
           (car) => car.dailyRate >= filters.minDailyRate
         );
       }
+
       if (filters.maxDailyRate) {
         results = results.filter(
           (car) => car.dailyRate <= filters.maxDailyRate
         );
       }
-      // Filtros de fecha de disponibilidad serían más complejos y necesitarían un selector de fechas en SearchFilters
-      // Por ejemplo, si tienes filters.pickupDate y filters.dropoffDate
-      // results = results.filter(car => car.availability.some(slot =>
-      //   new Date(filters.pickupDate) >= new Date(slot.startDate) && new Date(filters.dropoffDate) <= new Date(slot.endDate)
-      // ));
 
       setRentalCars(results);
       setLoading(false);
     }, 1000);
   };
 
-  // Necesitarás un MobileSidebar aquí también
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-  const { countryCode } = useParams<{ countryCode?: string }>();
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />{" "}
-      {/* Pasa la prop para el menú móvil */}
-      {/* Importa y usa MobileSidebar si lo tienes */}
-      {/* <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} /> */}{" "}
+    <div className="min-h-screen bg-brand-bg">
+      {/* 🔹 Header + Sidebar */}
+      <Header
+        onMenuClick={() => setIsMobileMenuOpen(true)}
+        currentCountryCode={countryCode}
+      />
       <MobileSidebar
         isOpen={isMobileMenuOpen}
-        onClose={toggleMobileMenu}
-        // Puedes pasar los navItems al MobileSidebar si no los define internamente
-        // navItems={/* el mismo array navItems que tienes en Header, o adaptado */}
+        onClose={() => setIsMobileMenuOpen(false)}
       />
+
       <div className="pt-[80px]">
-        {" "}
-        {/* Padding para compensar el header fijo */}
-        {/* Hero Section para Renta de Autos */}
+        {/* 🔹 HERO principal */}
         <Hero
           title="Renta el Auto Perfecto para tu Viaje"
-          subtitle="Amplia selección de vehículos para cualquier ocasión, con tarifas flexibles."
-          // Si tienes el Hero modificado para aceptar showSearch, puedes pasarlo aquí
-          // showSearch={false}
-        />{" "}
+          subtitle="Encuentra el vehículo ideal para tus vacaciones, negocios o aventuras."
+          backgroundImage="/assets/mundo/howItWorks.webp"
+        />
+
+        {/* 🔹 CTA publicar o anunciar */}
+        <SecondaryCTA
+          sectionBgColor="bg-white"
+          buttonBgColor="bg-brand-primary"
+          buttonTextColor="text-white"
+          sectionTextColor="text-brand-primary"
+        />
+
+        {/* 🔹 CTA para empresas */}
+        <BusinessCTA />
+
+        {/* 🔹 Mostrar rentadoras */}
         <BrandShowCase brandLogos={brandLogos} />
-        {/* Sección de CTA para empresas de renta de autos */}
+
+        {/* 🔹 Contenido principal */}
         <main className="mx-auto px-4 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-            {/* Columna Izquierda: Filtros y Anuncio Lateral 1 */}
+            {/* 🔸 Filtros + lateral */}
             <div className="lg:col-span-1 space-y-8">
-              {/* Ajusta SearchFilters para renta de autos. */}
               <SearchFilters
                 onSearch={handleSearch}
-                initialCategory="car_rental"
-                lockCategory={true} // Nuevo tipo de categoría para renta de autos
-                // Puedes añadir otras props para que SearchFilters se adapte:
-                // showMakeModel={true}
-                // showYear={false}
-                // showTransmission={true}
-                // showFuelType={true}
-                // showSeats={true}
-                // showDailyRateRange={true} // Rango de precio diario
-                // showPickupLocation={true}
-                // showDatesPicker={true} // Para seleccionar fechas de alquiler
+                condition="rental"
+                type="rental"
               />
-              <div className="lg:col-span-1 hidden lg:block space-y-8">
+
+              <div className="hidden lg:block">
                 <AdvertisementCarouselLateral
                   ads={[
                     {
                       src: "/assets/meguiarSpray.jpg",
-                      title: "Innovación que impulsa el futuro.",
-                      ctaText: "Ver más",
-                      ctaHref: "https://www.bridgestone.co.cr/",
-                    },
-                    {
-                      src: "/assets/meguiar.jpg",
-                      title: "Potencia y elegancia en cada viaje",
+                      title: "Mantén tu auto brillante",
                       ctaText: "Ver más",
                       ctaHref: "https://meguiarsdirect.com/",
                     },
+                    {
+                      src: "/assets/meguiar.jpg",
+                      title: "Calidad profesional para tu vehículo",
+                      ctaText: "Conoce más",
+                      ctaHref: "https://www.bridgestone.co.cr/",
+                    },
                   ]}
-                />{" "}
+                />
               </div>
             </div>
 
-            {/* Columna Central: Grid de Autos de Renta */}
+            {/* 🔹 Resultados */}
             <div className="lg:col-span-3 xl:col-span-4">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                <h2 className="text-2xl font-bold text-text-main mb-2">
                   Autos de Renta Disponibles
                 </h2>
-                <p className="text-gray-600">
-                  {rentalCars.length} vehículos de renta encontrados
+                <p className="text-text-secondary">
+                  {rentalCars.length} vehículos disponibles para renta
                 </p>
               </div>
               <RentalCarGrid cars={rentalCars} loading={loading} />
             </div>
+          </div>
 
-            {/*  <AdvertisementCarouselLateral
-            <div className="lg:col-span-1 hidden lg:block space-y-8">
-                ads={[
-                  {
-                    src: "/assets/castrolOil.png",
-                    title: "Innovación que impulsa el futuro.",
-                    ctaText: "Ver más",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/castrol.png",
-                    title: "Potencia y elegancia en cada viaje",
-                    ctaText: "Ver más",
-                    ctaHref: "https://www.toyota.com/",
-                  },
-                ]}
-              />
-              <AdvertisementCarouselLateral
-                ads={[
-                  {
-                    src: "/assets/meguiarSpray.jpg",
-                    title: "Innovación que impulsa el futuro.",
-                    ctaText: "Ver más",
-                    ctaHref: "https://www.bridgestone.co.cr/",
-                  },
-                  {
-                    src: "/assets/meguiar.jpg",
-                    title: "Potencia y elegancia en cada viaje",
-                    ctaText: "Ver más",
-                    ctaHref: "https://meguiarsdirect.com/",
-                  },
-                ]}
-              />
-            </div>*/}
-          </div>{" "}
+          {/* 🔸 Carrusel inferior */}
           <div className="mt-8">
             <AdvertisementCarousel
               slides={[
                 {
                   src: "/assets/tesla.svg",
                   title: "Innovación que impulsa el futuro.",
-                  subtitle: "Energía sin límites.",
-                  ctaText: "Ir a sitio",
-                  ctaHref: "https://www.bridgestone.co.cr/",
-                  badge: "",
+                  subtitle: "Tecnología sin límites.",
+                  ctaText: "Ver más",
+                  ctaHref: "https://www.tesla.com/",
                 },
                 {
                   src: "/assets/toyotaxl.png",
                   title: "Potencia y elegancia en cada viaje",
-                  subtitle: "Conduce tu destino.",
-                  ctaText: "Ver más",
+                  subtitle: "Tu próximo viaje comienza aquí.",
+                  ctaText: "Descubrir",
                   ctaHref: "https://www.toyota.com/",
-                  badge: "",
                 },
               ]}
             />
           </div>
         </main>
       </div>
+
       <Footer />
     </div>
   );

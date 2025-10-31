@@ -1,373 +1,78 @@
-// components/SecondaryCTA.tsx
-import { useState, React } from "react";
+import React, { useState } from "react";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ModalContainer from "./ModalContainer";
-import { Users, Building2, Crown, Zap, CheckCircle } from "lucide-react";
+import PlansGrid from "@/components/PlanCard/PlansGrid";
+
 interface SecondaryCTAProps {
-  sectionBgColor?: string; // Solo se usa si no hay imagen
-  sectionTextColor?: string;
-  buttonBgColor?: string;
-  buttonTextColor?: string;
-  backgroundImage?: string; // Nueva prop para imagen de fondo
+  backgroundImage?: string;
 }
 
-const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
-  sectionBgColor = "bg-brand-primary",
-  sectionTextColor = "text-white",
-  buttonBgColor = "bg-white",
-  buttonTextColor = "text-brand-primary",
-  backgroundImage, // Nueva prop
-}) => {
+const SecondaryCTA: React.FC<SecondaryCTAProps> = ({ backgroundImage }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { countryCode } = useParams<{ countryCode?: string }>();
+
   const getCountryPath = (path: string) => {
-    if (!countryCode || path === "/") {
-      return path;
-    }
-    if (path.startsWith("/")) {
-      return `/${countryCode}${path}`;
-    }
+    if (!countryCode || path === "/") return path;
+    if (path.startsWith("/")) return `/${countryCode}${path}`;
     return `/${countryCode}/${path}`;
   };
-  const buttonHoverClasses =
-    buttonBgColor === "bg-white"
-      ? "hover:bg-gray-100"
-      : "hover:bg-brand-primary/90";
-  const navigate = useNavigate();
+
   return (
     <section
-      className={`relative py-16 text-center ${
-        backgroundImage ? "" : `${sectionBgColor} ${sectionTextColor}`
-      }`}
+      className="relative py-20 text-center overflow-hidden bg-gradient-to-br from-brand-primary via-brand-hover to-[#012f36]"
       style={{
-        backgroundImage: "url('/assets/mundo/howItWorks.webp')", // Imagen clara generada en Sora
+        backgroundImage: backgroundImage
+          ? `url(${backgroundImage})`
+          : "url('/assets/mundo/howItWorks.webp')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
+      {/* 🪟 Modal con planes */}
       <ModalContainer
-        title="Seleccionar tu plan según tu necesidad"
+        title="Selecciona tu plan según tu necesidad"
         width="80rem"
         maxWidth="95%"
         className="max-w-7xl"
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       >
-        <div className="w-full">
-          {/* Grid de planes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {/* PLAN 1: INDEPENDIENTE */}
-            <div
-              className="relative group cursor-pointer transform transition-all duration-500
-                 hover:scale-[1.02] hover:-translate-y-2"
-              onClick={(e) => {
-                e.stopPropagation(), navigate(getCountryPath("publicar"));
-              }}
-            >
-              {/* Wrapper para el plan con efecto neoglass */}
-              <div
-                className={`
-          relative bg-white/20 backdrop-blur-xl border border-white/20
-          rounded-3xl p-8 shadow-2xl
-          group-hover:shadow-3xl group-hover:border-white/30
-          overflow-hidden
-          bg-gradient-to-br from-[#034651]/10 to-[#034651]/5
-          after:absolute after:inset-0 after:bg-gradient-to-r 
-          after:from-transparent after:via-white/10 after:to-transparent
-          after:opacity-0 group-hover:after:opacity-100
-          after:transition-opacity after:duration-500
-          before:absolute before:inset-0 before:bg-gradient-to-b
-          before:from-white/5 before:to-transparent
-          before:opacity-0 group-hover:before:opacity-100
-          before:transition-opacity before:duration-500
-        `}
-                style={{
-                  backgroundImage:
-                    "url('/assets/mundo/suscripcion-independiente.png')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {/* Efecto de brillo neoglass */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
-                </div>
-
-                {/* Contenido del plan */}
-                <div className="relative z-10 h-full flex flex-col">
-                  {/* Icono del tipo de plan */}
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 bg-[#034651]/20 rounded-2xl flex items-center justify-center border border-[#034651]/30">
-                      <Users className="h-8 w-8 text-[#034651]" />
-                    </div>
-                  </div>
-
-                  {/* Nombre del plan */}
-                  <h3 className="text-2xl font-bold text-center  mb-2 text-white text-shadow-md">
-                    Independiente
-                  </h3>
-
-                  {/* Descripción */}
-                  <div className="text-center mb-6 flex-1 flex flex-col justify-center ">
-                    <p className="   mt-1 text-white text-shadow-md font-bold">
-                      Perfecto para vendedores individuales
-                    </p>
-                  </div>
-
-                  {/* Lista de características */}
-                  <ul className="space-y-3 mb-8 flex-1">
-                    {[].map((feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center gap-3 text-gray-700"
-                      >
-                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Botón de selección */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation(), navigate(getCountryPath("publicar"));
-                    }}
-                    className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-300
-                       bg-gradient-to-r from-[#034651] to-[#034651]/80 text-white shadow-lg 
-                       hover:shadow-[#034651]/25 hover:scale-[1.02] active:scale-[0.98]
-                       after:absolute after:inset-0 after:bg-white/20 after:scale-0
-                       after:transform after:transition-transform after:duration-300
-                       hover:after:scale-100 relative overflow-hidden"
-                  >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Zap className="h-4 w-4" />
-                      Seleccionar Plan
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* PLAN 2: AUTOLOTE */}
-            <div
-              className="relative group cursor-pointer transform transition-all duration-500
-                 hover:scale-[1.02] hover:-translate-y-2 scale-105"
-              onClick={(e) => {
-                e.stopPropagation(), navigate(getCountryPath("publicar"));
-              }}
-            >
-              {/* Wrapper para el plan con efecto neoglass */}
-              <div
-                className={`
-          relative bg-white/20 backdrop-blur-xl border border-white/20
-          rounded-3xl p-8 shadow-2xl
-          group-hover:shadow-3xl group-hover:border-white/30
-          overflow-hidden
-          ring-2 ring-[#034651]/30 bg-gradient-to-br from-[#034651]/10 to-[#034651]/5
-          after:absolute after:inset-0 after:bg-gradient-to-r 
-          after:from-transparent after:via-white/10 after:to-transparent
-          after:opacity-0 group-hover:after:opacity-100
-          after:transition-opacity after:duration-500
-          before:absolute before:inset-0 before:bg-gradient-to-b
-          before:from-white/5 before:to-transparent
-          before:opacity-0 group-hover:before:opacity-100
-          before:transition-opacity before:duration-500
-        `}
-                style={{
-                  backgroundImage:
-                    "url('/assets/mundo/suscripcion-autolote.png')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {/* Efecto de brillo neoglass */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
-                </div>
-
-                {/* Contenido del plan */}
-                <div className="relative z-10 h-full flex flex-col">
-                  {/* Icono del tipo de plan */}
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 bg-[#034651]/20 rounded-2xl flex items-center justify-center border border-[#034651]/30">
-                      <Building2 className="h-8 w-8 text-[#034651]" />
-                    </div>
-                  </div>
-
-                  {/* Nombre del plan */}
-                  <h3 className="text-2xl font-bold text-center  mb-2 text-white text-shadow-md">
-                    Autolote
-                  </h3>
-
-                  {/* Descripción */}
-                  <div className="text-center mb-6 flex-1 flex flex-col justify-center">
-                    <p className="  mt-1 text-white text-shadow-md font-bold">
-                      Ideal para pequeños negocios de autos
-                    </p>
-                  </div>
-
-                  {/* Lista de características */}
-                  <ul className="space-y-3 mb-8 flex-1">
-                    {[].map((feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center gap-3 text-gray-700"
-                      >
-                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Botón de selección */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(getCountryPath("publicar"));
-                    }}
-                    className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-300
-                       bg-gradient-to-r from-[#034651] to-[#034651]/80 text-white shadow-lg 
-                       hover:shadow-[#034651]/25 hover:scale-[1.02] active:scale-[0.98]
-                       after:absolute after:inset-0 after:bg-white/20 after:scale-0
-                       after:transform after:transition-transform after:duration-300
-                       hover:after:scale-100 relative overflow-hidden"
-                  >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Zap className="h-4 w-4" />
-                      ¡Elige este plan!
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* PLAN 3: CONCESIONARIO */}
-            <div
-              className="relative group cursor-pointer transform transition-all duration-500
-                 hover:scale-[1.02] hover:-translate-y-2"
-              onClick={() => navigate(getCountryPath("publicar"))}
-            >
-              {/* Wrapper para el plan con efecto neoglass */}
-              <div
-                className={`
-          relative bg-white/20 backdrop-blur-xl border border-white/20
-          rounded-3xl p-8 shadow-2xl
-          group-hover:shadow-3xl group-hover:border-white/30
-          overflow-hidden
-          bg-gradient-to-br from-[#034651]/10 to-[#034651]/5
-          after:absolute after:inset-0 after:bg-gradient-to-r 
-          after:from-transparent after:via-white/10 after:to-transparent
-          after:opacity-0 group-hover:after:opacity-100
-          after:transition-opacity after:duration-500
-          before:absolute before:inset-0 before:bg-gradient-to-b
-          before:from-white/5 before:to-transparent
-          before:opacity-0 group-hover:before:opacity-100
-          before:transition-opacity before:duration-500
-        `}
-                style={{
-                  backgroundImage:
-                    "url('/assets/mundo/suscripcion-concesionario.png')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {/* Efecto de brillo neoglass */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
-                </div>
-
-                {/* Contenido del plan */}
-                <div className="relative z-10 h-full flex flex-col">
-                  {/* Icono del tipo de plan */}
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 bg-[#034651]/20 rounded-2xl flex items-center justify-center border border-[#034651]/30">
-                      <Crown className="h-8 w-8 text-[#034651]" />
-                    </div>
-                  </div>
-
-                  {/* Nombre del plan */}
-                  <h3 className="text-2xl font-bold text-center  mb-2 text-white text-shadow-md">
-                    Concesionario
-                  </h3>
-
-                  {/* Descripción */}
-                  <div className="text-center mb-6 flex-1 flex flex-col justify-center">
-                    <p className="  mt-1 text-white text-shadow-md font-bold">
-                      Para concesionarios profesionales
-                    </p>
-                  </div>
-
-                  {/* Lista de características */}
-                  <ul className="space-y-3 mb-8 flex-1">
-                    {[].map((feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center gap-3 text-gray-700"
-                      >
-                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Botón de selección */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation(), navigate(getCountryPath("publicar"));
-                    }}
-                    className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-300
-                       bg-gradient-to-r from-[#034651] to-[#034651]/80 text-white shadow-lg 
-                       hover:shadow-[#034651]/25 hover:scale-[1.02] active:scale-[0.98]
-                       after:absolute after:inset-0 after:bg-white/20 after:scale-0
-                       after:transform after:transition-transform after:duration-300
-                       hover:after:scale-100 relative overflow-hidden"
-                  >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Zap className="h-4 w-4" />
-                      Seleccionar Plan
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PlansGrid />
       </ModalContainer>
-      {/* Overlay suave solo si hay imagen */}
-      {backgroundImage && <div className="absolute inset-0 bg-white/20" />}
 
-      <div className="relative container mx-auto px-4">
-        <h2
-          className={`text-3xl md:text-4xl font-bold mb-4 text-shadow-md 
-        text-white/90`}
-        >
+      {/* 🌫️ Overlay de legibilidad */}
+      <div className="absolute inset-0 bg-[#034651]/70 backdrop-blur-[2px]" />
+
+      {/* ✨ Efectos de luz ambiental */}
+      <div className="absolute top-10 left-10 w-40 h-40 bg-brand-hover/25 rounded-full blur-3xl animate-slowFloat" />
+      <div className="absolute bottom-10 right-10 w-56 h-56 bg-brand-primary/30 rounded-full blur-3xl animate-slowFloat delay-300" />
+
+      {/* 📢 Contenido principal */}
+      <div className="relative z-10 container mx-auto px-6 flex flex-col items-center text-white">
+        <h2 className="text-3xl md:text-4xl font-extrabold mb-4 drop-shadow-lg text-shadow-md">
           ¿Quieres vender tu vehículo?
         </h2>
-        <p className={`text-xl mb-8 opacity-90 text-shadow-md text-white/90`}>
-          Publica tu anuncio de forma rápida, sencilla y llega a miles de
-          compradores.
+
+        <p className="text-lg md:text-xl mb-8 text-white/90 max-w-2xl leading-relaxed text-shadow-md">
+          Publica tu anuncio de forma rápida y sencilla <br /> y llega a miles
+          de compradores en toda la región.
         </p>
-        {/*<Link to={`${getCountryPath("inicio")}`}>
-          <Button
-            className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg transition-transform duration-200 ease-in-out hover:scale-105`}
-          >
-            <PlusCircle className="h-6 w-6 mr-2" /> Publica tu anuncio
-          </Button>
-        </Link> */}
 
         <Button
           onClick={() => setIsOpen(true)}
-          className={`${buttonBgColor} ${buttonTextColor} ${buttonHoverClasses} font-semibold py-3 px-8 rounded-lg shadow-xl text-lg transition-transform duration-200 ease-in-out hover:scale-105`}
+          className="bg-white text-brand-primary font-semibold py-3 px-8 rounded-full shadow-xl text-lg transition-all duration-300 ease-in-out hover:scale-105 hover:bg-white/90"
         >
-          <PlusCircle className="h-6 w-6 mr-2" /> Publica tu anuncio
+          <PlusCircle className="h-6 w-6 mr-2" />
+          Publica tu anuncio
         </Button>
       </div>
+
+      {/* 🌊 Línea decorativa inferior */}
+      <div className="absolute bottom-0 w-full h-[4px] bg-gradient-to-r from-white/40 via-brand-hover/70 to-white/40"></div>
     </section>
   );
 };
 
 export default SecondaryCTA;
-//Seleccionar tu plan segun tu necesidad

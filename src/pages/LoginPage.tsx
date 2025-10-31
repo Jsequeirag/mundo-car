@@ -9,31 +9,21 @@ import { toast } from "@/components/ui/sonner";
 const LoginPage: React.FC = () => {
   const { countryCode } = useParams<{ countryCode?: string }>();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<{
-    email: string;
-    password: string;
-  }>({
-    email: "",
-    password: "",
-  });
+
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [emailError, setEmailError] = useState<string | null>(null);
   const [user, setUser] = useState<IUserRegistered | null>(null);
 
-  const getCountryPath = (path: string) => {
-    if (!countryCode || path === "/") {
-      return path;
-    }
-    if (path.startsWith("/")) {
-      return `/${countryCode}${path}`;
-    }
-    return `/${countryCode}/${path}`;
-  };
+  const getCountryPath = (path: string) =>
+    !countryCode || path === "/"
+      ? path
+      : path.startsWith("/")
+      ? `/${countryCode}${path}`
+      : `/${countryCode}/${path}`;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (e.target.name === "email") {
-      setEmailError(null); // Clear email error on change
-    }
+    if (e.target.name === "email") setEmailError(null);
   };
 
   const {
@@ -41,61 +31,58 @@ const LoginPage: React.FC = () => {
     isPending: isLoginPending,
     data,
     isSuccess,
-  } = useApiSend<IUser>(
+  } = useApiSend<IUserRegistered>(
     () => {
       const { email, password } = formData;
       if (!email || !password) {
-        console.error("[Login] Correo o contraseña vacíos");
         toast.error("Por favor, completa todos los campos.");
         throw new Error("Correo o contraseña vacíos");
       }
       return login(email, password);
     },
-    async (data: IUserRegistered) => {
-      console.log("[Login] Inicio de sesión exitoso:", formData.email);
-      console.log("[Login] Datos recibidos:", data);
+    async (data) => {
       setUser(data);
-      toast.success("Inicio de sesión exitoso. Bienvenido a MundoCar!");
+      toast.success("Inicio de sesión exitoso. ¡Bienvenido a MundoCar!");
     },
     (error) => {
       toast.error("El usuario no existe. Por favor, regístrate.");
       setEmailError("El usuario no existe. Por favor, regístrate.");
-      console.log(error);
+      console.error(error);
     }
   );
 
   useEffect(() => {
     if (isSuccess && data) {
       const redirectPath = data.role === "user" ? "/dashboard" : "/admin";
-      console.log("Redirecting to:", getCountryPath(redirectPath)); // Debug log
       navigate(getCountryPath(redirectPath));
     }
-  }, [isSuccess, data, navigate]);
+  }, [isSuccess, data]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("[Login] Iniciando login...");
     setEmailError(null);
     loginUser();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#034651]/10 to-[#034651]/5 flex flex-col">
+    <div className="min-h-screen bg-brand-bg flex flex-col">
       <div className="flex flex-col lg:grid lg:grid-cols-2 flex-1">
-        {/* Izquierda: Formulario de login */}
-        <div className="bg-white/80 backdrop-blur-xl border border-[#034651]/20 flex items-center justify-center px-6 md:px-10 py-10">
+        {/* 🧊 Izquierda: Panel de login */}
+        <div className="bg-brand-card/80 backdrop-blur-lg border border-brand-primary/10 flex items-center justify-center px-6 md:px-10 py-12 shadow-inner">
           <div className="w-full max-w-md text-center">
+            {/* Error */}
             {emailError && (
               <p className="text-red-500 text-sm mb-4">{emailError}</p>
             )}
-            <Link to={`${getCountryPath("/")}`}>
-              <button className="mb-6 px-4 py-2 bg-[#034651] text-white rounded-xl hover:bg-[#05707f] transition-colors duration-300 flex items-center gap-2 mx-auto">
+
+            {/* Botón regresar */}
+            <Link to={getCountryPath("/")}>
+              <button className="mb-6 px-4 py-2 bg-brand-primary text-white rounded-xl hover:bg-brand-hover transition-all duration-300 flex items-center gap-2 mx-auto shadow-sm hover:shadow-md">
                 <svg
                   className="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     strokeLinecap="round"
@@ -107,29 +94,34 @@ const LoginPage: React.FC = () => {
                 Regresar
               </button>
             </Link>
+
+            {/* Logo */}
             <img
               src="/assets/mundocar-logo.png"
               alt="MundoCar"
-              className="mx-auto"
-              width={250}
+              className="mx-auto drop-shadow-md"
+              width={230}
               loading="lazy"
             />
-            <h2 className="text-2xl md:text-3xl font-extrabold text-[#034651] mt-4">
+
+            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-primary mt-4">
               Inicia sesión en MundoCar
             </h2>
-            <p className="text-[#034651]/80 mt-2">
+            <p className="text-text-secondary mt-2">
               Accede a tu cuenta para comprar, vender o rentar vehículos.
             </p>
-            <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+
+            {/* Formulario */}
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-[#034651]"
+                  className="block text-sm font-semibold text-text-main mb-1 text-left"
                 >
                   Correo electrónico
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-brand-primary/60" />
                   <input
                     type="email"
                     id="email"
@@ -139,22 +131,22 @@ const LoginPage: React.FC = () => {
                     required
                     disabled={isLoginPending}
                     className={`w-full pl-10 pr-4 py-3 border ${
-                      emailError ? "border-red-500" : "border-[#034651]/20"
-                    } rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition disabled:opacity-50`}
+                      emailError ? "border-red-500" : "border-brand-primary/20"
+                    } rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-transparent text-text-main placeholder-text-secondary/40 shadow-sm hover:shadow-md transition disabled:opacity-50`}
                     placeholder="tucorreo@ejemplo.com"
-                    aria-label="Correo electrónico"
                   />
                 </div>
               </div>
+
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-[#034651]"
+                  className="block text-sm font-semibold text-text-main mb-1 text-left"
                 >
                   Contraseña
                 </label>
                 <div className="relative">
-                  <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#034651]/60" />
+                  <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-brand-primary/60" />
                   <input
                     type="password"
                     id="password"
@@ -163,42 +155,38 @@ const LoginPage: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     disabled={isLoginPending}
-                    className="w-full pl-10 pr-4 py-3 border border-[#034651]/20 rounded-xl focus:ring-2 focus:ring-[#034651] focus:border-transparent text-[#034651] placeholder-[#034651]/40 shadow-sm hover:shadow-md transition disabled:opacity-50"
+                    className="w-full pl-10 pr-4 py-3 border border-brand-primary/20 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-transparent text-text-main placeholder-text-secondary/40 shadow-sm hover:shadow-md transition disabled:opacity-50"
                     placeholder="••••••••"
-                    aria-label="Contraseña"
                   />
                 </div>
               </div>
+
               <button
                 type="submit"
                 disabled={isLoginPending}
-                className="w-full flex items-center justify-center gap-2 bg-[#034651] text-white font-semibold p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-[#05707f] transition-all focus:outline-none focus:ring-2 focus:ring-[#034651] disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label="Iniciar sesión"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand-primary to-brand-hover text-white font-semibold p-3 rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-[1.02] focus:ring-2 focus:ring-brand-primary disabled:opacity-50"
               >
                 {isLoginPending ? "Iniciando..." : "Iniciar sesión"}
                 <ChevronRight className="w-4 h-4" />
               </button>
             </form>
-            <p className="mt-4 text-center text-sm text-[#034651]/80">
+
+            <p className="mt-5 text-sm text-text-secondary">
               ¿No tienes una cuenta?{" "}
-              <Link to={`${getCountryPath("registro")}`}>
-                <button
-                  className="text-[#034651] hover:underline font-medium"
-                  aria-label="Crear una cuenta"
-                >
-                  Regístrate
-                </button>
+              <Link
+                to={getCountryPath("registro")}
+                className="text-brand-primary hover:underline font-semibold"
+              >
+                Regístrate
               </Link>
             </p>
           </div>
         </div>
 
-        {/* Derecha: Video con overlay y texto */}
+        {/* 🎥 Derecha: Video hero */}
         <div className="relative h-[50vh] lg:h-full overflow-hidden">
           <video
             className="absolute inset-0 w-full h-full object-cover"
-            poster="/assets/videos/MundoCar3.mp4"
-            preload="metadata"
             autoPlay
             muted
             loop
@@ -207,24 +195,25 @@ const LoginPage: React.FC = () => {
             <source src="/assets/videos/MundoCar3.webm" type="video/webm" />
             <source src="/assets/videos/MundoCar3.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-[#034651]/55" />
-          <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-10">
-            <h1 className="text-white text-3xl md:text-5xl font-extrabold drop-shadow text-center">
+          <div className="absolute inset-0 bg-brand-primary/60 backdrop-blur-[2px]" />
+          <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-10 text-center text-white">
+            <h1 className="text-3xl md:text-5xl font-extrabold drop-shadow-lg">
               ¡Únete a MundoCar hoy!
             </h1>
-            <p className="text-white/90 mt-3 max-w-xl text-center">
-              Inicia sesión para explorar nuestra amplia selección de vehículos
-              nuevos y usados en toda Centroamérica.
+            <p className="text-white/90 mt-3 max-w-xl mx-auto leading-relaxed">
+              Inicia sesión para explorar vehículos nuevos y usados en toda
+              Centroamérica.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="bg-[#034651] text-white py-5 text-center">
-        <p className="text-xs opacity-90">
+      {/* Footer */}
+      <footer className="bg-brand-primary text-white py-5 text-center">
+        <p className="text-xs opacity-80">
           © {new Date().getFullYear()} MundoCar. Todos los derechos reservados.
         </p>
-      </div>
+      </footer>
     </div>
   );
 };

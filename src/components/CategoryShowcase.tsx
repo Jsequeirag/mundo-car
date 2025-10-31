@@ -1,42 +1,20 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Car, MapPin, Package, PlusCircle } from "lucide-react";
-import { useParams } from "react-router-dom";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import SubscriptionPlansGrid from "@/components/SubscriptionPlansGrid";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ModalContainer from "./ModalContainer";
-import { Users, Building2, Crown, Zap, CheckCircle, Star } from "lucide-react";
-const autoLotes = [
-  {
-    id: "1",
-    name: "AutoLote El Sol",
-    image: "/assets/autolotes/autolote-premium.png",
-  },
-  {
-    id: "2",
-    name: "AutoLote La Estrella",
-    image: "/assets/autolotes/autolote-laestrella.png",
-  },
-  {
-    id: "3",
-    name: "AutoLote Premium",
-    image: "/assets/autolotes/autolote-premium.png",
-  },
-];
+import PlansGrid from "@/components/PlanCard/PlansGrid";
 
 const CategoryShowcase: React.FC = () => {
   const { countryCode } = useParams<{ countryCode?: string }>();
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+
   const getCountryPath = (path: string) => {
-    if (!countryCode || path === "/") {
-      return path;
-    }
-    if (path.startsWith("/")) {
-      return `/${countryCode}${path}`;
-    }
+    if (!countryCode || path === "/") return path;
+    if (path.startsWith("/")) return `/${countryCode}${path}`;
     return `/${countryCode}/${path}`;
   };
+
   const categoryItems = [
     {
       label: "Autos Nuevos",
@@ -53,11 +31,12 @@ const CategoryShowcase: React.FC = () => {
       description: "Encuentra tu próximo vehículo de ocasión con confianza.",
     },
     {
-      label: "Publicar Anuncio",
+      label: "Publica tu Automóvil",
       icon: PlusCircle,
       href: `/${countryCode}/inicio`,
       image: "/assets/mundo/publishImage2.png",
       description: "Publica tu anuncio de forma rápida y sencilla.",
+      openModal: true,
     },
     {
       label: "Renta de Autos",
@@ -75,384 +54,87 @@ const CategoryShowcase: React.FC = () => {
     },
   ];
 
-  const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
   return (
     <>
+      {/* 🪟 Modal para planes */}
       <ModalContainer
-        title="Seleccionar tu plan según tu necesidad"
+        title="Selecciona tu plan según tu necesidad"
         width="80rem"
         maxWidth="95%"
         className="max-w-7xl"
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       >
-        <div className="w-full">
-          {/* Grid de planes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {/* PLAN 1: INDEPENDIENTE */}
-            <div
-              className="relative group cursor-pointer transform transition-all duration-500
-                 hover:scale-[1.02] hover:-translate-y-2"
-              onClick={(e) => {
-                e.stopPropagation(), navigate(getCountryPath("publicar"));
-              }}
-            >
-              {/* Wrapper para el plan con efecto neoglass */}
-              <div
-                className={`
-          relative bg-white/20 backdrop-blur-xl border border-white/20
-          rounded-3xl p-8 shadow-2xl
-          group-hover:shadow-3xl group-hover:border-white/30
-          overflow-hidden
-          bg-gradient-to-br from-[#034651]/10 to-[#034651]/5
-          after:absolute after:inset-0 after:bg-gradient-to-r 
-          after:from-transparent after:via-white/10 after:to-transparent
-          after:opacity-0 group-hover:after:opacity-100
-          after:transition-opacity after:duration-500
-          before:absolute before:inset-0 before:bg-gradient-to-b
-          before:from-white/5 before:to-transparent
-          before:opacity-0 group-hover:before:opacity-100
-          before:transition-opacity before:duration-500
-        `}
-                style={{
-                  backgroundImage:
-                    "url('/assets/mundo/suscripcion-independiente.png')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {/* Efecto de brillo neoglass */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
-                </div>
-
-                {/* Contenido del plan */}
-                <div className="relative z-10 h-full flex flex-col">
-                  {/* Icono del tipo de plan */}
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 bg-[#034651]/20 rounded-2xl flex items-center justify-center border border-[#034651]/30">
-                      <Users className="h-8 w-8 text-[#034651]" />
-                    </div>
-                  </div>
-
-                  {/* Nombre del plan */}
-                  <h3 className="text-2xl font-bold text-center  mb-2 text-white text-shadow-md">
-                    Independiente
-                  </h3>
-
-                  {/* Descripción */}
-                  <div className="text-center mb-6 flex-1 flex flex-col justify-center ">
-                    <p className="   mt-1 text-white text-shadow-md font-bold">
-                      Perfecto para vendedores individuales
-                    </p>
-                  </div>
-
-                  {/* Lista de características */}
-                  <ul className="space-y-3 mb-8 flex-1">
-                    {[].map((feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center gap-3 text-gray-700"
-                      >
-                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Botón de selección */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation(), navigate(getCountryPath("publicar"));
-                    }}
-                    className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-300
-                       bg-gradient-to-r from-[#034651] to-[#034651]/80 text-white shadow-lg 
-                       hover:shadow-[#034651]/25 hover:scale-[1.02] active:scale-[0.98]
-                       after:absolute after:inset-0 after:bg-white/20 after:scale-0
-                       after:transform after:transition-transform after:duration-300
-                       hover:after:scale-100 relative overflow-hidden"
-                  >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Zap className="h-4 w-4" />
-                      Seleccionar Plan
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* PLAN 2: AUTOLOTE */}
-            <div
-              className="relative group cursor-pointer transform transition-all duration-500
-                 hover:scale-[1.02] hover:-translate-y-2 scale-105"
-              onClick={(e) => {
-                e.stopPropagation(), navigate(getCountryPath("publicar"));
-              }}
-            >
-              {/* Wrapper para el plan con efecto neoglass */}
-              <div
-                className={`
-          relative bg-white/20 backdrop-blur-xl border border-white/20
-          rounded-3xl p-8 shadow-2xl
-          group-hover:shadow-3xl group-hover:border-white/30
-          overflow-hidden
-          ring-2 ring-[#034651]/30 bg-gradient-to-br from-[#034651]/10 to-[#034651]/5
-          after:absolute after:inset-0 after:bg-gradient-to-r 
-          after:from-transparent after:via-white/10 after:to-transparent
-          after:opacity-0 group-hover:after:opacity-100
-          after:transition-opacity after:duration-500
-          before:absolute before:inset-0 before:bg-gradient-to-b
-          before:from-white/5 before:to-transparent
-          before:opacity-0 group-hover:before:opacity-100
-          before:transition-opacity before:duration-500
-        `}
-                style={{
-                  backgroundImage:
-                    "url('/assets/mundo/suscripcion-autolote.png')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {/* Efecto de brillo neoglass */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
-                </div>
-
-                {/* Contenido del plan */}
-                <div className="relative z-10 h-full flex flex-col">
-                  {/* Icono del tipo de plan */}
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 bg-[#034651]/20 rounded-2xl flex items-center justify-center border border-[#034651]/30">
-                      <Building2 className="h-8 w-8 text-[#034651]" />
-                    </div>
-                  </div>
-
-                  {/* Nombre del plan */}
-                  <h3 className="text-2xl font-bold text-center  mb-2 text-white text-shadow-md">
-                    Autolote
-                  </h3>
-
-                  {/* Descripción */}
-                  <div className="text-center mb-6 flex-1 flex flex-col justify-center">
-                    <p className="  mt-1 text-white text-shadow-md font-bold">
-                      Ideal para pequeños negocios de autos
-                    </p>
-                  </div>
-
-                  {/* Lista de características */}
-                  <ul className="space-y-3 mb-8 flex-1">
-                    {[].map((feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center gap-3 text-gray-700"
-                      >
-                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Botón de selección */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(getCountryPath("publicar"));
-                    }}
-                    className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-300
-                       bg-gradient-to-r from-[#034651] to-[#034651]/80 text-white shadow-lg 
-                       hover:shadow-[#034651]/25 hover:scale-[1.02] active:scale-[0.98]
-                       after:absolute after:inset-0 after:bg-white/20 after:scale-0
-                       after:transform after:transition-transform after:duration-300
-                       hover:after:scale-100 relative overflow-hidden"
-                  >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Zap className="h-4 w-4" />
-                      ¡Elige este plan!
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* PLAN 3: CONCESIONARIO */}
-            <div
-              className="relative group cursor-pointer transform transition-all duration-500
-                 hover:scale-[1.02] hover:-translate-y-2"
-              onClick={() => navigate(getCountryPath("publicar"))}
-            >
-              {/* Wrapper para el plan con efecto neoglass */}
-              <div
-                className={`
-          relative bg-white/20 backdrop-blur-xl border border-white/20
-          rounded-3xl p-8 shadow-2xl
-          group-hover:shadow-3xl group-hover:border-white/30
-          overflow-hidden
-          bg-gradient-to-br from-[#034651]/10 to-[#034651]/5
-          after:absolute after:inset-0 after:bg-gradient-to-r 
-          after:from-transparent after:via-white/10 after:to-transparent
-          after:opacity-0 group-hover:after:opacity-100
-          after:transition-opacity after:duration-500
-          before:absolute before:inset-0 before:bg-gradient-to-b
-          before:from-white/5 before:to-transparent
-          before:opacity-0 group-hover:before:opacity-100
-          before:transition-opacity before:duration-500
-        `}
-                style={{
-                  backgroundImage:
-                    "url('/assets/mundo/suscripcion-concesionario.png')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {/* Efecto de brillo neoglass */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
-                </div>
-
-                {/* Contenido del plan */}
-                <div className="relative z-10 h-full flex flex-col">
-                  {/* Icono del tipo de plan */}
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 bg-[#034651]/20 rounded-2xl flex items-center justify-center border border-[#034651]/30">
-                      <Crown className="h-8 w-8 text-[#034651]" />
-                    </div>
-                  </div>
-
-                  {/* Nombre del plan */}
-                  <h3 className="text-2xl font-bold text-center  mb-2 text-white text-shadow-md">
-                    Concesionario
-                  </h3>
-
-                  {/* Descripción */}
-                  <div className="text-center mb-6 flex-1 flex flex-col justify-center">
-                    <p className="  mt-1 text-white text-shadow-md font-bold">
-                      Para concesionarios profesionales
-                    </p>
-                  </div>
-
-                  {/* Lista de características */}
-                  <ul className="space-y-3 mb-8 flex-1">
-                    {[].map((feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center gap-3 text-gray-700"
-                      >
-                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Botón de selección */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation(), navigate(getCountryPath("publicar"));
-                    }}
-                    className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-300
-                       bg-gradient-to-r from-[#034651] to-[#034651]/80 text-white shadow-lg 
-                       hover:shadow-[#034651]/25 hover:scale-[1.02] active:scale-[0.98]
-                       after:absolute after:inset-0 after:bg-white/20 after:scale-0
-                       after:transform after:transition-transform after:duration-300
-                       hover:after:scale-100 relative overflow-hidden"
-                  >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Zap className="h-4 w-4" />
-                      Seleccionar Plan
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PlansGrid />
       </ModalContainer>
+
+      {/* 🏷️ Sección de categorías */}
       <section
-        className="py-12 md:py-16 bg-brand-primary"
+        className="relative py-16 md:py-20 bg-brand-primary overflow-hidden"
         style={{
           backgroundImage: "url('/assets/mundo/howItWorks.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 text-shadow-md">
+        {/* Fondo con overlay de marca */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#034651]/90 via-[#045166]/80 to-[#022f36]/90 backdrop-blur-[2px]" />
+
+        {/* Efectos de luz ambiental */}
+        <div className="absolute top-10 left-10 w-40 h-40 bg-brand-hover/25 rounded-full blur-3xl animate-slowFloat" />
+        <div className="absolute bottom-10 right-10 w-56 h-56 bg-brand-primary/30 rounded-full blur-3xl animate-slowFloat delay-300" />
+
+        <div className="relative z-10 px-6">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-center text-white mb-12 tracking-tight drop-shadow-lg">
             Explora nuestras categorías
           </h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-            {/* Columna izquierda: Carrusel de AutoLotes (PC) */}
-            <div className="lg:block lg:col-span-1"></div>
+          <div className="flex flex-wrap justify-center items-center gap-8">
+            {categoryItems.map((item, index) => {
+              const Icon = item.icon;
+              const handleClick = () =>
+                item.openModal ? setIsOpen(true) : navigate(item.href);
 
-            {/* Columna central: Categorías */}
-            <div className="lg:col-span-4">
-              <div>
-                <div className=" flex  flex-wrap justify-center items-center w-full">
-                  {categoryItems.map((item) => {
-                    const Icon = item.icon;
-                    return item.label === "Publicar Anuncio" ? (
-                      <div
-                        className="rounded-lg overflow-hidden shadow-lg
-                               transform transition-transform duration-300 hover:scale-105 hover:shadow-xl w-[220px] h-[220px] mx-1 my-1 cursor-pointer"
-                        style={{
-                          backgroundImage: `url(${item.image})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }}
-                        onClick={() => setIsOpen(true)}
-                      >
-                        <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-opacity flex flex-col justify-end p-4">
-                          <div
-                            className={`flex items-center text-white mb-2  ${
-                              item.label === "Publicar Anuncio" &&
-                              "bg-brand-primary rounded-full px-1 py-1"
-                            }`}
-                          >
-                            <Icon className={`h-5 w-5 mr-2 `} />
-                            <h3 className=" font-semibold truncate">
-                              {item.label}
-                            </h3>
-                          </div>
-                          <p className="text-white text-sm opacity-90 group-hover:opacity-100 transition-opacity line-clamp-2">
-                            {item.description}
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div
-                        className="rounded-lg overflow-hidden shadow-lg
-                               transform transition-transform duration-300 hover:scale-105 hover:shadow-xl w-[220px] h-[220px] mx-1 my-1 cursor-pointer"
-                        style={{
-                          backgroundImage: `url(${item.image})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }}
-                        onClick={() => navigate(item.href)}
-                      >
-                        <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-opacity flex flex-col justify-end p-4">
-                          <div
-                            className={`flex items-center text-white mb-2  ${
-                              item.label === "Publicar Anuncio" &&
-                              "bg-brand-primary rounded-full px-1 py-1"
-                            }`}
-                          >
-                            <Icon className={`h-5 w-5 mr-2 `} />
-                            <h3 className=" font-semibold truncate">
-                              {item.label}
-                            </h3>
-                          </div>
-                          <p className="text-white text-sm opacity-90 group-hover:opacity-100 transition-opacity line-clamp-2">
-                            {item.description}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
+              return (
+                <div
+                  key={index}
+                  onClick={handleClick}
+                  className="relative group rounded-2xl overflow-hidden shadow-lg w-[240px] h-[240px] cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-1"
+                  style={{
+                    backgroundImage: `url(${item.image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                >
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/55 transition-all duration-300"></div>
+
+                  {/* Contenido */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-5 z-10">
+                    <div
+                      className={`flex items-center text-white mb-2 ${
+                        item.openModal
+                          ? "bg-brand-primary rounded-full px-2 py-1 shadow-md"
+                          : ""
+                      }`}
+                    >
+                      <Icon className="h-5 w-5 mr-2" />
+                      <h3 className="font-semibold text-base truncate">
+                        {item.label}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-white/90 opacity-90 group-hover:opacity-100 line-clamp-2">
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
+
+        {/* Línea decorativa inferior */}
+        <div className="absolute bottom-0 w-full h-[3px] bg-gradient-to-r from-white/40 via-brand-hover/70 to-white/40" />
       </section>
     </>
   );

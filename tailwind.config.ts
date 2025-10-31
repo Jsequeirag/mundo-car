@@ -20,10 +20,38 @@ export default {
       },
     },
     extend: {
+      gradientFlash: {
+        "0%": { backgroundPosition: "0% 50%" },
+        "50%": { backgroundPosition: "100% 50%" },
+        "100%": { backgroundPosition: "0% 50%" },
+      },
+      textPopSimple: {
+        "0%": {
+          opacity: 0,
+          transform: "scale(0.3)",
+        },
+        "60%": {
+          opacity: 1,
+          transform: "scale(1.1)",
+        },
+        "100%": {
+          opacity: 1,
+          transform: "scale(1)",
+        },
+      },
+      backgroundSize: {
+        "400%": "400% 400%",
+      },
+
       colors: {
         // Tu color de marca personalizado
         "brand-primary": "#034651",
-
+        "brand-hover": "#04606A",
+        "brand-bg": "#F1F6F7",
+        "brand-form": "#E8EFF0",
+        "brand-card": "#F7FAFA",
+        "text-main": "#1E2B2E",
+        "text-secondary": "#4B5D60",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -77,6 +105,42 @@ export default {
         sm: "calc(var(--radius) - 2px)",
       },
       keyframes: {
+        textPopSimple: {
+          "0%": {
+            opacity: "0",
+            transform: "scale(0.3)",
+          },
+          "60%": {
+            opacity: "1",
+            transform: "scale(1.1)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+        },
+        gradientFlash: {
+          "0%": {
+            backgroundPosition: "0% 50%",
+            filter: "brightness(1)",
+          },
+          "25%": {
+            backgroundPosition: "50% 50%",
+            filter: "brightness(1.1)",
+          },
+          "50%": {
+            backgroundPosition: "100% 50%",
+            filter: "brightness(1.25)",
+          },
+          "75%": {
+            backgroundPosition: "50% 50%",
+            filter: "brightness(1.1)",
+          },
+          "100%": {
+            backgroundPosition: "0% 50%",
+            filter: "brightness(1)",
+          },
+        },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -99,6 +163,10 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
+
+        flashText: "flashText 1s ease-in-out",
+        gradientFlash: "gradientFlash 4s ease-in-out infinite",
+        textPopSimple: "textPopSimple 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
       },
       typography: {
         DEFAULT: {

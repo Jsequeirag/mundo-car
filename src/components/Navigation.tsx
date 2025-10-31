@@ -1,37 +1,80 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Car, Wrench, MapPin, Package, Droplets } from "lucide-react";
+import {
+  Car,
+  Package,
+  MapPin,
+  Droplets,
+  PlusCircle,
+  Megaphone,
+  Home,
+} from "lucide-react";
+import { Link, useParams, useLocation } from "react-router-dom";
 
 const Navigation: React.FC = () => {
+  const { countryCode } = useParams<{ countryCode?: string }>();
+  const location = useLocation();
+
+  const getCountryPath = (path: string) => {
+    if (!countryCode || path === "/") return path;
+    if (path.startsWith("/")) return `/${countryCode}${path}`;
+    return `/${countryCode}/${path}`;
+  };
+
   const navItems = [
-    { label: "Autos nuevos", icon: Car, href: "/autos-nuevos" },
-    { label: "Autos usados", icon: Car, href: "/autos-usados" },
-    { label: "Renta de autos", icon: MapPin, href: "/renta" },
-    { label: "Autorepuestos", icon: Package, href: "/repuestos" },
-    { label: "Lubicentros", icon: Droplets, href: "/lubicentros" },
+    { label: "Inicio", icon: Home, href: getCountryPath("/") },
+    { label: "Autos Usados", icon: Car, href: getCountryPath("/autos-usados") },
+    { label: "Autos Nuevos", icon: Car, href: getCountryPath("/autos-nuevos") },
+    { label: "Renta de Autos", icon: MapPin, href: getCountryPath("/renta") },
+    {
+      label: "Autorepuestos",
+      icon: Package,
+      href: getCountryPath("/repuestos"),
+    },
+    {
+      label: "Lubricentros",
+      icon: Droplets,
+      href: getCountryPath("/lubicentros"),
+    },
+    {
+      label: "Publica tu Automóvil",
+      icon: PlusCircle,
+      href: getCountryPath("/publicar"),
+    },
+    {
+      label: "Promociona tu Negocio",
+      icon: Megaphone,
+      href: getCountryPath("/promociona"),
+    },
   ];
 
   return (
-    // CAMBIOS AQUÍ:
-    // Hacemos la barra de navegación "sticky"
-    // 'top-[calc(theme(spacing.16))]' o 'top-[80px]' asegura que se pegue justo debajo del header principal (altura de 80px)
-    // Z-index alto pero menor que el header (z-40) para que no lo cubra.
-    <nav className="sticky top-[60px] md:top-[64px] z-40 bg-white shadow-md border-b border-gray-100">
+    <nav
+      className="sticky top-[70px] md:top-[80px] z-40 
+                 bg-white/90 backdrop-blur-sm border-b border-gray-200 shadow-sm"
+    >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center space-x-8 py-3">
+        <div className="flex flex-wrap items-center justify-center gap-4 py-3">
           {navItems.map((item) => {
             const Icon = item.icon;
+            const isActive = location.pathname.includes(item.href);
+
             return (
               <Button
                 key={item.label}
                 variant="ghost"
-                className="flex items-center space-x-2 text-gray-700 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors duration-200"
+                className={`flex items-center space-x-2 text-sm font-medium rounded-md transition-all duration-200 
+                ${
+                  isActive
+                    ? "text-brand-primary bg-brand-hover/10 shadow-sm"
+                    : "text-text-main hover:text-brand-primary hover:bg-brand-hover/5"
+                }`}
                 asChild
               >
-                <a href={item.href}>
+                <Link to={item.href}>
                   <Icon className="h-4 w-4" />
                   <span className="hidden sm:inline">{item.label}</span>
-                </a>
+                </Link>
               </Button>
             );
           })}

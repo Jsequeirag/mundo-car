@@ -11,8 +11,9 @@ import MobileSidebar from "../components/MobileSidebar";
 import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
 import { getVehiclesByFeatures } from "../api/urls/vehicle";
 import { useApiGet } from "../api/config/customHooks";
-import BrandShowCase from "@/components/BrandShowCase";
+import UsedCarGrid from "@/components/UsedCarGrid";
 import useVehicleStore from "@/store/vehicleStore";
+import BusinessCTA from "../components/BusinessCTA";
 
 interface BrandLogo {
   id: string;
@@ -21,16 +22,11 @@ interface BrandLogo {
   type: string;
 }
 
-interface Ad {
-  src: string;
-  ctaHref: string;
-  badge?: string;
-}
-
 const UsedCarsPage: React.FC = () => {
   const { vehicles, setVehicles, setLoading } = useVehicleStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const { countryCode } = useParams<{ countryCode?: string }>();
+  const location = useLocation();
 
   const brandLogos: BrandLogo[] = [
     {
@@ -52,78 +48,78 @@ const UsedCarsPage: React.FC = () => {
       type: "autolote",
     },
   ];
-  const location = useLocation();
+
+  // 🔹 Fetch de vehículos destacados
   const { data, isSuccess, isPending, refetch } = useApiGet(
     ["getVehiclesByFeatures"],
     () => getVehiclesByFeatures({ condition: "used", featured: true }),
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      // Disable auto-fetch; we'll control it manually
       enabled: false,
     }
   );
 
-  // Initial fetch when component mounts
+  // 🔹 Fetch inicial
   useEffect(() => {
-    // Trigger initial fetch
     refetch();
-  }, [refetch]); // Run once on mount
+  }, [refetch]);
 
-  // Refetch data when the location changes, specific to this page
+  // 🔹 Refetch si cambia la URL
   useEffect(() => {
-    // Refetch only if the current page is /used-cars
     if (location.pathname.includes("/used-cars")) {
-      console.log("Refetching data for UsedCarsPage:", location.pathname); // Debug
       refetch();
     }
   }, [location, refetch]);
 
-  // Update state based on API response
+  // 🔹 Manejo de estado de carga
   useEffect(() => {
-    console.log(
-      "API Response - isPending:",
-      isPending,
-      "isSuccess:",
-      isSuccess,
-      "data:",
-      data
-    ); // Debug
-    if (isPending) {
-      setLoading(true);
-    } else if (isSuccess && data) {
+    if (isPending) setLoading(true);
+    else if (isSuccess && data) {
       setVehicles(data);
       setLoading(false);
-    } else {
-      setLoading(false); // Reset loading on error or no data
-    }
-  }, [isPending, isSuccess, data]);
+    } else setLoading(false);
+  }, [isPending, isSuccess, data, setVehicles, setLoading]);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-brand-bg text-text-main">
+      {/* 🔹 HEADER */}
       <Header onMenuClick={toggleMobileMenu} currentCountryCode={countryCode} />
+      <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
+
+      {/* 🔹 HERO MODERNO */}
       <div className="pt-[80px]">
         <Hero
           title="Autos Usados de Calidad"
           subtitle="Encuentra vehículos confiables con las mejores ofertas y verificación garantizada."
         />
-        <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
+
+        {/* 🔹 CTA PROMOCIONAL */}
         <SecondaryCTA
-          sectionTextColor="brand-primary"
+          sectionBgColor="bg-brand-card"
+          sectionTextColor="text-text-main"
           buttonBgColor="bg-brand-primary"
-          sectionBgColor="bg-white"
-          buttonTextColor="bg-brand-primary"
+          buttonTextColor="text-white"
         />
-        <BrandShowCase brandLogos={brandLogos} />
-        <main className="mx-auto px-6 py-10">
-          <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+
+        {/* 🔹 CTA EMPRESARIAL */}
+        <BusinessCTA />
+
+        {/* 🔹 MARCAS */}
+        <UsedCarGrid brandLogos={brandLogos} />
+
+        {/* 🔹 CONTENIDO PRINCIPAL */}
+        <main className="mx-auto px-6 py-12 border-t border-brand-primary/10">
+          <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-10">
+            {/* FILTROS Y ADS */}
             <div className="lg:col-span-1 space-y-8">
-              <SearchFilters condition="used" />
-              <div className="lg:col-span-1 hidden lg:block space-y-8">
+              <SearchFilters
+                condition="used"
+                className="bg-brand-form rounded-2xl shadow-sm border border-brand-primary/10"
+              />
+              <div className="hidden lg:block">
                 <AdvertisementCarouselLateral
                   ads={[
                     {
@@ -135,22 +131,28 @@ const UsedCarsPage: React.FC = () => {
                       ctaHref: "https://meguiarsdirect.com/",
                     },
                   ]}
+                  className="bg-brand-card rounded-2xl shadow-sm border border-brand-primary/10 p-3"
                 />
               </div>
             </div>
+
+            {/* VEHÍCULOS */}
             <div className="lg:col-span-3 xl:col-span-4">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                  Vehículos Usado
+                <h2 className="text-3xl font-bold text-brand-primary mb-1">
+                  Autos Usados Destacados
                 </h2>
-                <p className="text-gray-600">
-                  {vehicles.length} autos usados disponibles
+                <p className="text-text-secondary">
+                  {vehicles.length} autos disponibles en tu país
                 </p>
               </div>
-              <CarGrid /> {/* Pass vehicles as prop */}
+
+              <CarGrid className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" />
             </div>
           </div>
-          <div className="mt-8">
+
+          {/* 🔹 CARRUSEL DE ANUNCIOS */}
+          <div className="mt-12">
             <AdvertisementCarousel
               slides={[
                 {
@@ -168,6 +170,8 @@ const UsedCarsPage: React.FC = () => {
           </div>
         </main>
       </div>
+
+      {/* 🔹 FOOTER */}
       <Footer />
     </div>
   );

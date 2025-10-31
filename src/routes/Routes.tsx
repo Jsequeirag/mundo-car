@@ -8,7 +8,7 @@ import LubricentrosPage from "@/pages/LubricentrosPage";
 import RentalCarsPage from "@/pages/RentalCarsPage";
 import Car360CaptureGuide from "@/pages/Car360CaptureGuide";
 import CarDetailsPage from "@/pages/CarDetailsPage";
-import PublishCarPage from "@/pages/PublishCarPage";
+import PublishCarPage from "@/pages/PublishCar/PublishCarPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import AutoLotsPage from "@/pages/AutoLotsPage";
@@ -20,6 +20,7 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import UserDashboard from "@/pages/UserDashboard";
 import ManageAdsPage from "@/pages/ManageAdsPage";
 import PlanPage from "@/pages/PlanPage";
+import PayPage from "@/pages/PayPage";
 import NotFound from "@/pages/NotFound";
 
 export default [
@@ -124,7 +125,7 @@ export default [
     title: "User Dashboard",
   },
   {
-    path: "/:countryCode/ManageAdsPage",
+    path: "/:countryCode/promocionarnegocio",
     element: <ManageAdsPage />,
     title: "Manage Ads ",
   },
@@ -132,6 +133,11 @@ export default [
     path: "/:countryCode/planPage",
     element: <PlanPage />,
     title: "Plan Page ",
+  },
+  {
+    path: "/:countryCode/pago",
+    element: <PayPage />,
+    title: "Pago ",
   },
   {
     path: "*",

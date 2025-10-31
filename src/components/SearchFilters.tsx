@@ -85,7 +85,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       }),
     (data: any[]) => {
       setVehicles(data);
-      onSearch?.(filters); // Notify parent component of new filters
+      onSearch?.(filters);
     },
     (error: any) => console.error("Error fetching vehicles:", error),
     ["getVehiclesByFeatures"]
@@ -96,7 +96,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
 
   const handleSearchClick = () => {
-    setLoading(true); // Set loading before fetch
+    setLoading(true);
     fetchVehicles(filters);
   };
 
@@ -112,30 +112,34 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       condition,
     };
     setFilters(clearedFilters);
-    setLoading(true); // Set loading before fetch
+    setLoading(true);
     fetchVehicles(clearedFilters);
     onSearch?.(clearedFilters);
   };
 
-  // Sync loading state with isPending
   React.useEffect(() => {
-    setLoading(isPending); // Update global loading state based on mutation status
+    setLoading(isPending);
   }, [isPending, setLoading]);
 
   return (
-    <Card className="bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-brand-primary to-brand-primary/80 text-white p-4">
-        <CardTitle className="flex items-center gap-2 text-xl font-bold">
+    <Card className="bg-brand-form border border-brand-primary/10 shadow-md rounded-2xl overflow-hidden">
+      {/* Encabezado */}
+      <CardHeader className="bg-gradient-to-r from-brand-primary via-brand-hover to-[#012f36] text-white p-5">
+        <CardTitle className="flex items-center gap-2 text-xl font-bold tracking-tight">
           <Filter className="h-6 w-6" />
           Filtros de Búsqueda
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6 p-6">
+
+      {/* Contenido */}
+      <CardContent className="space-y-6 p-6 text-text-main">
+        {/* Campos de selección */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Marca */}
           <div>
             <Label
               htmlFor="brand"
-              className="text-gray-700 font-medium mb-1 block"
+              className="font-semibold text-text-main mb-1 block"
             >
               Marca
             </Label>
@@ -143,7 +147,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
               onValueChange={(value) => handleFilterChange("brand", value)}
               value={filters.brand}
             >
-              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+              <SelectTrigger className="bg-brand-card border border-brand-primary/20 focus:ring-brand-primary hover:border-brand-primary transition-colors">
                 <SelectValue placeholder="Cualquiera" />
               </SelectTrigger>
               <SelectContent>
@@ -155,10 +159,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             </Select>
           </div>
 
+          {/* Modelo */}
           <div>
             <Label
               htmlFor="model"
-              className="text-gray-700 font-medium mb-1 block"
+              className="font-semibold text-text-main mb-1 block"
             >
               Modelo
             </Label>
@@ -166,7 +171,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
               onValueChange={(value) => handleFilterChange("model", value)}
               value={filters.model}
             >
-              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+              <SelectTrigger className="bg-brand-card border border-brand-primary/20 focus:ring-brand-primary hover:border-brand-primary transition-colors">
                 <SelectValue placeholder="Cualquiera" />
               </SelectTrigger>
               <SelectContent>
@@ -179,10 +184,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             </Select>
           </div>
 
+          {/* Transmisión */}
           <div>
             <Label
               htmlFor="transmission"
-              className="text-gray-700 font-medium mb-1 block"
+              className="font-semibold text-text-main mb-1 block"
             >
               Transmisión
             </Label>
@@ -192,15 +198,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
               }
               value={filters.transmission}
             >
-              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+              <SelectTrigger className="bg-brand-card border border-brand-primary/20 focus:ring-brand-primary hover:border-brand-primary transition-colors">
                 <SelectValue placeholder="Cualquiera" />
               </SelectTrigger>
               <SelectContent>
                 {transmissionOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     <div className="flex items-center gap-2">
-                      {option.value === "any" ? null : (
-                        <Joystick className="h-5 w-5" />
+                      {option.value !== "any" && (
+                        <Joystick className="h-5 w-5 text-brand-primary" />
                       )}
                       {option.label}
                     </div>
@@ -210,10 +216,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             </Select>
           </div>
 
+          {/* Combustión */}
           <div>
             <Label
               htmlFor="fuel"
-              className="text-gray-700 font-medium mb-1 block"
+              className="font-semibold text-text-main mb-1 block"
             >
               Combustión
             </Label>
@@ -221,15 +228,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
               onValueChange={(value) => handleFilterChange("fuel", value)}
               value={filters.fuel}
             >
-              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+              <SelectTrigger className="bg-brand-card border border-brand-primary/20 focus:ring-brand-primary hover:border-brand-primary transition-colors">
                 <SelectValue placeholder="Cualquiera" />
               </SelectTrigger>
               <SelectContent>
                 {combustionOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     <div className="flex items-center gap-2">
-                      {option.value === "any" ? null : (
-                        <Droplets className="h-5 w-5" />
+                      {option.value !== "any" && (
+                        <Droplets className="h-5 w-5 text-brand-primary" />
                       )}
                       {option.label}
                     </div>
@@ -239,10 +246,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             </Select>
           </div>
 
+          {/* Ubicación */}
           <div>
             <Label
               htmlFor="department"
-              className="text-gray-700 font-medium mb-1 block"
+              className="font-semibold text-text-main mb-1 block"
             >
               Ubicación
             </Label>
@@ -250,7 +258,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
               onValueChange={(value) => handleFilterChange("department", value)}
               value={filters.department}
             >
-              <SelectTrigger className="focus:ring-brand-primary focus:ring-2 focus:ring-offset-2 border-gray-300 hover:border-brand-primary transition-colors">
+              <SelectTrigger className="bg-brand-card border border-brand-primary/20 focus:ring-brand-primary hover:border-brand-primary transition-colors">
                 <SelectValue placeholder="Cualquiera" />
               </SelectTrigger>
               <SelectContent>
@@ -268,8 +276,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           </div>
         </div>
 
+        {/* Rango de precio */}
         <div>
-          <Label className="text-gray-700 font-medium mb-1 block">
+          <Label className="font-semibold text-text-main block">
             Rango de Precio: ${filters.priceRange[0].toLocaleString()} - $
             {filters.priceRange[1].toLocaleString()}
           </Label>
@@ -283,8 +292,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           />
         </div>
 
+        {/* Rango de año */}
         <div>
-          <Label className="text-gray-700 font-medium mb-1 block">
+          <Label className="font-semibold text-text-main block">
             Rango de Año: {filters.yearRange[0]} - {filters.yearRange[1]}
           </Label>
           <Slider
@@ -297,18 +307,19 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           />
         </div>
 
-        <div className="flex gap-4">
+        {/* Botones */}
+        <div className="flex gap-4 pt-2">
           <Button
             onClick={handleSearchClick}
-            disabled={isPending} // Use isPending from useApiSend
-            className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-lg disabled:opacity-50"
+            disabled={isPending}
+            className="flex-1 bg-brand-primary hover:bg-brand-hover text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 text-lg disabled:opacity-50"
           >
             <Search className="h-5 w-5 mr-2" />
             Buscar
           </Button>
           <Button
             onClick={handleClearFilters}
-            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-lg"
+            className="flex-1 bg-brand-card border border-brand-primary/20 hover:border-brand-primary text-text-main font-semibold py-3 px-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 text-lg"
           >
             Limpiar
           </Button>

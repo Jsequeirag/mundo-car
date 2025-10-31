@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
-// Tipos para el componente ModalContainer
 interface ModalContainerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -19,38 +19,32 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   onClose,
   children,
   title,
-  width = "28rem",
-  maxWidth = "90%",
+  width = "60rem",
+  maxWidth = "95%",
   className = "",
   showCloseButton = true,
   preventCloseOnOverlayClick = false,
 }) => {
-  // Manejo del scroll de la página de fondo
+  const modalRoot = document.getElementById("modal-root");
+
+  // 🔒 Bloqueo del scroll del body
   useEffect(() => {
     if (isOpen) {
-      // Guardar la posición actual del scroll
       const scrollY = window.scrollY;
       document.body.style.position = "fixed";
       document.body.style.top = `-${scrollY}px`;
       document.body.style.width = "100%";
-
-      // Permitir scroll en el modal pero no en la página
       document.body.style.overflow = "hidden";
     } else {
-      // Restaurar el scroll cuando el modal se cierra
       const scrollY = document.body.style.top;
       document.body.style.position = "";
       document.body.style.top = "";
       document.body.style.width = "";
       document.body.style.overflow = "";
-
-      // Restaurar la posición del scroll
       if (scrollY) {
         window.scrollTo(0, parseInt(scrollY || "0") * -1);
       }
     }
-
-    // Cleanup: restaurar scroll si el componente se desmonta
     return () => {
       document.body.style.position = "";
       document.body.style.top = "";
@@ -59,42 +53,37 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
     };
   }, [isOpen]);
 
-  // Si el modal no está abierto, no renderizamos nada
-  if (!isOpen) {
-    return null;
-  }
+  if (!isOpen || !modalRoot) return null;
 
-  return (
-    // Overlay del modal: fondo semitransparente oscuro y efecto de desenfoque
+  const modalContent = (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/30 backdrop-blur-sm p-4 transition-opacity duration-300 ${
-        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 
+        bg-gradient-to-br from-[#012f36]/60 via-[#034651]/70 to-[#04606A]/60 
+        backdrop-blur-md transition-opacity duration-300 ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       onClick={!preventCloseOnOverlayClick ? onClose : undefined}
     >
-      {/* Contenido del modal: tarjeta flotante */}
+      {/* 🔹 Tarjeta principal del modal */}
       <div
-        className={`bg-white dark:bg-gray-800 rounded-xl shadow-2xl relative flex flex-col transform transition-all duration-300 scale-100 opacity-100 border border-gray-200 dark:border-gray-700 ${className}`}
+        className={`relative flex flex-col bg-[#F7FAFA] rounded-2xl shadow-2xl border border-brand-primary/10 transform transition-all duration-300 ease-out ${
+          isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        } ${className}`}
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: window.innerWidth > 768 ? width : width,
+          width: window.innerWidth > 768 ? width : "90%",
           maxWidth,
           maxHeight: "90vh",
         }}
       >
-        {/* Header con título y botón de cerrar */}
+        {/* 🔸 Header con color de marca */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-            {title && (
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                {title}
-              </h3>
-            )}
-
+          <div className="flex items-center justify-between px-6 py-4 bg-brand-primary text-white rounded-t-2xl">
+            {title && <h3 className="text-lg font-semibold">{title}</h3>}
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full w-8 h-8 flex items-center justify-center transition-colors duration-200 dark:text-gray-400 dark:hover:text-gray-200"
+                className="text-white/90 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40 rounded-full w-8 h-8 flex items-center justify-center transition-colors"
                 aria-label="Cerrar modal"
               >
                 <X className="h-5 w-5" />
@@ -103,11 +92,15 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
           </div>
         )}
 
-        {/* Contenido del modal - área flexible para children */}
-        <div className="flex-grow overflow-y-auto p-6">{children}</div>
+        {/* 🔹 Contenido del modal */}
+        <div className="flex-grow overflow-y-auto p-6 text-text-main">
+          {children}
+        </div>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, modalRoot);
 };
 
 export default ModalContainer;
