@@ -420,7 +420,7 @@ const AutoDetailPage: React.FC = () => {
               {/* Auto Lot Cars Section */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Otros Vehículos del AutoLote Premium
+                  Otros Vehículos del Agencia de Autos Usados Premium
                 </h2>
                 <CarGrid cars={mockUsedCars} loading={false} />
               </div>

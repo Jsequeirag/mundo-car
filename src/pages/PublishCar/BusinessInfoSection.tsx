@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
 
+import useLanguageStore from "@/store/useLanguageStore"; // 🌐 Store de idioma
 interface Branch {
   name: string;
   address: string;
@@ -28,11 +28,14 @@ const BusinessInfoSection: React.FC<BusinessInfoSectionProps> = ({
   setBranches,
   openImageModal,
 }) => {
+  const { getTranslation, language } = useLanguageStore();
   return (
     <div className="bg-[#E8EFF0] mt-10 p-8 rounded-3xl shadow-xl border border-brand-primary/10">
       <h3 className="text-2xl font-semibold text-brand-primary text-center mb-6">
         Información del{" "}
-        {selectedPlan === "usedCarDealer" ? "Autolote" : "Concesionario"}
+        {selectedPlan === "usedCarDealer"
+          ? "Agencia de Autos Usados"
+          : "Concesionario"}
       </h3>
 
       {/* 🔹 Nombre del negocio */}

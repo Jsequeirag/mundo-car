@@ -34,7 +34,7 @@ const UsedCarGrid: React.FC<UsedCarGridProps> = ({ brandLogos }) => {
             {brandLogos[0].type === "concesionario"
               ? "Explorar por Concesionarios"
               : brandLogos[0].type === "autolote"
-              ? "Explorar por Autolotes"
+              ? "Explorar por Agencia de Vehículos Usados"
               : brandLogos[0].type === "rentacar"
               ? "Explorar por Rentadoras"
               : "Explorar por Opciones"}

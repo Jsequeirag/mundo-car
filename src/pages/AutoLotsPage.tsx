@@ -145,7 +145,7 @@ const AutoLotsPage: React.FC = () => {
                     {/* Contact Details */}
                     <div className="">
                       <h2 className="font-semibold text-lg text-gray-900 mb-2">
-                        Autolote: AutoLote Premium
+                        Agencia de Vehículos Usados
                       </h2>
                       <p className="mb-2">
                         <LucidePhone className="inline mr-2 h-5 w-5 text-gray-600" />{" "}

@@ -36,7 +36,7 @@ const VehiclePreviewCard: React.FC<VehiclePreviewCardProps> = ({
   selectedStickerPlus,
   selectedAddons = [],
 }) => {
-  const { selectedCountry } = useCountryStore();
+  const selectedCountry = localStorage.getItem("selectedCountry");
   const [currentSticker, setCurrentSticker] = useState<Sticker | null>(null);
   const [isPlusSticker, setIsPlusSticker] = useState<boolean>(false);
 

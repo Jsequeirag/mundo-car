@@ -6,9 +6,10 @@ import {
   Heart,
   Eye,
   MapPin,
-  Star,
   ChevronLeft,
   ChevronRight,
+  Crown,
+  Images,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { IVehicle } from "@/interfaces/IVehicle";
@@ -21,6 +22,7 @@ import {
   DialogTitle,
   DialogHeader,
 } from "@/components/ui/dialog";
+import Flag from "react-flagkit";
 
 interface ImageVehicle {
   id: number;
@@ -36,27 +38,24 @@ interface CarCardProps {
 
 const CarCard: React.FC<CarCardProps> = ({ vehicle }) => {
   const { countryCode } = useParams<{ countryCode?: string }>();
+  const selectedCountry =
+    localStorage.getItem("selectedCountry") || countryCode || "CR";
 
   const getCountryPath = (path: string) => {
-    if (!countryCode || path === "/") {
-      return path;
-    }
-    if (path.startsWith("/")) {
-      return `/${countryCode}${path}`;
-    }
-    return `/${countryCode}/${path}`;
+    if (!countryCode || path === "/") return path;
+    return path.startsWith("/")
+      ? `/${countryCode}${path}`
+      : `/${countryCode}/${path}`;
   };
 
-  // Estado para controlar diálogo / modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Hook para traer imágenes; el “enabled: false” hace que no traiga hasta que llamemos refetch()
   const { data, isSuccess, isPending, isError, refetch } = useApiGet<
     ImageVehicle[]
   >(
-    ["getImagesByVehicleId", vehicle.id], // ya no uso Date.now() aquí — el hook maneja caching / refetch
+    ["getImagesByVehicleId", vehicle.id],
     () => getImagesByVehicleId(vehicle.id),
     {
       refetchOnWindowFocus: false,
@@ -65,39 +64,29 @@ const CarCard: React.FC<CarCardProps> = ({ vehicle }) => {
     }
   );
 
-  // Cuando el usuario clickea la imagen, abrir el modal y disparar fetch
-  const handleImageClick = async () => {
+  const handleOpenPhotos = async () => {
     setIsModalOpen(true);
     setIsImageLoading(true);
     setCurrentImageIndex(0);
-
-    // Forzar refetch siempre
     await refetch({ cancelRefetch: false });
   };
-  // Cuando cambie el estado de “open” del diálogo
+
   const handleOpenChange = (open: boolean) => {
     setIsModalOpen(open);
     if (!open) {
-      // si se cerró
       setIsImageLoading(false);
       setCurrentImageIndex(0);
     } else {
-      // si se abre de nuevo, volver a cargar
       setIsImageLoading(true);
       refetch();
     }
   };
 
-  // Mantener sincronizado el estado de loading
   useEffect(() => {
-    if (isPending) {
-      setIsImageLoading(true);
-    } else if (isSuccess || isError) {
-      setIsImageLoading(false);
-    }
+    if (isPending) setIsImageLoading(true);
+    else if (isSuccess || isError) setIsImageLoading(false);
   }, [isPending, isSuccess, isError]);
 
-  // Navegación de imágenes
   const handlePrevious = () => {
     setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
@@ -110,43 +99,66 @@ const CarCard: React.FC<CarCardProps> = ({ vehicle }) => {
     }
   };
 
-  // Logs de debugging
-  useEffect(() => {
-    console.log(
-      "Fetch Status - isPending:",
-      isPending,
-      "isSuccess:",
-      isSuccess,
-      "isError:",
-      isError
-    );
-    console.log("Fetched data:", data);
-    console.log("Current Image Index:", currentImageIndex);
-  }, [isPending, isSuccess, isError, data, currentImageIndex]);
-
   return (
     <Card
-      className={`bg-[#F7FAFA] group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 b  border-2 ${
-        vehicle.featured === true
-          ? "border-brand-primary"
-          : "hover:border-brand-primary"
-      }`}
+      className={`bg-[#F7FAFA] group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 rounded-2xl border-2 overflow-hidden relative
+        ${
+          vehicle.featured
+            ? "border-[#034651] shadow-[0_0_20px_rgba(3,70,81,0.35)]"
+            : "border-gray-200 hover:border-brand-primary"
+        }`}
     >
+      {/* 👑 SUPER DELUXE BADGE */}
+      {vehicle.featured && (
+        <div
+          className="absolute z-20 top-3 left-3 flex items-center gap-2
+          bg-gradient-to-r from-[#04606A] via-[#034651] to-[#012F3C]
+          text-white font-semibold text-[11px] uppercase
+          px-3 py-1.5 rounded-full shadow-[0_0_12px_rgba(3,70,81,0.4)]
+          border border-[#E8EFF0]/10 animate-fadeIn"
+        >
+          <Crown className="h-4 w-4 text-yellow-400 animate-pulse" />
+          <span>Super Deluxe</span>
+        </div>
+      )}
+
       <CardHeader className="p-0 relative">
-        <div className="relative overflow-hidden rounded-t-lg">
-          {/* El componente Dialog ahora controla su “open” y “onOpenChange” */}
+        <div className="relative overflow-hidden rounded-t-2xl">
+          <img
+            src={vehicle.img}
+            alt={`${vehicle.brand} ${vehicle.model}`}
+            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+
+          <div className="absolute top-3 right-3 flex gap-2 z-10">
+            <Button
+              size="sm"
+              variant="secondary"
+              className="bg-white/90 hover:bg-white text-gray-600 hover:text-brand-primary rounded-full h-8 w-8 p-0 shadow-sm"
+            >
+              <Heart className="h-4 w-4" />
+            </Button>
+            <Badge className="bg-brand-primary text-white font-semibold rounded-full px-3 py-1 text-xs shadow-sm">
+              {vehicle.condition}
+            </Badge>
+          </div>
+        </div>
+
+        {/* 🖼 BOTÓN "VER FOTOS" */}
+        <div className="flex justify-center mt-3 mb-2">
           <Dialog open={isModalOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-              <img
-                src={vehicle.img}
-                alt={`${vehicle.brand} ${vehicle.model}`}
-                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
-                onClick={handleImageClick}
-              />
+              <Button
+                onClick={handleOpenPhotos}
+                className="bg-[#034651] hover:bg-[#04606A] text-white font-semibold text-sm px-4 py-2 rounded-lg flex items-center gap-2 shadow-md"
+              >
+                <Images className="h-4 w-4" />
+                Ver Fotos
+              </Button>
             </DialogTrigger>
             <DialogContent className="max-w-3xl">
               <DialogHeader>
-                <DialogTitle>Vehicle Images</DialogTitle>
+                <DialogTitle>Fotos del Vehículo</DialogTitle>
               </DialogHeader>
               {isImageLoading ? (
                 <div className="flex items-center justify-center h-64">
@@ -162,7 +174,6 @@ const CarCard: React.FC<CarCardProps> = ({ vehicle }) => {
                     src={data[currentImageIndex].base64}
                     alt={`Vehicle Image ${currentImageIndex + 1}`}
                     className="w-full h-64 object-cover rounded-lg"
-                    onError={(e) => console.error("Image load error:", e)}
                   />
                   {data.length > 1 && (
                     <div className="absolute top-1/2 -translate-y-1/2 flex justify-between w-full px-4">
@@ -185,54 +196,39 @@ const CarCard: React.FC<CarCardProps> = ({ vehicle }) => {
                     </div>
                   )}
                   <p className="text-center mt-2 text-sm text-gray-600">
-                    {currentImageIndex + 1} of {data.length}
+                    {currentImageIndex + 1} de {data.length}
                   </p>
                 </div>
               ) : (
-                <p className="text-gray-500">No images available.</p>
+                <p className="text-gray-500">No hay fotos disponibles.</p>
               )}
             </DialogContent>
           </Dialog>
-
-          <div className="absolute top-3 right-3 flex gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              className="bg-white/90 hover:bg-white/95 text-gray-600 hover:text-brand-primary transition-colors"
-            >
-              <Heart className="h-4 w-4" />
-            </Button>
-            <Badge className="bg-brand-primary text-white font-semibold rounded-full px-3 py-1 text-xs">
-              {vehicle.condition}
-            </Badge>
-          </div>
-          {vehicle.featured === true && (
-            <div className="absolute top-3 left-3 bg-brand-primary bg-opacity-90 text-yellow-600 text-sm font-bold py-2 px-4 rounded-full shadow-lg border border-yellow-500 flex items-center gap-1.5">
-              <Star className="h-5 w-5" style={{ fill: "currentColor" }} />
-              <span>Destacado</span>
-            </div>
-          )}
         </div>
       </CardHeader>
+
+      {/* 🧾 INFO VEHÍCULO */}
       <CardContent className="p-4">
-        <CardTitle className="text-xl font-bold text-gray-800 mb-2">
+        <CardTitle className="text-lg font-bold text-[#1E2B2E] mb-2 line-clamp-1 ">
           {vehicle.year} {vehicle.brand} {vehicle.model}
         </CardTitle>
-        <div className="space-y-2 mb-4">
-          <p className="text-2xl font-bold text-brand-primary">
+
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <p className="text-2xl font-extrabold text-brand-primary tracking-tight">
             ${vehicle.price.toLocaleString()}
           </p>
-          <div className="flex items-center text-gray-600 text-sm">
-            <MapPin className="h-4 w-4 mr-1" />
+
+          <div className="flex items-center justify-end text-[#4B5D60] text-sm">
+            <MapPin className="h-4 w-4 mr-1 text-[#4B5D60]" />
             {vehicle.locate}
+            <span className="ml-2">
+              <Flag country={selectedCountry} size={16} />
+            </span>
           </div>
-          {vehicle.condition === "used" && (
-            <p className="text-gray-500 text-sm">
-              {vehicle.distance.toLocaleString()} Kilómetros
-            </p>
-          )}
         </div>
-        <div className="flex gap-2">
+
+        {/* 🔹 BOTÓN DETALLES CENTRADO */}
+        <div className="flex justify-center mt-3">
           <Link
             to={`${getCountryPath(
               vehicle.condition === "new"
@@ -240,9 +236,9 @@ const CarCard: React.FC<CarCardProps> = ({ vehicle }) => {
                 : "autoDetailsPage"
             )}`}
           >
-            <Button className="flex-1 bg-brand-primary hover:bg-opacity-90 transition-colors">
+            <Button className="bg-brand-primary hover:bg-[#04606A] text-white font-semibold text-sm px-6 py-2 rounded-lg shadow-md">
               <Eye className="h-4 w-4 mr-2" />
-              Ver detalles
+              Ver Detalles
             </Button>
           </Link>
         </div>

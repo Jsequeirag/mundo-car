@@ -117,7 +117,7 @@ const AutoLotCarousel: React.FC<AutoLotCarouselProps> = ({
     <Card className="bg-gray-400/70 hite border-none shadow-2xl rounded-xl overflow-hidden max-w-2xl mx-auto">
       <CardHeader className="bg-gradient-to-r from-brand-primary to-brand-secondary text-white p-6">
         <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-          Autolotes
+          Agencia de Vehículos Usados
         </h2>
         <p className="text-sm md:text-base text-white/80 mt-1">
           Descubre los mejores vehículos usados
