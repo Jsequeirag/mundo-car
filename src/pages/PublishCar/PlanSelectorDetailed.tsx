@@ -183,7 +183,7 @@ const PlanSelectorDetailed = () => {
     {
       id: "independent",
       name: "Plan Independiente",
-      description: "Todos nuestros planes incluyen IVA/Cobro mensual",
+      description: "Todos nuestros planes incluyen IVA / Cobro mensual",
       options: [
         {
           id: "basic",
@@ -221,7 +221,7 @@ const PlanSelectorDetailed = () => {
     {
       id: "usedCarDealer",
       name: "Plan Agencia de Vehículos Usados",
-      description: "Todos nuestros planes incluyen IVA/Cobro mensual",
+      description: "Todos nuestros planes incluyen IVA / Cobro mensual",
       details: [
         "Aparece según los criterios de búsqueda y en la página principal",
         "Aleatoriamente según la cantidad de VEHÍCULOS Ventacar",
@@ -253,7 +253,7 @@ const PlanSelectorDetailed = () => {
     {
       id: "dealerShip",
       name: "Plan Vendedor Concesionario",
-      description: "Todos nuestros planes incluyen IVA/Cobro mensual",
+      description: "Todos nuestros planes incluyen IVA / Cobro mensual",
       details: [
         "Aparece según los criterios de búsqueda y en la página principal",
         "Aleatoriamente según la cantidad de VEHÍCULOS del concesionario",
