@@ -139,7 +139,7 @@ const AutoLotsPage: React.FC = () => {
                 {/* Contact Info Section */}
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2">
-                    Información del Autolote
+                    Información de Agencia
                   </h2>
                   <div className="flex flex-col sm:flex-row sm:items-start sm:gap-8">
                     {/* Contact Details */}
