@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Info, FileText, CheckCircle2 } from "lucide-react";
-import ModalContainer from "@/components/ModalContainer";
+import ModalContainer from "@/components/Modals/ModalContainer";
 
 interface TermsAndConditionsSectionProps {
-  termsText: string;
   onContinue?: () => void;
 }
 
 const TermsAndConditionsSection: React.FC<TermsAndConditionsSectionProps> = ({
-  termsText,
   onContinue,
 }) => {
   const [accepted, setAccepted] = useState(false);
@@ -35,7 +33,7 @@ const TermsAndConditionsSection: React.FC<TermsAndConditionsSectionProps> = ({
 
   return (
     <div className="w-full mt-10 bg-brand-form text-text-main rounded-3xl p-8 text-center border border-brand-primary/10 shadow-md mx-auto max-w-[1200px] transition-all duration-300">
-      {/* 🔹 Título y explicación */}
+      {/* 🔹 Encabezado */}
       <div className="flex flex-col items-center mb-6">
         <div className="flex items-center gap-2 mb-2">
           <FileText className="text-brand-primary h-6 w-6" />
@@ -48,7 +46,6 @@ const TermsAndConditionsSection: React.FC<TermsAndConditionsSectionProps> = ({
           condiciones de uso. Presione el botón a continuación para verlas:
         </p>
 
-        {/* 🔘 Botón para abrir modal */}
         <button
           onClick={openModal}
           className="mt-3 px-6 py-2 rounded-lg bg-brand-primary text-white font-semibold shadow hover:bg-brand-hover transition-all"
@@ -75,7 +72,6 @@ const TermsAndConditionsSection: React.FC<TermsAndConditionsSectionProps> = ({
         </p>
       </div>
 
-      {/* ⚠️ Aviso si no acepta */}
       {showNotice && (
         <div className="mt-4 flex items-center justify-center gap-2 text-red-500 font-medium text-sm">
           <Info className="h-4 w-4" />
@@ -85,7 +81,6 @@ const TermsAndConditionsSection: React.FC<TermsAndConditionsSectionProps> = ({
         </div>
       )}
 
-      {/* 🧩 Estado visual de lectura */}
       {hasOpenedTerms && (
         <div className="mt-4 flex items-center justify-center gap-2 text-green-600 text-sm font-medium">
           <CheckCircle2 className="h-5 w-5" />
@@ -93,14 +88,12 @@ const TermsAndConditionsSection: React.FC<TermsAndConditionsSectionProps> = ({
         </div>
       )}
 
-      {/* 💬 Nota final */}
       <p className="mt-6 text-text-secondary text-sm font-medium">
         Por favor oprima el botón{" "}
         <span className="text-brand-primary font-semibold">CONTINUAR</span> una
         sola vez después de aceptar los términos.
       </p>
 
-      {/* 🟢 Botón continuar */}
       <div className="mt-5">
         <Button
           onClick={handleContinue}
@@ -115,7 +108,7 @@ const TermsAndConditionsSection: React.FC<TermsAndConditionsSectionProps> = ({
         </Button>
       </div>
 
-      {/* 🪟 ModalContainer con texto dinámico */}
+      {/* 🪟 Modal */}
       <ModalContainer
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -130,28 +123,14 @@ const TermsAndConditionsSection: React.FC<TermsAndConditionsSectionProps> = ({
             MUNDOCAR.COM
           </h2>
 
-          <p className="text-text-secondary text-sm">
-            Toda la negociación entre vendedores y compradores de vehículos
-            publicitados en este portal son de responsabilidad entre las partes,
-            <span className="font-semibold text-brand-primary">
-              {" "}
-              MUNDOCAR.COM{" "}
-            </span>
-            no es responsable de ningún incumplimiento, malentendido o disputa
-            entre los mismos. MUNDOCAR.COM es solamente una plataforma de
-            anuncios en la cual se muestran vehículos de diferentes tipos y
-            propietarios, por lo que sus servicios se limitan exclusivamente a
-            la promoción de vehículos a través de sus mecanismos de márqueting.
-          </p>
-
           <h3 className="text-lg font-semibold text-brand-primary mt-6 mb-2">
             TÉRMINOS Y CONDICIONES
           </h3>
 
-          <ul className="list-disc pl-5 text-sm text-text-secondary space-y-2">
+          <ol className="list-decimal pl-6 text-sm text-text-secondary space-y-3">
             <li>
               Solamente se permite anunciar vehículos que ya se encuentren en
-              territorio costarricense, sean nuevos o usados.
+              territorio costarricense, ya que sean nuevos o usados.
             </li>
             <li>
               No se permite anunciar vehículos para repuestos, chocados,
@@ -164,88 +143,101 @@ const TermsAndConditionsSection: React.FC<TermsAndConditionsSectionProps> = ({
               carritos de golf, etc.
             </li>
             <li>
-              Los anuncios deberán contener toda la información requerida, la
-              cual deberá ser veraz. MUNDOCAR.COM no se hace responsable por
-              información errónea ingresada por el anunciante.
+              Los anuncios deberán contener TODA la información requerida; la
+              misma deberá ser fehaciente y verdadera. MUNDOCAR.COM no se hace
+              responsable por cualquier información errónea que el anunciante
+              haya ingresado.
             </li>
             <li>
               El tiempo de permanencia de un anuncio DELUXE y SUPER DELUXE en la
-              página principal depende de la cantidad de anuncios de ese tipo
-              publicados en el período; no se garantiza un tiempo específico de
-              exposición.
+              página principal depende de la cantidad de anuncios DELUXE y SUPER
+              DELUXE que ingresen en determinado período de tiempo, por lo cual
+              no se garantiza ningún tiempo específico de exposición en esa
+              posición.
             </li>
             <li>
-              Un anuncio mantendrá la opción DELUXE o SUPER DELUXE hasta que
-              venza o sea marcado como vendido.
+              Un anuncio mantendrá la opción de DELUXE o SUPER DELUXE hasta que
+              el mismo venza o sea marcado como vendido.
             </li>
             <li>
-              Un anuncio con la opción SUPER DELUXE será posteado en el muro de
-              Facebook, Instagram y TikTok de MUNDOCAR.COM, aproximadamente 30
-              minutos después de subir las fotografías.
+              Un anuncio con la opción de SUPER DELUXE será posteado en el muro
+              de Facebook e Instagram de MUNDOCAR.COM, aproximadamente 30
+              minutos después de que el usuario suba las fotografías del mismo.
             </li>
-            <li>
-              Cualquier vehículo vendido debe ser eliminado o marcado como
-              VENDIDO por quien lo publicó.
-            </li>
+            {/* 🔹 Eliminado el punto 8 */}
             <li>
               La vigencia de los planes para los anunciantes es de 1 mes. Si el
-              anunciante desea renovar, podrá hacerlo desde su cuenta con la
-              misma información previa.
+              anunciante desea publicarse nuevamente, su información estará
+              disponible en su cuenta y podrá activarlo en la misma si desea
+              contratar 1 mes adicional.
             </li>
             <li>
-              El precio de venta debe ingresarse en colones o dólares y debe
-              reflejar el valor total del vehículo, incluyendo impuestos,
-              financiamiento o deudas. Se permite indicar el precio antes de
-              impuestos solo si se selecciona la opción correspondiente.
+              El precio de venta debe ser ingresado en colones o dólares y debe
+              ser del precio TOTAL del vehículo; no puede ser una prima o un
+              valor inferior al precio real de venta que tendrá que pagar el
+              comprador por el vehículo, incluyendo cualquier deuda o
+              financiamiento pendiente, aunque se agreguen comentarios
+              adicionales.
             </li>
             <li>
-              No se permite incluir fotos o videos que no correspondan al
-              vehículo en venta. Todas las imágenes deben ser propias y mostrar
-              el vehículo real.
+              Se permite ingresar el precio del vehículo antes de pagar
+              impuestos siempre y cuando se seleccione el botón que indica que
+              el vehículo aún NO ha pagado dichos impuestos.
             </li>
             <li>
-              Solo se permite publicar anuncios para la venta directa de
-              vehículos. No se permiten anuncios de compra, remate, subasta ni
-              métodos alternos.
+              No se permite incluir fotos o videos en ningún anuncio que no
+              correspondan a las del vehículo que está siendo anunciado para la
+              venta. Además, TODAS las fotos o videos deben mostrar alguna parte
+              del vehículo, y TODAS las fotos o videos deben ser propias y no de
+              terceros.
             </li>
             <li>
-              MUNDOCAR.COM se reserva el derecho de eliminar cualquier anuncio
-              que considere contrario a sus políticas o perjudicial para la
-              imagen del sitio, sin responsabilidad ni reembolso.
+              Solamente se permite publicar anuncios para la VENTA DIRECTA de
+              vehículos. No se permite publicar anuncios para la COMPRA de un
+              vehículo, ni vehículos en REMATE, SUBASTA, o cualquier otro método
+              que no sea una venta directa entre vendedor y comprador.
             </li>
             <li>
-              Cualquier usuario que no cumpla con estos términos podrá ser
-              bloqueado para futuras publicaciones. Al publicar acepta recibir
-              correos informativos o publicitarios de MUNDOCAR.COM.
+              MUNDOCAR.COM se reserva el derecho de eliminar CUALQUIER anuncio
+              que considere va en contra de sus políticas o pueda ser
+              perjudicial para la imagen del sitio, sin responsabilidad de su
+              parte y sin reembolso de efectivo.
+            </li>
+            <li>
+              Cualquier usuario que no cumpla con los Términos y Condiciones
+              aquí descritos podrá ser bloqueado de publicar anuncios en el
+              futuro.
             </li>
             <li>
               MUNDOCAR.COM se reserva el derecho de eliminar sin reembolso
-              cualquier anuncio que considere riesgoso o dañino, aunque no viole
-              ninguna otra condición aquí descrita.
+              cualquier anuncio que considere va en contra de su imagen, la
+              seguridad de sus usuarios o el funcionamiento normal del sitio,
+              aunque éste no incumpla con ninguna de las otras condiciones aquí
+              descritas.
             </li>
             <li>
-              El anunciante es responsable de la veracidad de la información y
-              deberá responder ante cualquier reclamo de un comprador.
+              Al anunciar un vehículo en MUNDOCAR.COM, el anunciante es el
+              responsable de que toda la información esté correcta y deberá
+              responder ante cualquier reclamo de un comprador.
             </li>
             <li>
               Al publicar un anuncio en MUNDOCAR.COM usted acepta ser
-              contactado(a) por MUNDOCAR.COM o sus afiliados, por teléfono o
-              correo electrónico.
+              contactado(a) por MUNDOCAR.COM o cualquiera de sus afiliados, ya
+              sea a su número de teléfono o su dirección de correo electrónico.
             </li>
-          </ul>
+          </ol>
+        </div>
 
-          <p className="text-sm text-text-secondary mt-4">
-            Cualquier anuncio que no cumpla con estos Términos y Condiciones de
-            Uso será eliminado y no se reembolsará ningún monto pagado. Si tiene
-            dudas sobre la publicación o los planes disponibles, contáctenos al{" "}
-            <span className="font-semibold text-brand-primary">7078-7117</span>{" "}
-            antes de publicar o realizar un pago.
-          </p>
-
-          <p className="text-sm text-text-secondary italic mt-3">
-            Estos Términos y Condiciones pueden modificarse en cualquier momento
-            sin previo aviso. Le recomendamos revisarlos antes de publicar.
-          </p>
+        <div className="flex justify-center mt-6 mb-3">
+          <button
+            onClick={() => {
+              setHasOpenedTerms(true);
+              setIsModalOpen(false);
+            }}
+            className="px-6 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-md hover:bg-brand-hover transition-all"
+          >
+            Cerrar
+          </button>
         </div>
       </ModalContainer>
     </div>

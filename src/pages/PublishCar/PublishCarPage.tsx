@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import PlanSelectorDetailed from "./PlanSelectorDetailed";
 import PublishHeroSection from "./PublishHeroSection";
 import { useToast } from "@/components/ui/use-toast";
-
+import Hero from "../../components/Hero";
 import Header from "@/components/Header";
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral";
@@ -165,27 +165,8 @@ export default function PublishCarPage() {
       <MobileSidebar isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
 
       <div className="pt-[80px]">
+        <Hero showIcons={false} title="COMPRA. VENDE. AVANZA" />
         <main className="mx-auto px-6 py-10">
-          {" "}
-          <PublishHeroSection />
-          <div className="mb-8">
-            <AdvertisementCarousel
-              slides={[
-                {
-                  src: "/assets/bridgestone.png",
-                  ctaText: "",
-                  ctaHref: "https://www.bridgestone.com/",
-                  badge: "",
-                },
-                {
-                  src: "/assets/texaco.png",
-                  ctaText: "",
-                  ctaHref: "https://www.toyota.com/",
-                  badge: "",
-                },
-              ]}
-            />
-          </div>
           <button
             onClick={() => navigate(-1)}
             className="mb-6 px-4 py-2 bg-[#034651] text-white rounded-md hover:bg-[#045166] transition-colors duration-300 flex items-center gap-2"

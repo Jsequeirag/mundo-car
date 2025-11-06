@@ -58,14 +58,14 @@ const PlanVehicleData: React.FC<PlanVehicleDataProps> = ({
       }
     } else if (selectedPlan === "dealerShip") {
       // Concesionario
-      label = "Plan Concesionario";
+      label = "Plan Vendedor Concesionario";
       if (["0_5", "5_10"].includes(subPlan)) {
         maxImages = 8;
         maxVideos = 1;
       } else {
         maxImages = 8;
         maxVideos = 1;
-        label = "Plan Concesionario — Premium";
+        label = "Plan Vendedor Concesionario — Premium";
       }
     }
 

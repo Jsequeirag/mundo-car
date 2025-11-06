@@ -16,7 +16,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import ModalContainer from "@/components/ModalContainer";
+import ModalContainer from "@/components/Modals/ModalContainer";
 import { Country } from "../interfaces/IUser";
 import { useParams } from "react-router-dom";
 

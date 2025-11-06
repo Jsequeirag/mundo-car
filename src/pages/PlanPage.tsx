@@ -13,7 +13,7 @@ import {
   Loader2,
   Shield,
 } from "lucide-react";
-import ModalContainer from "@/components/ModalContainer";
+import ModalContainer from "@/components/Modals/ModalContainer";
 
 const PlansPage: React.FC = () => {
   const { countryCode } = useParams<{ countryCode?: string }>();

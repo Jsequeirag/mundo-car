@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import BlogPreview from "@/components/BlogPreview";
 import Hero from "@/components/Hero";
-import SecondaryCTA from "@/components/SecondaryCTA";
+import SecondaryCTA from "@/components/cta/SecondaryCTA";
 import MobileSidebar from "../components/MobileSidebar";
 import { useParams, Outlet } from "react-router-dom";
 import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";

@@ -14,7 +14,7 @@ import { verifyExisted, register, sendVerification } from "../api/urls/User";
 import { useApiSend } from "../api/config/customHooks";
 import Flag from "react-flagkit";
 import { toast } from "@/components/ui/sonner";
-import ModalContainer from "@/components/ModalContainer";
+import ModalContainer from "@/components/Modals/ModalContainer";
 
 const RegisterPage: React.FC = () => {
   const { countryCode } = useParams<{ countryCode?: string }>();

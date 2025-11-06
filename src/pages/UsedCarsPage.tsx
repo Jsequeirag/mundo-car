@@ -6,14 +6,14 @@ import CarGrid from "@/components/CarGrid";
 import Footer from "@/components/Footer";
 import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import Hero from "@/components/Hero";
-import SecondaryCTA from "@/components/SecondaryCTA";
+import SecondaryCTA from "@/components/cta/SecondaryCTA";
 import MobileSidebar from "../components/MobileSidebar";
 import AdvertisementCarouselLateral from "../components/AdvertisementCarouselLateral";
 import { getVehiclesByFeatures } from "../api/urls/vehicle";
 import { useApiGet } from "../api/config/customHooks";
 import UsedCarGrid from "@/components/UsedCarGrid";
 import useVehicleStore from "@/store/vehicleStore";
-import BusinessCTA from "../components/BusinessCTA";
+import BusinessCTA from "../components/cta/BusinessCTA";
 
 interface BrandLogo {
   id: string;
@@ -140,7 +140,7 @@ const UsedCarsPage: React.FC = () => {
             <div className="lg:col-span-3 xl:col-span-4">
               <div className="mb-6">
                 <h2 className="text-3xl font-bold text-brand-primary mb-1">
-                  Autos Usados Destacados
+                  Vehículos Usados
                 </h2>
                 <p className="text-text-secondary">
                   {vehicles.length} autos disponibles en tu país

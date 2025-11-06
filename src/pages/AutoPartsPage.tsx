@@ -7,8 +7,8 @@ import AdvertisementCarousel from "@/components/AdvertisementCarousel";
 import AdvertisementCarouselLateral from "@/components/AdvertisementCarouselLateral";
 import Hero from "@/components/Hero";
 import MobileSidebar from "@/components/MobileSidebar";
-import BusinessCTA from "@/components/BusinessCTA";
-import SecondaryCTA from "@/components/SecondaryCTA";
+import BusinessCTA from "@/components/cta/BusinessCTA";
+import SecondaryCTA from "@/components/cta/SecondaryCTA";
 import { mockAutoParts, AutoPart } from "@/data/mockAutoParts";
 import { useParams } from "react-router-dom";
 

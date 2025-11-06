@@ -12,7 +12,7 @@ import useCountryStore from "@/store/countryStore";
 import loadingStore from "@/store/loadingScreenStore";
 import { useApiGet } from "@/api/config/customHooks";
 import { getCountries } from "@/api/urls/Country";
-import CountrySelectorModal from "@/components/Modals/CountrySelectorModal/CountrySelectorModal";
+import CountrySelectorModal from "@/components/modals/CountrySelectorModal";
 
 const App = () => {
   const { setCountries } = useCountryStore();

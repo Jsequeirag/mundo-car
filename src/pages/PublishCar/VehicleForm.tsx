@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import ModalContainer from "@/components/ModalContainer";
+import ModalContainer from "@/components/Modals/ModalContainer";
 
 interface VehicleFormProps {
   maxImages: number;

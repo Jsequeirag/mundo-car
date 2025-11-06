@@ -321,3 +321,286 @@
 .ring-mc-secondary {
   --tw-ring-color: var(--mc-secondary);
 }
+
+/* === BASE === */
+:root {
+  --outline-stroke: 0.8px #ffffff; /* ← Ajustado para mejor visibilidad */
+}
+.sticker-dual-text {
+  display: flex;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: none;
+  filter: none !important;
+  transition: all 0.4s ease-in-out;
+}
+
+.sticker-dual-text .word-1,
+.sticker-dual-text .word-2 {
+  will-change: transform, color, -webkit-text-stroke, opacity;
+}
+
+/* === PULSE INTEGRADO EN CADA PASO === */
+@keyframes stickerWord1Cycle {
+  /* 1. Borde */
+  0%,
+  10% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+
+    opacity: 0.92;
+  }
+
+  /* 2. Relleno */
+  10%,
+  20% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+
+    opacity: 1;
+  }
+
+  /* 3. Borde */
+  20%,
+  30% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+  }
+
+  /* 4. Relleno */
+  30%,
+  40% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+  }
+
+  /* 5. Borde */
+  40%,
+  50% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+  }
+
+  /* 6. Relleno */
+  50%,
+  60% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+  }
+
+  /* 7. Borde */
+  60%,
+  70% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+  }
+
+  /* 8. Borde */
+  70%,
+  80% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+  }
+
+  /* 9. Relleno (mientras palabra 2 es borde) */
+  80%,
+  90% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+  }
+
+  /* 10. Relleno */
+  90%,
+  100% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+  }
+}
+
+/* 🔁 Palabra 2 */
+@keyframes stickerWord2Cycle {
+  /* 1. Borde */
+  0%,
+  10% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+
+    opacity: 0.92;
+  }
+
+  /* 2. Relleno */
+  10%,
+  20% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+
+    opacity: 1;
+  }
+
+  /* 3. Borde */
+  20%,
+  30% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+  }
+
+  /* 4. Borde */
+  30%,
+  40% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+  }
+
+  /* 5. Relleno */
+  40%,
+  50% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+  }
+
+  /* 6. Relleno */
+  50%,
+  60% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+  }
+
+  /* 7. Borde */
+  60%,
+  70% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+  }
+
+  /* 8. Relleno */
+  70%,
+  80% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+  }
+
+  /* 9. Borde (mientras palabra 1 es relleno) */
+  80%,
+  90% {
+    color: transparent;
+    -webkit-text-stroke: var(--outline-stroke);
+  }
+
+  /* 10. Relleno */
+  90%,
+  100% {
+    color: #ffffff;
+    -webkit-text-stroke: 0;
+  }
+}
+/* === ANIMACIONES === */
+.sticker-dual-text .word-1 {
+  animation: stickerWord1Cycle 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.sticker-dual-text .word-2 {
+  animation: stickerWord2Cycle 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* === FALLBACK para Firefox / Edge === */
+@supports not (-webkit-text-stroke: 1px white) {
+  .sticker-dual-text .word-1,
+  .sticker-dual-text .word-2 {
+    paint-order: stroke fill;
+    -webkit-text-fill-color: transparent;
+    text-shadow: -0.8px -0.8px 0 #fff, 0.8px -0.8px 0 #fff, -0.8px 0.8px 0 #fff,
+      0.8px 0.8px 0 #fff;
+  }
+  .sticker-dual-text .word-1[style*="color: #ffffff"],
+  .sticker-dual-text .word-2[style*="color: #ffffff"] {
+    -webkit-text-fill-color: #fff;
+    text-shadow: none;
+  }
+}
+@keyframes movingGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ✨ Clase para Stickers + Plus animados */
+.sticker-plus-gradient {
+  background: linear-gradient(
+    90deg,
+    #04606a,
+    #034651,
+    #012f3c,
+    #034651,
+    #04606a
+  );
+  background-size: 300% 300%;
+  animation: movingGradient 6s ease-in-out infinite;
+  color: white;
+  border: 1px solid rgba(232, 239, 240, 0.2);
+  box-shadow: 0 0 12px rgba(3, 70, 81, 0.4);
+  transition: transform 0.4s ease, brightness 0.4s ease;
+}
+
+.sticker-plus-gradient:hover {
+  filter: brightness(1.15);
+}
+/* 🌈 Animación suave del fondo de los Stickers Plus */
+@keyframes movingGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ✨ Stickers normales */
+.sticker-normal {
+  border: 1px solid rgba(232, 239, 240, 0.3);
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 6px rgba(3, 70, 81, 0.3);
+}
+
+/* ✨ Stickers Plus */
+.sticker-plus-gradient {
+  background: linear-gradient(
+    90deg,
+    #04606a,
+    #034651,
+    #012f3c,
+    #034651,
+    #04606a
+  );
+  background-size: 300% 300%;
+  animation: movingGradient 6s ease-in-out infinite;
+  border: 1.5px solid #cfa94a; /* 🟡 borde dorado elegante */
+  box-shadow: 0 0 8px rgba(207, 169, 74, 0.3);
+  transition: all 0.4s ease-in-out;
+}
+
+/* 🌟 Seleccionado */
+.sticker-dimmed {
+  opacity: 0.3;
+  filter: grayscale(0.7) blur(1px);
+  pointer-events: none;
+  transform: scale(0.98);
+  transition: all 0.4s ease-in-out;
+}
+
+.sticker-selected {
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+  opacity: 1 !important;
+  filter: none !important;
+  transition: all 0.3s ease-in-out;
+}

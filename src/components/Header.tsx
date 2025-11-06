@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Car,
@@ -12,6 +12,8 @@ import {
 import { Link, useParams } from "react-router-dom";
 import Flag from "react-flagkit";
 import useCountryStore from "@/store/countryStore";
+import ModalContainer from "../components/Modals/ModalContainer";
+import PlansGrid from "@/components/PlanCard/PlansGrid";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -22,6 +24,7 @@ const Header: React.FC<HeaderProps> = ({
   onMenuClick,
   currentCountryCode = "HN",
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const {
@@ -76,21 +79,39 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const navItems = [
-    { label: "Inicio", icon: Home, href: getCountryPath("") },
-    { label: "Autos Usados", icon: Car, href: getCountryPath("/autos-usados") },
-    { label: "Autos Nuevos", icon: Car, href: getCountryPath("/autos-nuevos") },
-    { label: "Renta de Autos", icon: Car, href: getCountryPath("/renta") },
+    { id: "", label: "Inicio", icon: Home, href: getCountryPath("") },
     {
+      id: "usedCars",
+      label: "Autos Usados",
+      icon: Car,
+      href: getCountryPath("/autos-usados"),
+    },
+    {
+      id: "newCars",
+      label: "Autos Nuevos",
+      icon: Car,
+      href: getCountryPath("/autos-nuevos"),
+    },
+    {
+      id: "rentCars",
+      label: "Renta de Autos",
+      icon: Car,
+      href: getCountryPath("/renta"),
+    },
+    {
+      id: "autoParts",
       label: "Autorepuestos",
       icon: Package,
       href: getCountryPath("/repuestos"),
     },
     {
+      id: "postYourCar",
       label: "Publica tu Automóvil",
       icon: PlusCircle,
       href: getCountryPath("/publicar"),
     },
     {
+      id: "promoteYourBusiness",
       label: "Promociona tu negocio",
       icon: Megaphone,
       href: getCountryPath("/promocionarnegocio"),
@@ -115,6 +136,17 @@ const Header: React.FC<HeaderProps> = ({
         isScrolled ? "py-3 shadow-xl bg-opacity-90" : "py-5 bg-opacity-100"
       }`}
     >
+      {/* 🪟 Modal para planes */}
+      <ModalContainer
+        title="Selecciona tu plan según tu necesidad"
+        width="80rem"
+        maxWidth="95%"
+        className="max-w-7xl"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      >
+        <PlansGrid />
+      </ModalContainer>
       <div className="px-4 h-full flex flex-wrap items-center justify-start gap-x-6 gap-y-3">
         {/* 🔹 Logo con efecto premium */}
         <div className="flex items-center flex-shrink-0">
@@ -136,11 +168,14 @@ const Header: React.FC<HeaderProps> = ({
             return (
               <Button
                 key={item.label}
+                onClick={() => {
+                  if (item.id === "postYourCar") setIsOpen(true);
+                }}
                 variant="ghost"
                 className="flex items-center space-x-2 transition-colors text-white/95 hover:bg-white/20 hover:text-white rounded-md"
                 asChild
               >
-                <Link to={item.href}>
+                <Link to={(item.id === "postYourCar") === false && item.href}>
                   <Icon className="h-5 w-5" />
                   <span className="font-medium text-sm">{item.label}</span>
                 </Link>

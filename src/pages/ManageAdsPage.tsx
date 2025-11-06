@@ -16,7 +16,7 @@ import { Country } from "../interfaces/IUser";
 import Header from "@/components/Header";
 import MobileNav from "@/components/MobileSidebar";
 import Footer from "@/components/Footer";
-import ModalContainer from "@/components/ModalContainer";
+import ModalContainer from "@/components/Modals/ModalContainer";
 
 type Placement = "hero" | "top" | "left" | "right" | "bottom";
 type MediaType = "image" | "video";

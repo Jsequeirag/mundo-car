@@ -17,7 +17,7 @@ import {
   Key,
   Plus,
 } from "lucide-react";
-import ModalContainer from "@/components/ModalContainer";
+import ModalContainer from "@/components/Modals/ModalContainer";
 
 interface UserStats {
   country: string;

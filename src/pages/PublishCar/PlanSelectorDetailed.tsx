@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ModalContainer from "@/components/ModalContainer";
+import ModalContainer from "@/components/Modals/ModalContainer";
 
 import useLanguageStore from "@/store/useLanguageStore";
 import PlanVehicleData from "./PlanVehicleData";
@@ -13,6 +13,10 @@ import TermsAndConditionsSection from "./TermsAndConditionsSection";
 import BusinessInfoSection from "./BusinessInfoSection";
 const PlanSelectorDetailed = () => {
   const { getTranslation } = useLanguageStore();
+  interface Sticker {
+    text: string;
+    color: string;
+  }
   const [vehicleData, setVehicleData] = useState({
     brand: "",
     model: "",
@@ -24,17 +28,33 @@ const PlanSelectorDetailed = () => {
   // Estados principales
   const [selectedPlan, setSelectedPlan] = useState("");
   const [selectedSubPlan, setSelectedSubPlan] = useState("");
-  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
-  const [selectedStickers, setSelectedStickers] = useState<string[]>([]);
-  const [selectedStickerPlus, setSelectedStickerPlus] = useState<string[]>([]);
-
+  const [selectedAddons, setSelectedAddons] = useState<string[]>([
+    "stickerVentacar",
+    "stickerPlusVentacar",
+    "sticker",
+    "stickerPlus",
+    "stickerPlusDealer",
+    "stickerDealer",
+  ]);
+  const [selectedStickers, setSelectedStickers] = useState<Sticker[]>([]);
+  const [selectedStickerPlus, setSelectedStickerPlus] = useState<Sticker[]>([]);
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const showWebsiteField = selectedAddons.includes("websiteLink");
+  const alwaysShowWebsite = selectedPlan === "dealerShip";
   // Info negocio
   const [businessName, setBusinessName] = useState("");
   const [businessLogo, setBusinessLogo] = useState<File | null>(null);
   const [branches, setBranches] = useState<
     { name: string; address: string; photo: File | null }[]
   >([{ name: "", address: "", photo: null }]);
-
+  const [sellerInfo, setSellerInfo] = useState({
+    profilePhoto: null,
+    name: "",
+    phone: "",
+    email: "",
+    facebook: "",
+    instagram: "",
+  });
   // Modal de imagen
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState<string | null>(null);
@@ -200,103 +220,53 @@ const PlanSelectorDetailed = () => {
     },
     {
       id: "usedCarDealer",
-      name: getTranslation("usedCarDealer"),
+      name: "Plan Agencia de Vehículos Usados",
       description: "Todos nuestros planes incluyen IVA",
+      details: [
+        "Aparece según los criterios de búsqueda y en la página principal",
+        "Aleatoriamente según la cantidad de VEHÍCULOS Ventacar",
+        "8 FOTOS",
+        "1 video por vehículo",
+      ],
       options: [
+        { id: "0_5", label: "0 a 5 vehículos", price: "$85" },
+        { id: "5_10", label: "5 a 10 vehículos", price: "$110" },
+        { id: "10_15", label: "10 a 15 vehículos", price: "$150" },
+        { id: "15_20", label: "15 a 20 vehículos", price: "$210" },
+      ],
+      extras: [
         {
-          id: "0_5",
-          title: "0 a 5 vehículos",
-          price: "$85",
-          details: [
-            "Aparece según los criterios de búsqueda y en la página principal",
-            "Aleatoriamente según la cantidad de VEHÍCULOS Ventacar",
-            "8 FOTOS",
-            "1 video por vehículo",
-          ],
+          id: "superDeluxeVentacar",
+          name: "Vehículos SUPER DELUXE",
+          description:
+            "Publicaciones con pauta nacional en Facebook e Instagram. Incluye 8 fotos y video.",
+          price: "$5",
         },
         {
-          id: "5_10",
-          title: "5 a 10 vehículos",
-          price: "$110",
-          details: [
-            "Aparece según los criterios de búsqueda y en la página principal",
-            "Aleatoriamente según la cantidad de VEHÍCULOS Ventacar",
-            "8 FOTOS",
-            "1 video por vehículo",
-          ],
-        },
-        {
-          id: "10_15",
-          title: "10 a 15 vehículos",
-          price: "$150",
-          details: [
-            "Aparece según los criterios de búsqueda y en la página principal",
-            "Aleatoriamente según la cantidad de VEHÍCULOS Ventacar",
-            "8 FOTOS",
-            "1 video por vehículo",
-          ],
-        },
-        {
-          id: "15_20",
-          title: "15 a 20 vehículos",
-          price: "$210",
-          details: [
-            "Aparece según los criterios de búsqueda y en la página principal",
-            "Aleatoriamente según la cantidad de VEHÍCULOS Ventacar",
-            "8 FOTOS",
-            "1 video por vehículo",
-          ],
+          id: "websiteLink",
+          name: "Agregar enlace a página web",
+          description: "Permite añadir el link de tu sitio o autolote.",
+          price: "$20",
         },
       ],
     },
     {
       id: "dealerShip",
-      name: "Plan Concesionario",
+      name: "Plan Vendedor Concesionario",
       description: "Todos nuestros planes incluyen IVA",
+      details: [
+        "Aparece según los criterios de búsqueda y en la página principal",
+        "Aleatoriamente según la cantidad de VEHÍCULOS del concesionario",
+        "8 FOTOS",
+        "1 video por vehículo",
+        "Incluye enlace a sitio web del concesionario",
+        "Publicaciones en Facebook e Instagram con pauta nacional. Incluye 8 fotos y video.",
+      ],
       options: [
         {
-          id: "0_5",
-          title: "0 a 5 vehículos",
-          price: "$85",
-          details: [
-            "Aparece según los criterios de búsqueda y en la página principal",
-            "Aleatoriamente según la cantidad de VEHÍCULOS del concesionario",
-            "8 FOTOS",
-            "1 video por vehículo",
-          ],
-        },
-        {
-          id: "5_10",
-          title: "5 a 10 vehículos",
-          price: "$110",
-          details: [
-            "Aparece según los criterios de búsqueda y en la página principal",
-            "Aleatoriamente según la cantidad de VEHÍCULOS del concesionario",
-            "8 FOTOS",
-            "1 video por vehículo",
-          ],
-        },
-        {
-          id: "10_15",
-          title: "10 a 15 vehículos",
-          price: "$150",
-          details: [
-            "Aparece según los criterios de búsqueda y en la página principal",
-            "Aleatoriamente según la cantidad de VEHÍCULOS del concesionario",
-            "8 FOTOS",
-            "1 video por vehículo",
-          ],
-        },
-        {
-          id: "15_20",
-          title: "15 a 20 vehículos",
-          price: "$210",
-          details: [
-            "Aparece según los criterios de búsqueda y en la página principal",
-            "Aleatoriamente según la cantidad de VEHÍCULOS del concesionario",
-            "8 FOTOS",
-            "1 video por vehículo",
-          ],
+          id: "unique",
+          label: "Plan único",
+          price: "$55",
         },
       ],
     },
@@ -308,13 +278,6 @@ const PlanSelectorDetailed = () => {
     { id: string; name: string; price: string; description?: string }[]
   > = {
     independent: [
-      {
-        id: "superDeluxe",
-        name: "Vehículos SUPER DELUXE",
-        price: "₡10,900",
-        description:
-          "Publicaciones en Facebook e Instagram de MundoCar con pauta nacional. Incluye 8 fotos y video.",
-      },
       { id: "sticker", name: "Sticker Llamativo", price: "₡2,250" },
       {
         id: "stickerPlus",
@@ -323,13 +286,6 @@ const PlanSelectorDetailed = () => {
       },
     ],
     usedCarDealer: [
-      {
-        id: "superDeluxeVentacar",
-        name: "Vehículos SUPER DELUXE Ventacar",
-        price: "$5",
-        description:
-          "Publicaciones en Facebook e Instagram con pauta nacional. Incluye 8 fotos, video y enlace al autolote.",
-      },
       { id: "stickerVentacar", name: "Sticker Llamativo", price: "$3" },
       {
         id: "stickerPlusVentacar",
@@ -338,13 +294,6 @@ const PlanSelectorDetailed = () => {
       },
     ],
     dealerShip: [
-      {
-        id: "superDeluxeDealer",
-        name: "Vehículos SUPER DELUXE Concesionario",
-        price: "$10",
-        description:
-          "Publicaciones en Facebook e Instagram con pauta nacional. Incluye 8 fotos, video y enlace al concesionario.",
-      },
       { id: "stickerDealer", name: "Sticker Llamativo", price: "$3" },
       {
         id: "stickerPlusDealer",
@@ -368,31 +317,26 @@ const PlanSelectorDetailed = () => {
     setSelectedSubPlan(uniqueSubPlanId);
     localStorage.setItem("selectedPlan", planId);
     localStorage.setItem("selectedSubPlan", uniqueSubPlanId);
-    setSelectedAddons([]);
-    setSelectedStickers([]);
-    setSelectedStickerPlus([]);
+    setSelectedAddons([]); // ← pero se actualizarán si marca los adicionales
   };
-
   // Funciones stickers
-  const handleStickerToggle = (sticker: string) => {
+  const handleStickerToggle = (sticker: Sticker) => {
     setSelectedStickers((prev) =>
-      prev.includes(sticker)
-        ? prev.filter((s) => s !== sticker)
-        : [...prev, sticker]
+      prev.some((s) => s.text === sticker.text) ? [] : [sticker]
     );
   };
 
-  const handleStickerPlusToggle = (stickerText: string) => {
+  const handleStickerPlusToggle = (sticker: Sticker) => {
     setSelectedStickerPlus((prev) => {
-      if (prev.includes(stickerText)) {
-        return prev.filter((s) => s !== stickerText);
+      if (prev.some((s) => s.text === sticker.text)) {
+        return prev.filter((s) => s.text !== sticker.text);
       }
       if (prev.length >= 3) {
         if (typeof window !== "undefined" && window.navigator.vibrate)
           window.navigator.vibrate(100);
         return prev;
       }
-      return [...prev, stickerText];
+      return [...prev, sticker];
     });
   };
 
@@ -402,19 +346,15 @@ const PlanSelectorDetailed = () => {
 
   return (
     <div className="min-h-screen font-sans">
-      <h1
-        className="text-3xl font-bold text-center text-brand-primary mb-10"
-        id="plansSection"
-      >
-        Selecciona tu Plan MundoCar
-      </h1>
       {/* 🔹 SELECCIÓN DE PLAN */}
       <PlanSelectorMain
         plans={plans}
         selectedPlan={selectedPlan}
         selectedSubPlan={selectedSubPlan}
         onSelectSubPlan={handleSubPlanSelect}
-      />{" "}
+        selectedAddons={selectedAddons}
+        setSelectedAddons={setSelectedAddons}
+      />
       {showBusinessSection && (
         <BusinessInfoSection
           selectedPlan={selectedPlan}
@@ -425,6 +365,12 @@ const PlanSelectorDetailed = () => {
           branches={branches}
           setBranches={setBranches}
           openImageModal={openImageModal}
+          sellerInfo={sellerInfo}
+          setSellerInfo={setSellerInfo}
+          showWebsiteField={showWebsiteField}
+          websiteUrl={websiteUrl}
+          setWebsiteUrl={setWebsiteUrl}
+          alwaysShowWebsite={alwaysShowWebsite}
         />
       )}
       {/* 🔹Vehiculo */}
@@ -474,9 +420,10 @@ const PlanSelectorDetailed = () => {
           }
           location={vehicleData.location || "Ubicación"}
           images={vehicleData.images}
-          selectedStickers={stickerOptions}
-          selectedStickerPlus={stickerPlusOptions}
           selectedAddons={selectedAddons}
+          // STICKERS SELECCIONADOS (100% SEGUROS)
+          selectedStickers={selectedStickers}
+          selectedStickerPlus={selectedStickerPlus}
         />
       </div>
       {/* 🔹 MODAL IMAGEN */}

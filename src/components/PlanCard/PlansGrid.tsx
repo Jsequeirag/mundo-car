@@ -59,7 +59,7 @@ const PlansGrid: React.FC = () => {
           title={language === "es" ? "Concesionario" : "Dealership"}
           description={
             language === "es"
-              ? "Para concesionarios profesionales"
+              ? "Para Vendedores Profesionales de Concesionarios "
               : "For professional dealerships"
           }
           icon={<Crown className="h-8 w-8 text-brand-primary" />}
@@ -70,7 +70,6 @@ const PlansGrid: React.FC = () => {
       {/* 🔹 Nota informativa */}
       <div className="text-center mt-8">
         <p className="inline-flex items-center gap-2 text-sm text-text-secondary bg-brand-card px-4 py-2 rounded-full shadow-sm">
-          🚗{" "}
           {language === "es"
             ? "Puedes cambiar de plan en cualquier momento."
             : "You can change your plan at any time."}

@@ -13,14 +13,14 @@ interface PlanAddonsProps {
   >;
   selectedAddons: string[];
   setSelectedAddons: React.Dispatch<React.SetStateAction<string[]>>;
-  selectedStickers: string[];
-  setSelectedStickers: React.Dispatch<React.SetStateAction<string[]>>;
-  selectedStickerPlus: string[];
-  setSelectedStickerPlus: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedStickers: Sticker[];
+  setSelectedStickers: React.Dispatch<React.SetStateAction<Sticker[]>>;
+  selectedStickerPlus: Sticker[];
+  setSelectedStickerPlus: React.Dispatch<React.SetStateAction<Sticker[]>>;
   stickerOptions: Sticker[];
   stickerPlusOptions: Sticker[];
-  handleStickerToggle: (sticker: string) => void;
-  handleStickerPlusToggle: (sticker: string) => void;
+  handleStickerToggle: (sticker: Sticker) => void;
+  handleStickerPlusToggle: (sticker: Sticker) => void;
 }
 
 const PlanAddons: React.FC<PlanAddonsProps> = ({
@@ -37,11 +37,6 @@ const PlanAddons: React.FC<PlanAddonsProps> = ({
   handleStickerToggle,
   handleStickerPlusToggle,
 }) => {
-  // ⚙️ Control interno: solo un sticker normal permitido
-  const handleSingleStickerToggle = (sticker: string) => {
-    setSelectedStickers((prev) => (prev.includes(sticker) ? [] : [sticker]));
-  };
-
   return (
     <form
       onSubmit={(e) => e.preventDefault()}
@@ -56,12 +51,13 @@ const PlanAddons: React.FC<PlanAddonsProps> = ({
           const isStickerAddon = addon.id.toLowerCase().includes("sticker");
           const isPlusAddon = addon.id.toLowerCase().includes("plus");
 
+          // 🔧 NO limpiar stickers Plus al cambiar el addon
           const handleAddonToggle = () => {
             setSelectedAddons((prev) => {
+              alert(selectedAddons);
               const isSelected = prev.includes(addon.id);
               if (isSelected) {
-                // 🧹 Si el addon se desactiva, limpiar stickers relacionados
-                if (isPlusAddon) setSelectedStickerPlus([]);
+                // Limpia solo los normales, no los plus
                 if (!isPlusAddon && isStickerAddon) setSelectedStickers([]);
                 return prev.filter((id) => id !== addon.id);
               } else {
@@ -80,24 +76,20 @@ const PlanAddons: React.FC<PlanAddonsProps> = ({
               }`}
             >
               {/* 🔘 Checkbox principal */}
-              <label className="flex justify-between items-center cursor-pointer">
+              <label
+                onClick={handleAddonToggle}
+                className="flex justify-between items-center cursor-pointer"
+              >
                 <span className="text-text-main font-medium flex flex-col sm:flex-row sm:items-center gap-1">
                   {addon.name}
                   <span className="text-brand-primary font-semibold">
                     {addon.price}
                   </span>
                 </span>
-
-                <input
-                  type="checkbox"
-                  checked={selectedAddons.includes(addon.id)}
-                  onChange={handleAddonToggle}
-                  className="w-5 h-5 accent-brand-primary"
-                />
               </label>
-              {selectedStickerPlus}
+
               {/* 🏷️ Opciones de Stickers */}
-              {isStickerAddon && selectedAddons.includes(addon.id) && (
+              {selectedAddons.includes(addon.id) && (
                 <div className="mt-5 pl-3">
                   <p className="text-sm text-text-secondary mb-3 font-semibold">
                     {isPlusAddon
@@ -111,16 +103,21 @@ const PlanAddons: React.FC<PlanAddonsProps> = ({
                         const selectedList = isPlusAddon
                           ? selectedStickerPlus
                           : selectedStickers;
-                        const toggleFn = isPlusAddon
-                          ? handleStickerPlusToggle
-                          : handleSingleStickerToggle;
+                        const isSelected = selectedList.some(
+                          (s) => s.text === sticker.text
+                        );
 
-                        const limitReached =
+                        const isLimitReached =
                           isPlusAddon &&
                           selectedStickerPlus.length >= 3 &&
-                          !selectedStickerPlus.includes(sticker.text);
+                          !selectedStickerPlus.some(
+                            (s) => s.text === sticker.text
+                          );
 
-                        // Separar emoji y texto
+                        const anySelected = isPlusAddon
+                          ? selectedStickerPlus.length > 0 && !isSelected
+                          : selectedStickers.length > 0 && !isSelected;
+
                         const match = sticker.text.match(
                           /^(\p{Emoji_Presentation}|\p{Emoji}\ufe0f?|\p{Extended_Pictographic})/u
                         );
@@ -131,47 +128,60 @@ const PlanAddons: React.FC<PlanAddonsProps> = ({
                           <label
                             key={sticker.text}
                             className={`relative flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase cursor-pointer transition-all
-                              ${sticker.color}
-                              bg-[length:400%_400%] ${
-                                isPlusAddon ? "animate-gradientFlash" : ""
-                              }
-                              shadow-[0_0_8px_rgba(255,149,0,0.6)]
-                              hover:scale-[1.06] hover:brightness-110
-                              ${
-                                selectedList.includes(sticker.text)
-                                  ? "ring-2 ring-offset-1 ring-brand-primary"
-                                  : "opacity-95"
-                              }
-                              ${
-                                limitReached
-                                  ? "opacity-50 pointer-events-none"
-                                  : ""
-                              }
-                            `}
+        text-white
+        ${
+          isPlusAddon
+            ? "sticker-plus-gradient"
+            : "sticker-normal bg-gradient-to-r from-[#04606A] via-[#034651] to-[#012F3C]"
+        }
+        ${
+          isSelected
+            ? "ring-2 ring-white ring-offset-2 ring-offset-brand-primary shadow-lg scale-105"
+            : isLimitReached || anySelected
+            ? "opacity-40 cursor-not-allowed"
+            : "hover:scale-105 hover:brightness-110"
+        }
+      `}
                           >
                             <input
                               type="checkbox"
-                              checked={selectedList.includes(sticker.text)}
-                              onChange={() => toggleFn(sticker.text)}
+                              checked={isSelected}
+                              onChange={() => {
+                                if (isPlusAddon) {
+                                  handleStickerPlusToggle(sticker);
+                                } else {
+                                  handleStickerToggle(sticker);
+                                }
+                              }}
                               className="hidden"
+                              disabled={isLimitReached}
                             />
 
-                            {/* ✨ Emoji */}
                             {emoji && (
                               <span
-                                className={`${
-                                  isPlusAddon
-                                    ? "text-sm animate-bounce"
-                                    : "text-sm"
-                                }`}
+                                className={`text-sm ${
+                                  isPlusAddon ? "animate-pulse" : ""
+                                } text-yellow-400`}
                               >
                                 {emoji}
                               </span>
                             )}
 
-                            {/* Texto */}
-                            <span className=" font-semibold leading-tight text-brand-primary">
-                              {text}
+                            <span
+                              className={`font-bold uppercase text-[11px] tracking-wide ${
+                                isPlusAddon ? "sticker-dual-text" : "text-white"
+                              }`}
+                            >
+                              {text.split(" ").map((word, index) => (
+                                <span
+                                  key={index}
+                                  className={`inline-block ${
+                                    index % 2 === 0 ? "word-1" : "word-2"
+                                  } mx-[2px]`}
+                                >
+                                  {word}
+                                </span>
+                              ))}
                             </span>
                           </label>
                         );
@@ -179,11 +189,22 @@ const PlanAddons: React.FC<PlanAddonsProps> = ({
                     )}
                   </div>
 
-                  {isPlusAddon && (
-                    <p className="text-xs text-text-secondary font-semibold mt-2">
-                      {selectedStickerPlus.length}/3 seleccionados
-                    </p>
-                  )}
+                  {/* 📝 Leyenda */}
+                  <div className="mt-3 text-xs text-text-secondary font-semibold">
+                    {isPlusAddon ? (
+                      <span>
+                        Puedes seleccionar hasta{" "}
+                        <span className="text-brand-primary">
+                          {selectedStickerPlus.length}
+                        </span>{" "}
+                        de 3 Stickers + Plus.
+                      </span>
+                    ) : (
+                      <span>
+                        Solo puedes seleccionar un (1) sticker llamativo.
+                      </span>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

@@ -59,7 +59,7 @@ const HeroSlide: React.FC<HeroSlideProps> = ({
                 index === currentSlideIndex ? "opacity-70" : "opacity-0"
               }`}
               poster={typeof media.src === "object" ? media.src.poster : ""}
-              preload="metadata"
+              preload="auto"
               autoPlay
               muted
               loop

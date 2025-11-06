@@ -13,7 +13,7 @@ import {
 import Header from "@/components/Header";
 import MobileNav from "@/components/MobileSidebar";
 import Footer from "@/components/Footer";
-import ModalContainer from "@/components/ModalContainer";
+import ModalContainer from "@/components/Modals/ModalContainer";
 import { useNavigate, useParams } from "react-router-dom";
 
 interface AdPublication {

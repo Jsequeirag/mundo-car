@@ -6,8 +6,8 @@ import { mockUsedPremiumCars } from "@/data/mockUsedPremiumCars";
 import { mockNewCars } from "@/data/mockNewCars";
 
 import Hero from "./Hero";
-import CategoryShowcase from "./CategoryShowcase";
-import BusinessCTA from "@/components/BusinessCTA";
+import CategoryCTA from "./cta/CategoryCTA";
+import BusinessCTA from "@/components/cta/BusinessCTA";
 import MobileSidebar from "./MobileSidebar";
 
 import { useParams, Outlet } from "react-router-dom";
@@ -43,7 +43,7 @@ const AppLayout: React.FC = () => {
       />
       <div className="pt-[80px]">
         <Hero />
-        <CategoryShowcase /> <BusinessCTA />
+        <CategoryCTA /> <BusinessCTA />
       </div>
 
       <Footer />
