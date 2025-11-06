@@ -41,7 +41,9 @@ const PlansGrid: React.FC = () => {
         <PlanCard
           planKey="usedCarDealer"
           title={
-            language === "es" ? "Agencia de Autos Usados" : "Used Car Dealer"
+            language === "es"
+              ? "Agencia de Vehículos Usados"
+              : "Used Car Dealer"
           }
           description={
             language === "es"
