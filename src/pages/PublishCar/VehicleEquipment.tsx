@@ -71,7 +71,7 @@ const VehicleEquipment: React.FC<VehicleEquipmentProps> = ({ onChange }) => {
   return (
     <div className="bg-brand-form mt-10 p-8 rounded-3xl shadow-md border border-brand-primary/10 mx-auto w-full max-w-[1200px] transition-all duration-300">
       <h3 className="text-2xl font-semibold text-brand-primary mb-6 text-center border-b border-brand-primary/10 pb-2">
-        Equipamiento del vehículo
+        Equipamiento del vehículo (Opcional)
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
